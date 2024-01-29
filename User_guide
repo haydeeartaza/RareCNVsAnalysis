@@ -1,4 +1,0 @@
-Pipeline Description
-
-The pipeline structure follows the Snakemake modularization. 
-Modules are set in a main snake file which will be called for the workflow execution (Figure 1). A module consists of  one or more rules which decompose the workflow into small steps by specifying how to create sets of output files from sets of input files. A rule can not be run if the input files are not found, also if an error occurs during the execution the output files created are deleted to keep consistency in the workflow in case a corrupted output is created. A rule also could include configurable parameters such as params, shell, messages, among others (Figure 2). File names, paths and parameters can be set in specific configuration files for easy modifications and administration (Figure 3 and Figure 4).
