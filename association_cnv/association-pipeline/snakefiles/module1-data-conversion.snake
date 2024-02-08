@@ -1,0 +1,184 @@
+
+# Convert the PennCNV output file into the Plink CNV file format.
+# 1.Input: rawcn file from PennCNV (QC and merged file )
+# 2.output: CNV, FAM and MAP plink format  
+rule CONVERT_PENNCNV_TO_PLINK_FORMAT:
+    input:
+        samplesall = config['sample_all_file'],
+    output: 
+        samplesallcnv = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}', prefix = cnv_all_prefix, ext=CNV_PLINK_EXT),
+    params: 
+        mapfile = config['map_file'],
+        allphenofile = config['allpheno_file'],
+        prefix = expand('{prefix}', prefix = cnv_all_prefix),
+        outputdir = config['data_conversion_path'],
+        logfile =  config['log_path'] + '/' + 'data_conversion.log'
+    message: "Creating CNV, FAM and MAP format PLINK from {input}"
+
+    shell:
+        """
+        source {libdir}/functions.sh
+        plink={plink17}
+	echo "{params.outputdir} - {params.prefix}"
+    
+	# Create cnv, fam and map format
+        create_cnv_fam_map \
+            {input.samplesall} \
+            {params.mapfile} \
+            {params.allphenofile} \
+            {params.prefix} \
+            {params.outputdir}
+
+
+        
+        # log    
+        initial_samples=`awk '{{print $5}}' {input.samplesall} | sort -u | wc -l`
+        initial_calls=` awk '$1!="FID"' {input.samplesall} | wc -l | cut -f1 -d' '`
+        controls=`awk '$6==1' {params.outputdir}/{params.prefix}.fam | wc -l`
+        cases=`awk '$6==2' {params.outputdir}/{params.prefix}.fam | wc -l`
+        males=`awk '$5==1' {params.outputdir}/{params.prefix}.fam | wc -l`
+        females=`awk '$5==2' {params.outputdir}/{params.prefix}.fam | wc -l`
+        echo "\nIntial samples: $initial_samples" > {params.logfile}
+        echo "Intial calls: $initial_calls" >> {params.logfile}
+        echo "Males: $males" >> {params.logfile}
+        echo "Famales: $females" >> {params.logfile}
+        echo "Cases: $cases" >> {params.logfile}
+        echo "Controls: $controls" >> {params.logfile}
+        
+
+        """
+
+
+# Extract CORE samples, unrelated European, and their CNVs in Plink CNV file format.
+# 1.Input: rawcn clean cnvs (passed QC and merged CNVs)
+# 2.output: core samples and CNVs files in CNV, FAM and MAP plink format  
+rule EXTRACT_CORE_SAMPLES:
+    input:
+        samplesallcnv = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}', prefix = cnv_all_prefix, ext=CNV_PLINK_EXT),
+	samplespassmerged = config['sample_merged_file']
+    output:
+        samplescnvcore = expand(config['data_conversion_path'] + '/' + '{prefix}' + '_qc_merged' + '{ext}', prefix = cnv_prefix, ext=CNV_PLINK_EXT),
+    params:
+        mapfile = config['map_file'],
+        allphenofile = config['allpheno_file'],
+        corefile = config['core_file'],
+        coreprefix = expand('{prefix}', prefix = cnv_prefix),
+        outputdir = config['data_conversion_path'],
+        logfile =  config['log_path'] + '/' + 'data_conversion.log'
+    message: "Extracting CORE samples from {params.corefile}"
+
+    shell:
+        """
+
+        source {libdir}/functions.sh
+        plink={plink17}
+
+        # Extract core samples and their CNVs
+        get_qc_core_cnvs_rawcn \
+            {input.samplespassmerged} \
+            {params.mapfile} \
+            {params.corefile} \
+            {params.outputdir}/{params.coreprefix}_qc_merged.rawcn || true
+
+        # Create rawcn, cnv, fam and map files for samples in CORE (unrelated samples) and clean CNVs (after QC and merging process)
+        create_cnv_fam_map \
+            {params.outputdir}/{params.coreprefix}_qc_merged.rawcn \
+            {params.mapfile} \
+            {params.allphenofile} \
+            {params.coreprefix}_qc_merged \
+            {params.outputdir}
+
+
+        # log
+        initial_samples=`awk '$1!="FID" {{print $2}}' {params.outputdir}/{params.coreprefix}_qc_merged.cnv | sort -u | wc -l`
+        initial_calls=`awk '$1!="FID"'  {params.outputdir}/{params.coreprefix}_qc_merged.cnv | wc -l | cut -f1 -d' '`
+        controls=`awk '$6==1' {params.outputdir}/{params.coreprefix}_qc_merged.fam | wc -l`
+        cases=`awk '$6==2' {params.outputdir}/{params.coreprefix}_qc_merged.fam | wc -l`
+        males=`awk '$5==1' {params.outputdir}/{params.coreprefix}_qc_merged.fam | wc -l`
+        females=`awk '$5==2' {params.outputdir}/{params.coreprefix}_qc_merged.fam | wc -l`
+        echo "\nIntial CORE samples after QC and merging: $initial_samples" >> {params.logfile}
+        echo "Intial CORE calls after QC and merging: $initial_calls" >> {params.logfile}
+        echo "Males CORE after  QC and merging: $males" >> {params.logfile}
+        echo "Famales CORE after  QC and merging: $females" >> {params.logfile}
+        echo "Cases CORE after QC and merging: $cases" >> {params.logfile}
+        echo "Controls CORE after  QC and merging: $controls" >> {params.logfile}
+
+
+        """
+
+# Filter CNVs by length and number of SNPs (markers). Most CNVs smaller than 1 kb in size are not detectable.
+# 1.Input: CORE samples and clean CNVs (after QC and merging) rawcn file from PennCNV
+# 2.output: CNV, FAM and MAP plink format  
+rule EXTRACT_FINAL_CNVs:
+    input:
+        samplescnvcore = expand(config['data_conversion_path'] + '/' + '{prefix}' + '_qc_merged' + '{ext}', prefix = cnv_prefix, ext=CNV_PLINK_EXT)
+    output:
+        samplescnvcorefinal = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}' , prefix = cnv_prefix, ext=CNV_PLINK_EXT)
+    params:
+        coreprefix = expand('{prefix}', prefix = cnv_prefix),
+        outputdir = config['data_conversion_path'],
+        logfile =  config['log_path'] + '/' + 'data_conversion.log'
+    message: "Creating CNV, FAM and MAP format PLINK from {input}"
+
+    shell:
+        """
+	source {libdir}/functions.sh
+        plink={plink17}
+	
+	SNPs=$(({cnvSNPs} + 1))
+	# Get rawcn file for CORE CNVs biger than cnvKB and biger than cnvSNPS
+        get_final_core_cnvs_rawcn \
+            {params.outputdir}/{params.coreprefix}_qc_merged.rawcn \
+            {params.outputdir}/{params.coreprefix}.rawcn \
+            {cnvKB} \
+            {cnvSNPs}
+
+	# Getting *.cnv.indiv and *.cnv.summary plink files for CNVs bigger than cnvKB and biger than cnvSNPS
+	{plink17} \
+		--cnv-list {params.outputdir}/{params.coreprefix}_qc_merged.cnv \
+                --fam  {params.outputdir}/{params.coreprefix}_qc_merged.fam \
+                --map  {params.outputdir}/{params.coreprefix}_qc_merged.cnv.map\
+                --cnv-kb {cnvKB} \
+                --cnv-sites $SNPs \
+                --allow-no-sex \
+                --noweb \
+                --out  {params.outputdir}/{params.coreprefix}
+
+	# Getting *.cnv *.fam  and *.cnv.map plink files for the FINAL CNVs
+
+	{plink17} \
+                --cnv-list {params.outputdir}/{params.coreprefix}_qc_merged.cnv \
+                --fam  {params.outputdir}/{params.coreprefix}_qc_merged.fam \
+                --map  {params.outputdir}/{params.coreprefix}_qc_merged.cnv.map\
+		--cnv-write \
+                --cnv-kb {cnvKB} \
+                --cnv-sites $SNPs \
+                --allow-no-sex \
+                --noweb \
+                --out  {params.outputdir}/{params.coreprefix}
+
+	{plink17} \
+        	--cnv-list {params.outputdir}/{params.coreprefix}.cnv \
+        	--cnv-make-map \
+        	--out {params.outputdir}/{params.coreprefix} \
+        	--noweb
+        
+
+        #log
+        initial_samples=`awk '$1!="FID" {{print $2}}' {params.outputdir}/{params.coreprefix}.cnv | sort -u | wc -l`
+        initial_calls=`awk '$1!="FID"' {params.outputdir}/{params.coreprefix}.cnv | wc -l | cut -f1 -d' '`
+	controls=`awk '$4!=0 && $3==1' {params.outputdir}/{params.coreprefix}.cnv.indiv | wc -l`
+        cases=`awk '$4!=0 && $3==2' {params.outputdir}/{params.coreprefix}.cnv.indiv | wc -l`
+	males=`for i in $(awk '$1!="FID" && $4!=0 {{print $2}}' {params.outputdir}/{params.coreprefix}.cnv.indiv); do \
+		grep -w $i -m 1 {params.outputdir}/{params.coreprefix}.fam; done | awk '$5==1' | wc -l`
+        females=`for i in $(awk '$1!="FID" && $4!=0 {{print $2}}' {params.outputdir}/{params.coreprefix}.cnv.indiv); do \
+                grep -w $i -m 1 {params.outputdir}/{params.coreprefix}.fam; done | awk '$5==2' | wc -l`
+        echo "\nIntial CORE samples after QC and merging and {cnvKB}kb {cnvSNPs} SNPs: $initial_samples" >> {params.logfile}
+        echo "Intial CORE calls in after and merging and {cnvKB}kb {cnvSNPs} SNPs: $initial_calls" >> {params.logfile}
+	echo "Males CORE after  QC and merging and {cnvKB}kb {cnvSNPs} SNPS: $males" >> {params.logfile}
+        echo "Famales CORE after  QC and merging and {cnvKB}kb {cnvSNPs} SNPS: $females" >> {params.logfile}
+        echo "Cases CORE in after and merging and {cnvKB}kb {cnvSNPs} SNPs: $cases" >> {params.logfile}
+        echo "Controls CORE after QC and merging and {cnvKB}kb {cnvSNPs} SNPS: $controls" >> {params.logfile}
+
+
+        """

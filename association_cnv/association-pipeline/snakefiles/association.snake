@@ -1,0 +1,17 @@
+# Config files containing hard coded variables
+configfile: os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), 'snakefiles/config.json'))
+
+# Runtime variables
+include: "variables.py"
+    
+# rule all
+rule all:
+    input:
+         rarecnvsdelpathenrichment = expand(config['enrichment_rare_cnvs_pathway_path'] + '/' + '{prefix}' + '_rare_del_pathway_CNVs_enrichment' + '.cnv.burden', prefix = cnv_prefix),
+         rarecnvsduppathenrichment = expand(config['enrichment_rare_cnvs_pathway_path'] + '/' + '{prefix}' + '_rare_dup_pathway_CNVs_enrichment' + '.cnv.burden', prefix = cnv_prefix)
+
+# Include modules
+include: "module1-data-conversion.snake"
+include: "module2-burden-analysis.snake"
+include: "module3-rare-cnvs-analysis.snake"
+include: "module4-rare-cnvs-enrichment.snake"

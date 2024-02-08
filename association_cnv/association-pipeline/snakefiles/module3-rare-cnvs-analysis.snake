@@ -1,0 +1,513 @@
+# Get the common CNVs (deletions and duplications) from a set of controls samples
+# Input: The ID list for the set of reference controls 
+# Output: cnv, fam and map files for reference controls and common variants (deletions and duplications) 
+rule GET_REF_CONTROLS_COMMON_CNVs:
+   input:
+       burdendelfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_del' + '.cnv.indiv', prefix = cnv_prefix),
+       burdendupfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_dup' + '.cnv.indiv', prefix = cnv_prefix),
+       controlsrandomfile = config['controls_random_file'],	
+   output:
+       referencecontrols = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls' + '{ext}', ext = CNV_PLINK_EXT),
+       commoncnvs = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls' + '_{type}_freq_{hfreq}_common_variants' + '{ext}', type = cnv_type, hfreq = high_freq, ext = CNV_PLINK_EXT),
+   params:
+       referencecontrolsprefix = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls'),
+       samplescnvscoreprefix = expand(config['data_conversion_path'] + '/' + '{prefix}', prefix = cnv_prefix),
+       mapfile = config['map_file'],
+       allphenofile = config['allpheno_file'],
+       outputdir = config['rare_cnvs_reference_path'],
+       logfile = config['log_path'] + '/' + 'rare_cnvs_analysis.log', 
+
+   message: "Getting REFENCE controls and their common DELs and DUPs"
+
+       shell:
+           """
+            libdir={libdir}
+            plink={plink17}
+            source {libdir}/functions.sh
+            
+            echo "##### Extracting CNVs for the REFERENCE controls from {params.samplescnvscoreprefix} #####"
+            # Extract CNVs for the REFERENCE controls
+            for i in `cat {input.controlsrandomfile}`; do grep -w $i {params.samplescnvscoreprefix}.rawcn ; done \
+            > {params.referencecontrolsprefix}.rawcn
+
+	    echo "##### Getting REFERENCE controls cnv, fam and map files #####"
+	    create_cnv_fam_map \
+                    {params.referencecontrolsprefix}.rawcn \
+                    {params.mapfile} \
+                    {params.allphenofile} \
+                    reference_controls \
+                    {params.outputdir}
+
+
+	    # Getting referent controls frequencie overwiew for del and dup (*.cnv, *.fam, *.cnv.map)
+	    echo "##### Extracting the common variants high frequency >= {high_freq} for deletions and duplications #####"
+            {plink17} \
+                --cfile {params.referencecontrolsprefix} \
+                --allow-no-sex \
+                --noweb \
+                --cnv-seglist \
+                --cnv-del \
+                --cnv-freq-method2 0.5 \
+		--cnv-freq-exclude-below {high_freq} \
+                --cnv-write \
+                --out {params.referencecontrolsprefix}_del_freq_{high_freq}_common_variants
+	   
+	   {plink17} \
+                --cnv-list {params.referencecontrolsprefix}_del_freq_{high_freq}_common_variants.cnv \
+                --cnv-make-map \
+                --out {params.referencecontrolsprefix}_del_freq_{high_freq}_common_variants \
+                --noweb
+	
+
+            {plink17} \
+                --cfile {params.referencecontrolsprefix} \
+                --allow-no-sex \
+                --noweb \
+                --cnv-seglist \
+                --cnv-dup \
+                --cnv-freq-method2 0.5 \
+		--cnv-freq-exclude-below {high_freq} \
+                --cnv-write \
+                --out {params.referencecontrolsprefix}_dup_freq_{high_freq}_common_variants
+
+	   {plink17} \
+                --cnv-list {params.referencecontrolsprefix}_dup_freq_{high_freq}_common_variants.cnv \
+                --cnv-make-map \
+                --out {params.referencecontrolsprefix}_dup_freq_{high_freq}_common_variants \
+                --noweb
+
+           # log
+           echo "##### Getting REFENCE controls and their common DELs and DUPs #####\n" > {params.logfile}
+           samples_initial=`awk '{{if($1!="FID") print $2}}' {params.samplescnvscoreprefix}.cnv | sort -u | wc -l`
+           cnvs_initial=`awk '$1!="FID"' {params.samplescnvscoreprefix}.cnv | wc -l`
+           echo "Initial data" >> {params.logfile}
+           echo "Initial samples: $samples_initial" >> {params.logfile}
+           echo "Initial CNVs: $cnvs_initial" >> {params.logfile}
+        
+           echo "\nGet REFERENCE  controls" >> {params.logfile}
+           samples=`awk '{{print $5}}' {params.referencecontrolsprefix}.rawcn | sort -u | wc -l`
+           cnvs=`wc -l {params.referencecontrolsprefix}.rawcn | cut -f1 -d' '`
+           echo "Samples: $samples" >> {params.logfile}
+           echo "CNVs: $cnvs" >> {params.logfile}
+        
+        """
+
+# Remove the reference controls samples and their CNVs from controls cohort.
+# Input: reference controls ID list, *.cnv, *.fam and *.cnv.map for common variants and reference controls
+# Output: cnv, fam and map files of samples and CNVs without references controls
+rule FILTER_REFERENCE_CONTROLS:
+   input:
+       referencecontrols = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls' + '{ext}', ext = CNV_PLINK_EXT),
+       commoncnvs = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls' + '_{type}_freq_{hfreq}_common_variants' + '{ext}', type = cnv_type, hfreq = high_freq, ext = CNV_PLINK_EXT),
+       controlsrandomfile = config['controls_random_file'],
+   output:
+       sampleswithoutrefctrsdel = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_without_reference_controls_del' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+       sampleswithoutrefctrsdup = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_without_reference_controls_dup' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+   params:
+       referencecontrolsprefix = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_reference_controls', prefix = cnv_prefix),
+       samplescnvscoreprefix = expand(config['data_conversion_path'] + '/' + '{prefix}', prefix = cnv_prefix),
+       sampleswithoutrefctrsprefix = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_without_reference_controls', prefix = cnv_prefix),
+       outputdir = config['rare_cnvs_reference_path'],
+       logfile = config['log_path'] + '/' + 'rare_cnvs_analysis.log', 
+
+   message: "Removing REFENCE controls samples and CNVs from controls cohort"
+
+       shell:
+           """
+            libdir={libdir}
+            plink={plink17}
+
+            echo "##### Removing  REFERENCE controls from {params.samplescnvscoreprefix}.cnv #####"
+            # Remove reference contros from initial data
+            grep -w -v -f {input.controlsrandomfile} {params.samplescnvscoreprefix}.cnv > {params.sampleswithoutrefctrsprefix}.cnv
+
+            # Getting CNVs without reference controls  fam and map files
+            echo "##### Getting CNVs without reference controls fam and map files #####"
+	    for i in `awk '{{if($1!="FID") print $2}}' {params.sampleswithoutrefctrsprefix}.cnv  | sort -u`; do
+		grep -m 1 -w $i {params.samplescnvscoreprefix}.fam 
+	    done > {params.sampleswithoutrefctrsprefix}.fam
+
+	    # Creating map file
+	    {plink17} \
+                --cnv-list {params.sampleswithoutrefctrsprefix}.cnv \
+                --cnv-make-map \
+                --out {params.sampleswithoutrefctrsprefix} \
+                --noweb
+
+
+            echo "##### Getting CNVs DUPs and DELs without controls reference #####"
+            # Getting DELETIONS AND DUPLICATIONS CNVS (*.cnv, *.fam, *.map) after removing reference controls
+            {plink17} \
+                --cfile {params.sampleswithoutrefctrsprefix} \
+                --allow-no-sex \
+                --noweb \
+                --cnv-del \
+                --cnv-write \
+                --out {params.sampleswithoutrefctrsprefix}_del 
+
+	    {plink17} \
+                --cnv-list {params.sampleswithoutrefctrsprefix}.cnv \
+                --cnv-make-map \
+                --out {params.sampleswithoutrefctrsprefix}_del \
+                --noweb
+
+            {plink17} \
+                --cfile {params.sampleswithoutrefctrsprefix} \
+                --allow-no-sex \
+                --noweb \
+                --cnv-dup \
+                --cnv-write \
+                --out {params.sampleswithoutrefctrsprefix}_dup
+
+	    {plink17} \
+                --cnv-list {params.sampleswithoutrefctrsprefix}.cnv \
+                --cnv-make-map \
+                --out {params.sampleswithoutrefctrsprefix}_dup \
+                --noweb
+
+           # log
+           echo "\n##### Removing {random_controls} REFENCE controls samples and CNVs from controls cohort #####\n" >> {params.logfile}
+           samples_final=`awk '{{if($1!="FID") print $2}}' {params.sampleswithoutrefctrsprefix}.cnv | sort -u | wc -l`
+           cnvs_final=`awk '$1!="FID"' {params.sampleswithoutrefctrsprefix}.cnv | wc -l`
+           echo "Final samples: $samples_final" >> {params.logfile}
+           echo "Final CNVs: $cnvs_final" >> {params.logfile}
+
+           echo "\nCNVs DELETION after removing reference controls" >> {params.logfile}
+           samples_final=`awk '{{if($1!="FID") print $2}}' {params.sampleswithoutrefctrsprefix}_del.cnv | sort -u | wc -l`
+           cnvs_final=`awk '$1!="FID"' {params.sampleswithoutrefctrsprefix}_del.cnv | wc -l`
+           echo "Final samples: $samples_final" >> {params.logfile}
+           echo "Final CNVs: $cnvs_final" >> {params.logfile}
+
+           echo "\nCNVs DUPLICATION after removing reference controls" >> {params.logfile}
+           samples_final=`awk '{{if($1!="FID") print $2}}' {params.sampleswithoutrefctrsprefix}_dup.cnv | sort -u | wc -l`
+           cnvs_final=`awk '$1!="FID"' {params.sampleswithoutrefctrsprefix}_dup.cnv | wc -l`
+           echo "Final samples: $samples_final" >> {params.logfile}
+           echo "Final CNVs: $cnvs_final" >> {params.logfile}
+
+        """
+
+
+# Extract rare CNVs, deletions and duplications, removing all CNVs overlapping at least 50% with common variants
+# Input: *.cnv, *.fam, *.map files for common variants and samples/CNVs without reference controls 
+# Output: cnv, fam and map files of rare CNVs (deletions and duplications) 
+rule GET_RARE_CNVs:
+   input:
+       commoncnvs = expand(config['rare_cnvs_reference_path'] + '/' + 'reference_controls' + '_{type}_freq_{hfreq}_common_variants' + '{ext}', type = cnv_type, hfreq = high_freq, ext = CNV_PLINK_EXT),
+       sampleswithoutrefctrscnv = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_without_reference_controls_' + '{type}' + '.cnv', prefix = cnv_prefix, type = cnv_type),
+       sampleswithoutrefctrsfam = expand(config['rare_cnvs_reference_path'] + '/' + '{prefix}' + '_without_reference_controls_' + '{type}' + '.fam', prefix = cnv_prefix, type = cnv_type),
+   output:
+       rarecnvsdel = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_del' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+       rarecnvsdup = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_dup' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+   params:
+       sampleswithoutrefctrsprefix = expand('{prefix}' + '_without_reference_controls', prefix = cnv_prefix),
+       forplotsdir = config['rare_cnvs_forplots_path'],
+       referencedir = config['rare_cnvs_reference_path'],
+       outputdir = config['rare_cnvs_path'],
+       graphicsdir = config['rare_cnvs_graph_path'],
+       logfile =  config['log_path'] + '/' + 'rare_cnvs_analysis.log',
+
+   message: "Removing common variants in CNVs study"
+
+       shell:
+         """
+          libdir={libdir}
+          plink={plink17}
+
+
+          echo "##### Getting the rare CNVs for DELETIONs and DUPLICATIONs... #####" 
+          for type in {cnv_type}; do
+            echo "##### Processing CNV: $type #####"
+            refcontrols="reference_controls"_$type"_freq_{high_freq}_common_variants"
+            rarecnvsfinalprefix={cnv_prefix}"_rare_"$type
+
+	    echo "##### Obtaining BED format for {params.sampleswithoutrefctrsprefix}_$type.cnv and $refcontrols.cnv files #####"
+            # Get bed format for *.cnv files 
+            {plink17} \
+                --cfile {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type \
+                --noweb \
+                --cnv-track \
+                --out {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track"
+
+	   # Add cnv_type and sites information at BED file from .cnv file
+	   echo "##### Adding cnv type and sites information at BED file from {params.sampleswithoutrefctrsprefix}_"$type"_track.cnv.bed file... #####"
+	   for sample in `awk 'OFS=";" {{$1=$1}}1' {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed`; do
+		cnv_sites=""
+		if [[ ! $sample =~ "track" ]]; then
+		 chr=`echo $sample | cut -f1 -d ';' | sed 's/chr//'`
+		 fid=`echo $sample | cut -f4 -d';' | sed 's/_.*//'`
+                 iid=`echo $sample | cut -f4 -d';' | sed 's/^.*_//'`
+                 bp1=`echo $sample | cut -f2 -d ';'`
+                 score=`echo $sample | cut -f5 -d ';'`
+		 cnv_sites=`grep -w $iid {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type.cnv| grep -w $fid| grep -w $chr| grep -w $bp1| \
+		 	    grep -w $score| awk '{{print $6";"$8 }}'`
+		fi
+		echo -e "$sample;$cnv_sites" | tr ";" " "
+           done > {params.referencedir}/temp 
+	   mv {params.referencedir}/temp {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed
+
+
+            {plink17} \
+                --cfile {params.referencedir}/$refcontrols \
+                --noweb \
+                --cnv-track \
+                --out {params.referencedir}/$refcontrols"_track"
+
+	   # Add cnv_type and sites information at BED file from .cnv file
+	   echo "##### Adding cnv type and sites information at BED file from $refcontrols.cnv file... #####"
+           for sample in `awk 'OFS=";" {{$1=$1}}1' {params.referencedir}/$refcontrols"_track".cnv.bed`; do
+                cnv_sites=""
+                if [[ ! $sample =~ "track" ]]; then
+                 chr=`echo $sample | cut -f1 -d ';' | sed 's/chr//'`
+                 fid=`echo $sample | cut -f4 -d';' | sed 's/_.*//'`
+                 iid=`echo $sample | cut -f4 -d';' | sed 's/^.*_//'`
+                 bp1=`echo $sample | cut -f2 -d ';'`
+                 score=`echo $sample | cut -f5 -d ';'`
+                 cnv_sites=`grep -w $iid {params.referencedir}/$refcontrols.cnv| grep -w $fid| grep -w $chr| grep -w $bp1| \
+                            grep -w $score| awk '{{print $6";"$8 }}'`
+                fi
+                echo -e "$sample;$cnv_sites" | tr ";" " "
+           done > {params.referencedir}/temp 
+           mv {params.referencedir}/temp {params.referencedir}/$refcontrols"_track".cnv.bed 
+
+	   # Change temporally space by tab in *.bed files for Bedtools analysis 
+	   cat {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed	| tr " " "\t" > \
+			{params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed
+	   cat {params.referencedir}/$refcontrols"_track".cnv.bed | tr " " "\t" > \
+                        {params.referencedir}/$refcontrols"_track".cnv.temp.bed
+
+	   echo "##### Getting CNVs overlapping at least 50% with common varianats... #####"
+
+           # Find CNV in study_without_reference_controls_(del,dup).bed that overlap at least 50% 
+           # with CNVs in reference_controls_(del,dup).cnv (and vice versa)
+           # Last four columns in coverage:
+           # The number of features in B that overlapped (by at least one base pair) the A interval.
+           # The number of bases in A that had non-zero coverage from features in B.
+           # The length of the entry in A.
+           # The fraction of bases in A that had non-zero coverage from features in B.
+           # Check if first column of the last four or "The number of features in B that overlapped (by at least 50%) the A interval" has != 0 value. 
+           # That means: a CNV have at least 50% of its region inside of one or more CNVs belong to common variants (and vice versa) and should be removed.
+            
+           bedtools coverage -f 0.5 -r \
+	    -a {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed \
+            -b {params.referencedir}/$refcontrols"_track".cnv.temp.bed \
+            | awk '$12!=0' | cut -f1-11 | tr "\t" " " >  {params.referencedir}/cnvs_overlapping_common_variants_$type.bed
+
+           echo "##### Remove CNVs overlapping with common variants... #####"
+           # Remove CNVs which overlap with common variants (high frequency variants) and create the RARE CNVs BED file   
+           grep -v -f {params.referencedir}/cnvs_overlapping_common_variants_$type.bed \
+            {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed > {params.outputdir}/$rarecnvsfinalprefix.bed 
+	
+	   # Get RARE CNVs (*.cnv file)
+	   echo "##### Generating $rarecnvsfinalprefix.cnv... #####"
+	   echo -e "FID\tIID\tCHR\tBP1\tBP2\tTYPE\tSCORE\tSITES" > {params.outputdir}/$rarecnvsfinalprefix.cnv
+	   awk '$0!~/track/ {{chr=$1; gsub(/chr/,"",chr); fid=$4; gsub(/_.*/,"",fid); iid=$4; gsub(/.*_/,"",iid);  print fid"\t"iid"\t"chr"\t"$2"\t"($3-1)"\t"$10"\t"$5"\t"$11}}' \
+	    {params.outputdir}/$rarecnvsfinalprefix.bed >>  {params.outputdir}/$rarecnvsfinalprefix.cnv
+
+	   # Get fam file
+	   echo "##### Generating $rarecnvsfinalprefix.fam... #####"
+	   for i in `awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix.cnv  | sort -u`; do
+		grep -w $i {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type.fam
+	   done > {params.outputdir}/$rarecnvsfinalprefix.fam
+
+	   # Get map file
+	   echo "##### Generating $rarecnvsfinalprefix.cnv.map... #####"
+	   {plink17} \
+                --cnv-list {params.outputdir}/$rarecnvsfinalprefix.cnv \
+                --cnv-make-map \
+                --out {params.outputdir}/$rarecnvsfinalprefix \
+                --noweb
+
+	   # log
+           echo "\n##### Removing common variants from $type #####\n" >> {params.logfile}
+           echo "Get common variants (high frequency variants) in $type"  >> {params.logfile}
+           samples=`awk '$1!="FID" {{print $2}}' {params.referencedir}/$refcontrols.cnv | sort -u | wc -l`
+           cnvs=`awk '$1!="FID"' {params.referencedir}/$refcontrols.cnv | wc -l | cut -f1 -d' '`
+           echo "Samples: $samples" >> {params.logfile}
+           echo "CNVs: $cnvs" >> {params.logfile}
+	   echo "\nGet CNVs overlapping at least 50% with common variants (reciprocal) in $type" >> {params.logfile}
+           samples=`awk '{{print $4}}' {params.referencedir}/cnvs_overlapping_common_variants_$type.bed | sort -u | wc -l`
+           cnvs=`wc -l {params.referencedir}/cnvs_overlapping_common_variants_$type.bed | cut -f1 -d' '`
+           echo "Samples: $samples" >> {params.logfile}
+           echo "CNVs: $cnvs" >> {params.logfile}
+	   echo "\nRemoving common variants in $type" >> {params.logfile}
+           samples=`awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix.cnv | sort -u | wc -l`
+           cnvs=`awk '$1!="FID"' {params.outputdir}/$rarecnvsfinalprefix.cnv | wc -l | cut -f1 -d' '`
+           echo "Samples: $samples" >> {params.logfile}
+           echo "CNVs: $cnvs" >> {params.logfile}
+
+	  done
+
+	 """
+
+# Inspect the rare CNVs frequency based on CNVs regions CNVR 
+# Input: core CNVs fam file, *.cnv, *.fam, *.cnv.map for rare deletions and duplications 
+# Output: *.cnv, *.fam, *.cnv.map for rare deletions and duplications REGIONs  
+rule FREQUENCY_CNVs_INSPECTION:
+   input:
+       samplescnvcorefamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' +  '.fam', prefix = cnv_prefix),	
+       rarecnvsdel = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_del' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+       rarecnvsdup = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_dup' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),		
+   output:
+       rarecnvsdelregions = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_del_regions' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+       rarecnvsdupregions = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_dup_regions' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+   params:
+       forplotsdir = config['rare_cnvs_forplots_path'],
+       referencedir = config['rare_cnvs_reference_path'],
+       outputdir = config['rare_cnvs_path'],
+       graphicsdir = config['rare_cnvs_graph_path'],
+       logfile =  config['log_path'] + '/' + 'rare_cnvs_analysis.log',
+
+   message: "Frequency inspection for RARE CNVs"
+
+       shell:
+         """ 
+	    libdir={libdir}
+            plink={plink17}	
+	    source {libdir}/functions.sh
+
+	    for type in {cnv_type}; do
+             echo "##### Processing CNV: $type #####"
+             rarecnvsfinalprefix={cnv_prefix}"_rare_"$type
+
+             echo "##### Merging $type in CNVR... #####"
+             bedtools merge -i <(bedtools sort -i <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t")) > {params.outputdir}/$rarecnvsfinalprefix"_merged.bed"
+             echo "##### Intersect $type in CNVR... #####"
+             bedtools intersect -wa -wb -a <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t") -b {params.outputdir}/$rarecnvsfinalprefix"_merged.bed" > \
+             {params.outputdir}/$rarecnvsfinalprefix"_regions.bed"
+            
+	     # Get cnv file to CNVR
+	     echo "##### Creating "$rarecnvsfinalprefix"_regions.cnv... #####" 
+	     echo -e "FID\tIID\tCHR\tBP1\tBP2\tTYPE\tSCORE\tSITES" > {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
+             awk '$0!~/track/ {{chr=$1; gsub(/chr/,"",chr); fid=$4; gsub(/_.*/,"",fid); iid=$4; gsub(/.*_/,"",iid);  print fid"\t"iid"\t"chr"\t"$13"\t"($14-1)"\t"$10"\t"$5"\t"$11}}' \
+	     {params.outputdir}/$rarecnvsfinalprefix"_regions.bed" >> {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
+
+             # Get fam file to CNVR
+             echo "##### Creating "$rarecnvsfinalprefix"_regions.fam... #####"
+             for idd in `awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix"_regions".cnv  | sort -u`; do
+		grep -w $idd {params.outputdir}/$rarecnvsfinalprefix.fam 
+             done > {params.outputdir}/$rarecnvsfinalprefix"_regions".fam
+            
+             # Get map file to CNVR
+             echo "##### Creating "$rarecnvsfinalprefix"_regions.cnv.map... #####"
+             create_map_file \
+                {params.outputdir}/$rarecnvsfinalprefix"_regions".cnv \
+                $rarecnvsfinalprefix"_regions" \
+                {params.outputdir}
+
+
+             # Get frequency based on Regions
+             echo "##### Obtaining the frequencies for all regions... #####"
+             $plink \
+		--cfile {params.outputdir}/$rarecnvsfinalprefix"_regions" \
+                --allow-no-sex \
+                --noweb \
+                --cnv-seglist \
+                --cnv-freq-method2 0.5 \
+                --cnv-write \
+                --cnv-write-freq \
+                --out {params.outputdir}/$rarecnvsfinalprefix"_regions_freq"
+
+             # plots
+             echo "##### Plot frequency distribution in rare cnvs (del,dup) region freq file... #####"
+             # Extracting denominator for frequency calculation. It includea  samples with 0 CNVs
+             samplesize=$(wc -l {input.samplescnvcorefamfile} | cut -f1 -d' ')
+	     # Remove the {random_controls} used for rare variants extraction
+	     samplesize=$(($samplesize - {random_controls}))             
+             plot_frequency_distribution \
+                 {params.outputdir}/$rarecnvsfinalprefix"_regions_freq.cnv" \
+                 $rarecnvsfinalprefix"_regions_freq" \
+                 $samplesize \
+                 {params.forplotsdir} \
+                 {params.graphicsdir}
+           
+	    done     
+	"""
+
+# Assess the CNVs frequencies. Generate summary file for all deletions and duplications frequencies in cases and controls
+# And summaries for frequencies split by CNVs interval size.
+# This files include the two proportion test evaluation and the odds ratio (OR) estimation
+# Input: rare CNVs  *.cnv, *.fam and *.cnv.map files
+# Output: summary frequencies *.csv files
+rule FREQUENCY_CNVs_ASSESSMENT:
+   input:
+       samplescnvcorefamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' +  '.fam', prefix = cnv_prefix),
+       rarecnvsdelregions = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_del_regions' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix),
+       rarecnvsdupregions = expand(config['rare_cnvs_path'] + '/' + '{prefix}' + '_rare_dup_regions' + '{ext}', ext = CNV_PLINK_EXT, prefix = cnv_prefix)
+   output:
+       rarecnvsallsummary = expand(config['rare_cnvs_summary_path'] + '/' + '{prefix}' + '_rare_{type}' + '_ALL_summary_statistics' + '.csv', type=cnv_type,  prefix = cnv_prefix),
+       rarecnvsbylengthsummary = expand(config['rare_cnvs_summary_path'] + '/' + '{prefix}' + '_rare_{type}' + '_summary_statistics' + '.csv', type=cnv_type, prefix = cnv_prefix),
+   params:
+       forplotsdir = config['rare_cnvs_forplots_path'],
+       referencedir = config['rare_cnvs_reference_path'],
+       summarydir = config['rare_cnvs_summary_path'],
+       outputdir = config['rare_cnvs_path'],
+       graphicsdir = config['rare_cnvs_graph_path'],
+       logfile =  config['log_path'] + '/' + 'rare_cnvs_analysis.log',
+
+   message: "Frequency assessment for RARE CNVs"
+
+       shell:
+         """
+	    libdir={libdir}
+            plink={plink17}
+            source {libdir}/functions.sh
+
+            for type in {cnv_type}; do
+             echo "##### Processing CNV: $type #####"
+             rarecnvsfinalprefix={cnv_prefix}"_rare_"$type
+
+             # Statistics for cases/controls and deletions/duplications
+	     echo "##### Statistics for cases/controls in $type... #####"
+
+             cases=$(awk '$6==2' {input.samplescnvcorefamfile} | wc -l)
+             controls=$(awk '$6==1' {input.samplescnvcorefamfile} | wc -l)
+             controls=$(($controls - {random_controls}))
+
+             echo "##### Creating frequencies summary files for all rare CNVS... #####"
+             # Overall CNVs summary frequencies including two proportion test and OR test.
+             create_summary_by_cnvs_overall_exclusive \
+                {params.outputdir} \
+                $rarecnvsfinalprefix \
+                {params.summarydir} \
+                $cases \
+                $controls
+            
+             # CNVs summary  frequemcies by length intervals including two proportion test and OR test.
+             # Function include forest R plot
+             create_summary_by_cnvs_lengths_exclusive \
+                {params.outputdir} \
+                $rarecnvsfinalprefix \
+                {params.summarydir} \
+		"{cnv_lengths}" \
+                $cases \
+                $controls \
+                {params.graphicsdir}
+
+             echo "##### Creating rare $type *.indiv file... #####"
+             {plink17} \
+                --cfile {params.outputdir}/$rarecnvsfinalprefix \
+                --allow-no-sex \
+                --noweb \
+                --out {params.outputdir}/$rarecnvsfinalprefix
+
+             echo "##### Plotting sample vs. CNVs distribution... #####"
+
+             # Plots
+             plot_samples_distribution \
+                    {params.outputdir}/$rarecnvsfinalprefix.cnv.indiv \
+                    $rarecnvsfinalprefix \
+		    "{cnv_lengths}" \
+                    $cases \
+                    $controls \
+                    {params.forplotsdir} \
+                    {params.graphicsdir}
+
+            # log
+            echo "\n##### Frequency assessment for RARE CNVs in $type #####\n" >> {params.logfile}
+            totalCNVs=`awk '$1!="FID"' {params.outputdir}/$rarecnvsfinalprefix.cnv | wc -l`
+            echo "Total CNVs freq < 2%: $totalCNVs" >> {params.logfile}
+           
+	   done
+
+         """
+

@@ -1,0 +1,169 @@
+# Perform a preliminary burden test for core samples and CNVS
+# Input: cnv, fam and map files 
+# Output: burden test result in *.summary.mperm and grp.summary files.
+rule BURDEN_CNVs:
+    input:
+        samplescnvfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv', prefix = cnv_prefix),
+	samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
+        samplescnvmapfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv.map', prefix = cnv_prefix)
+    output:
+        burdencnvsfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden' + '{ext}', ext = CNV_EXT, prefix = cnv_prefix),
+    params:
+        bfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden',  prefix = cnv_prefix),
+        outputdir = config['burden_analysis_path'],
+        graphdir = config['burden_graph_path'],
+        logfile =  config['log_path'] + '/' + 'burden_analysis.log',
+
+    message: "Getting CNV burden for case/control from {input} in {output}"
+
+        shell:
+            """
+            # The function randomly shuffles the case/control status of all subjects 10,000 times to
+            # compute P-values empirically for the hypothesis that the burden of CNVs is different
+            # between case and control subjects. PLINK will generate two files: mydata.summary contains
+            # CNV frequencies by case/control status, and mydata.summary.mperm contains P-values from permutations.
+
+            {plink17} \
+                --cnv-list {input.samplescnvfile} \
+                --fam  {input.samplescnvfamfile} \
+                --map {input.samplescnvmapfile} \
+                --cnv-check-no-overlap \
+                --mperm 10000 \
+                --cnv-indiv-perm \
+                --allow-no-sex \
+                --noweb \
+                --out {params.bfile}
+
+            #logs
+            markers=`grep markers {params.bfile}.log`
+            samples=`grep "individuals read" {params.bfile}.log`
+            cnvs=`grep "mapped as" {params.bfile}.log`
+            males_females=`grep "males" {params.bfile}.log`
+            cases_controls=`grep "cases" {params.bfile}.log`
+            del_dup_summary=`grep -A 4 "CopyN" {params.bfile}.log`
+            
+            echo "Burden summary" > {params.logfile}
+            echo $samples >> {params.logfile}
+            echo $markers >> {params.logfile}
+            echo -e "$cnvs\n" >> {params.logfile}
+            echo $males_females >> {params.logfile}
+            echo $cases_controls >> {params.logfile}
+            echo -e "$del_dup_summary\n" >> {params.logfile}
+
+            """
+
+# Split CNVs in Deletions and Duplications, then it obtains the frequency of dels and dups in cases vs. controls 
+# Input: cnv, fam and map files for core samples and clean CNVs
+# Output: *.cnv,  *.fam, and  *cnv.indiv files for deletions and duplications
+#        Also generate deletions and duplications frequency split by case-controls and length interval,
+#        and calculate the deletions and duplications total mean length, and plot the CNVs length-distribution in cases and controls.
+rule SPLIT_CNVs_DEL_AND_DUP:
+    input:
+        samplescnvfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv', prefix = cnv_prefix),
+        samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
+        samplescnvmapfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv.map', prefix = cnv_prefix),
+	burdencnvsfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden' + '{ext}', ext = CNV_EXT, prefix = cnv_prefix)
+    output:
+        burdendelfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_del' + '.cnv.indiv', prefix = cnv_prefix),
+	burdendupfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_dup' + '.cnv.indiv', prefix = cnv_prefix),
+    params:
+        prefix = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden',  prefix = cnv_prefix),
+        outputdir = config['burden_analysis_path'],
+        graphdir = config['burden_graph_path'],
+	tempdir = config['burden_temp_path'],
+        logfile =  config['log_path'] + '/' + 'burden_analysis.log',
+
+    message: "Split CNVs in Deletions and Duplications"
+
+        shell:
+            """
+
+            # Dividing  CNVs by deletions and duplications
+            echo "##### Dividing CNVs by deletions and duplications... #####"
+	    echo "##### Generating *.cnv.indiv file #####"
+            {plink17} \
+                --cnv-list {input.samplescnvfile} \
+                --fam {input.samplescnvfamfile} \
+                --map {input.samplescnvmapfile} \
+                --cnv-del \
+                --allow-no-sex \
+                --noweb \
+                --out {params.prefix}_del
+	   
+	    {plink17} \
+                --cnv-list {input.samplescnvfile} \
+                --fam  {input.samplescnvfamfile} \
+                --map {input.samplescnvmapfile} \
+                --cnv-dup \
+                --allow-no-sex \
+                --noweb \
+                --out {params.prefix}_dup
+
+
+
+            # Assessing number of CNVs in an length interval  in cases vs controls (deletions and duplications)
+            echo "##### Generation deletions and duplications in the interval {cnv_lengths}... #####"
+            # Getting CNV deletion and duplications for each size
+            for length in {cnv_lengths}; do echo $length;
+                {plink17} \
+                    --cnv-list {input.samplescnvfile} \
+                    --fam {input.samplescnvfamfile} \
+                    --map {input.samplescnvmapfile} \
+                    --cnv-del \
+                    --cnv-kb $length \
+                    --allow-no-sex \
+                    --noweb \
+                    --out {params.tempdir}/'cnvs_'$length'KB_del'
+               
+               {plink17} \
+                    --cnv-list {input.samplescnvfile} \
+                    --fam {input.samplescnvfamfile} \
+                    --map {input.samplescnvmapfile} \
+                    --cnv-dup \
+                    --cnv-kb $length \
+                    --allow-no-sex \
+                    --noweb \
+                    --out {params.tempdir}/'cnvs_'$length'KB_dup'
+
+             done
+        
+            # Extracting total cases and controls to calculate frequency
+            cases=`awk '$6==2' {input.samplescnvfamfile} | wc -l` 
+            controls=`awk '$6==1' {input.samplescnvfamfile} | wc -l` 
+            
+	    # Extracting number of CNVs by length and its ratio (numCNVs/total_cases | numCNVs/total_controls)
+            # DELETIONS
+            echo -e "pheno\tlength\tnumCNV\tratio" > {params.outputdir}/case_control_CNVs_length_del.tsv
+            for file in `ls {params.tempdir}/*KB_del*indiv`;  do class=`echo $file | cut -f4 -d'_' | cut -f1 -d'.'`; 
+                awk -v c="$class" -v cses="$cases" -v ctrls="$controls" '{{if($6!=0 && $6!~/KB/) a[$3][c]=a[$3][c]+$4}} 
+                    END{{for(i in a) for(j in a[i]) if(i==1) print i"\t"j"\t"a[i][j]"\t"a[i][j]/ctrls; else print i"\t"j"\t"a[i][j]"\t"a[i][j]/cses }}' $file; 
+            done | sort -k1,2 -V >> {params.outputdir}/case_control_CNVs_length_del.tsv
+            
+	    # DUPLICATIONS
+            echo -e "pheno\tlength\tnumCNV\tratio" > {params.outputdir}/case_control_CNVs_length_dup.tsv
+            for file in `ls {params.tempdir}/*KB_dup*indiv`;  do class=`echo $file | cut -f4 -d'_' | cut -f1 -d'.'`; 
+                awk -v c="$class" -v cses="$cases" -v ctrls="$controls" '{{if($6!=0 && $6!~/KB/) a[$3][c]=a[$3][c]+$4}} 
+                    END{{for(i in a) for(j in a[i]) if(i==1) print i"\t"j"\t"a[i][j]"\t"a[i][j]/ctrls; else print i"\t"j"\t"a[i][j]"\t"a[i][j]/cses }}' $file; 
+            done | sort -k1,2 -V >> {params.outputdir}/case_control_CNVs_length_dup.tsv
+            
+            # Assessing total mean length of CNVs in cases vs controls
+            echo "##### Assessing total mean length of CNVs in cases vs controls... #####"
+            # DELETIONS
+            echo -e "pheno\ttot_length_CNVs(Kb)\ttot_CNVs\ttot_mean_length_CNVs(Kb)" > {params.outputdir}/case_control_CNVs_tot_length_mean_del.tsv
+            awk '{{if(NR>1){{l[$3]=l[$3]+$4; a[$3]=a[$3]+$5}} }}END{{for(i in a) print i"\t"a[i]"\t"l[i]"\t"a[i]/l[i]}}' {params.prefix}_del.cnv.indiv \
+            >> {params.outputdir}/case_control_CNVs_tot_length_mean_del.tsv
+            
+	    # DUPLICATIONS
+            echo -e "pheno\ttot_length_CNVs(Kb)\ttot_CNVs\ttot_mean_length_CNVs(Kb)" > {params.outputdir}/case_control_CNVs_tot_length_mean_dup.tsv
+            awk '{{if(NR>1){{l[$3]=l[$3]+$4; a[$3]=a[$3]+$5}} }}END{{for(i in a) print i"\t"a[i]"\t"l[i]"\t"a[i]/l[i]}}' {params.prefix}_dup.cnv.indiv \
+            >> {params.outputdir}/case_control_CNVs_tot_length_mean_dup.tsv
+
+            # Plot            
+            {libdir}/plot_distribution_cnv_by_length.R \
+                {params.outputdir}/case_control_CNVs_length_del.tsv \
+                {params.outputdir}/case_control_CNVs_length_dup.tsv \
+                {params.graphdir}
+            
+            """
+
+

@@ -1,0 +1,27 @@
+{
+    "map_file": "/mnt/work/hartaza/projects//CNV_pipeline/pipeQCresults/data_conversion/sample_map.txt",
+    "allpheno_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/ALL_phenotypes_09052019.tsv",
+    "core_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/21h_positive_core.txt",
+    "sample_all_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_calling/sampleall.rawcn",
+    "sample_merged_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_clean/samples_qcpass.clean.merged.rawcn",
+    "sample_XKbYSNPs_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_clean/samples_qcpass.clean.merged.50Kb5SNPs.rawcn",
+    "controls_random_file": "/mnt/work/hartaza/projects/CNV_pipeline/association_cnv/resources/controls_random_sampling.txt",
+    "genes_ref_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/enrichment/glist-hg19.dat",
+    "pathway_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/enrichment/PanelApp/panelApp_AI_genes.dat",
+
+    "data_conversion_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/data_conversion",
+    "burden_analysis_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/burden_analysis",
+    "burden_temp_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/burden_analysis/temp",
+    "burden_graph_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/graphics/burden_analysis",
+    "rare_cnvs_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/rare_cnvs",
+    "rare_cnvs_summary_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/rare_cnvs/summary",
+    "rare_cnvs_reference_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/rare_cnvs/Reference",
+    "rare_cnvs_reference_summary_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/rare_cnvs/Reference/summary",
+    "rare_cnvs_forplots_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/rare_cnvs/forplots",
+    "rare_cnvs_graph_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/graphics/rare_cnvs",
+    "enrichment_rare_cnvs_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/enrichment_rare_cnvs",
+    "enrichment_rare_cnvs_genic_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/enrichment_rare_cnvs/genic_CNVs",
+    "enrichment_rare_cnvs_pathway_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/enrichment_rare_cnvs/pathway_CNVs",
+    "log_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/logs"
+ 
+}
