@@ -1,0 +1,87 @@
+
+# Convert file from report GenomeStudio to signal intensity files
+# 1.Input: txt report from GenomeStudio
+# 2.output: N intensities files one by each sample 
+rule CREATE_INTENSITY_FILES:
+    input: 
+        signal_intensity_file = config['signal_intensity_file'],
+        final_report_file= config['final_report_file']
+    output: 
+        listfile = config['list_signal_files_file'],
+        snpfile = config['snp_file']
+    params: 
+        outputdir = config['data_intensity_path'],
+        mapfile = config['map_file'],
+        logfile =  config['log_path'] + '/' + 'data_conversion.log'
+    message: "Creating intensity files from {input}"
+
+    shell:
+        """
+        
+        # Create signal intensity files from  GenomeStudio Report
+        split_illumina_report.pl \
+           -numeric \
+           -prefix {params.outputdir}/ {input.final_report_file}
+            
+        # Generate the file with the list of intensity files (used in PennCNV)    
+        echo "##### Generate map file sample vs. file associated... #####"
+        for i in `ls {params.outputdir}`; do sample=`head -1 {params.outputdir}/$i | cut -f2 | cut -f1 -d'.'`; echo -e "$i\t$sample"; done > {params.mapfile}
+
+        echo "##### Generate the file with the list of intensity files per sample (used in PennCNV)... #####"
+        for i in `ls {params.outputdir} | sort -V`; do echo -e "$i"; done > {output.listfile}
+
+        # Create SNPs list file (Name, Chr, Position) from signal intensity 
+        echo "##### Create SNPs file from signal intensity file... #####"
+        cut -f1-3 {input.signal_intensity_file} > {output.snpfile}
+        
+        # log    
+        raw_samples=`wc -l {output.listfile}`
+        echo "##### Converting GS report to signal files... #####"
+        echo "Samples in report: $raw_samples" > {params.logfile}
+        
+
+        """
+
+   
+ # Convert from signal intensity files to PFB (Population frequency of B allele) file and GCModel file
+ # 1.Input: N intensities files one by each sample
+ # 2.output: PFB and GCmodel files
+rule CREATE_PennCNV_INPUT_FILES:
+     input: 
+        listfile = config['list_signal_files_file'],
+        snpfile = config['snp_file']
+     output:
+        pfbfile = config['pfb_file'],
+        gcmodelfile = config['gcmodel_file']
+     params:
+        signalintensitydir =  config['data_intensity_path'],
+        gccontentfile = config['gc_content_file'],
+        logfile = config['log_path'] + '/' + 'data_conversion.log'
+     message: "Creating PFB and GCmodel files from {input.listfile}"
+
+        shell:
+            """
+            # Get PBF file using PennCNV command
+            currentdir=`pwd`
+            cd {params.signalintensitydir}
+            compile_pfb.pl \
+                -listfile {input.listfile} \
+                -snpposfile {input.snpfile} \
+                -output {output.pfbfile}
+
+           cd $currentdir
+
+           # Get GC model  file using PennCNV command
+           echo "##### Get GC model file ... #####"
+           cal_gc_snp.pl \
+                {params.gccontentfile} {input.snpfile} \
+                -output {output.gcmodelfile}
+
+           # log
+           raw_markers=`wc -l {output.pfbfile} | cut -f1 -d' '`
+           echo "PFB file with: $raw_markers markers" >> {params.logfile}
+           echo "GC model file was created in {output.gcmodelfile}" >> {params.logfile}
+           
+            """
+
+

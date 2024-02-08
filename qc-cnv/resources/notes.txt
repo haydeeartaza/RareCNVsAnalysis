@@ -1,0 +1,8 @@
+
+#dowanload gc content file from fftp://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gc5Base.txt.gz 
+#sorted and used to generate GC model for PennCNV
+
+sort -T . -k 2,2 -k 3,3n gc5Base.txt > gc5Base.sorted.txt
+
+
+# Download telomere and centromere regions for Table browser and upstream/downstream of 1000Kb

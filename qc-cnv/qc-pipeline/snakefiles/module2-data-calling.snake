@@ -1,0 +1,53 @@
+
+# Run PennCNV to detec CNVs
+# 1.Input: PFB and GCmodel files
+# 2.output: list of calls by sample in *.rawcn file
+# .rawcnv description:
+#   1.The first field in each line specifies the chromosome region from PFB file
+#   2.The second field and the third field tell how many SNPs are contained within the CNV and the length of the 
+#	CNV (calculated by subtracting the coordinate of the last SNP by the coordinate of the first SN$
+#   3.The fourth field tells the HMM state and the actual copy number (CN) of the CNV call. You can ignore the state, 
+#	as it is jus an internal HMM parameter. The CN refers to the actual integer copy number
+#      - The normal copy number is 2.
+#      - CN=0 or 1 means there is a deletion.
+#      - CN>=3 means there is a duplication.
+#      - For chrX or chrY in males, CN=1 is the normal copy number and CN=0 means a deletion.
+#   4.The fifth, sixth and seventh fields specify the original file name, the starting marker identifier and the ending marker identifier in the CNV, respectively.
+#
+rule DETECT_CNVs:
+    input:
+        pbffile = config['pfb_file'],
+        gcmodelfile = config['gcmodel_file']
+    output:
+       callrawfile = expand(config['data_calling_path'] + '/' + '{prefix}' + '.rawcn', prefix=calling_prefix),
+       calllogfile = expand(config['data_calling_path'] + '/' + '{prefix}' + '.log', prefix=calling_prefix)
+    params:
+        signalintensitydir =  config['data_intensity_path'],
+        outputdir = config['data_calling_path'],
+        hmmfile = config['hmm_file'],
+        listfile = config['list_signal_files_file'],
+        logfile =  config['log_path'] + '/' + 'data_calling.log',
+    message: "Calling for CNV detection from {input} in {output}"
+
+        shell:
+            """
+            #Calling from PennCNV command
+            detect_cnv.pl \
+                -test \
+                -conf \
+                -hmm {params.hmmfile} \
+                -pfb {input.pbffile} \
+                -directory {params.signalintensitydir} \
+                -list {params.listfile} \
+                -log {output.calllogfile} \
+                -out {output.callrawfile} \
+                -gcmodel {input.gcmodelfile}
+
+            #login
+            samples_with_calls=`awk '{{print $5}}'  {output.callrawfile} | sort -u | wc -l`
+            total_calls=`wc -l  {output.callrawfile} | cut -f1 -d' '`
+            echo "Were found $samples_with_calls samples with $total_calls calls" >> {params.logfile}
+
+
+            """
+

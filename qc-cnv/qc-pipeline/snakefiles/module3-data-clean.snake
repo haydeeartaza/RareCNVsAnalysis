@@ -1,0 +1,212 @@
+
+# Filter all samples with low quality defined by LRR and BAF statistics mainly
+# 1.Input: raw and the log file from detect_cnv.pl
+# 2.output: 
+#       - file with list of samples_calls which passed the QC, 
+#       - file with raw information for samples and calls passed the QC 
+#         (chr1:149095346-149143879  numsnp=4  length=48,534   state2,cn=1 split1 startsnp=GSA-1:149095346 endsnp=GSA-rs79760750)
+#       - file  summary with all samples and calls (passed and not) include LRR and BAF statistics 
+rule FILTER_LOW_QUALITY_SAMPLES:
+    input: 
+        callrawfile = expand(config['data_calling_path'] + '/' + '{prefix}' + '.rawcn', prefix=calling_prefix),
+        calllogfile = expand(config['data_calling_path'] + '/' + '{prefix}' + '.log', prefix=calling_prefix)
+    output: 
+        samplepasslistfile = config['sample_pass_list_file'],
+        samplepassfile = config['sample_pass_file'],
+        samplesummaryfile = config['sample_summary_file']
+    params: 
+        outputdir = config['data_clean_path'],
+        graphicdir = config['graphic_qc_path'],
+        logfile =  config['log_path'] + '/' + 'data_clean.log'
+    message: "Geting quality calls from from {input}"
+
+    shell:
+        """
+        
+        # Filtering calls by LRR_SD, BAF_drift, WF, NumCNVt
+        echo "##### Filtering samples by LRR_SD, BAF_drift, WF, NumCNVt ... #####"
+        filter_cnv.pl {input.callrawfile} \
+            -qcnumcnv {qcnumcnv} \
+            -qcwf {wf} \
+            -qcbafdrift {qcbafdrift} \
+            -qclrrsd {qclrrsd} \
+            -qclogfile {input.calllogfile} \
+            -qcpassout {output.samplepasslistfile} \
+            -qcsumout {output.samplesummaryfile} \
+            -output {output.samplepassfile} 
+        
+                
+        # log    
+        calls_before_filter=`wc -l {input.callrawfile} | cut -f1 -d' '`
+        calls_pass=`wc -l {output.samplepassfile} | cut -f1 -d' '`
+        calls_lost="$(($calls_before_filter-$calls_pass))"
+        samples_before_filter=`awk '{{a[$5]++}}END{{print length(a)}}' {input.callrawfile}`
+        samples_pass=`wc -l {output.samplepasslistfile} | cut -f1 -d' '`
+        samples_lost="$(($samples_before_filter-$samples_pass))"
+        echo "Clean filter criteria LRR_SD, BAF_drift, WF, NumCNVs..." > {params.logfile}
+        echo "Initial samples: $samples_before_filter" >> {params.logfile}
+        echo "Samples passed default filter criteria: $samples_pass" >> {params.logfile}
+        echo "Lost samples: $samples_lost\n" >> {params.logfile}
+        echo "Initial calls: $calls_before_filter" >> {params.logfile}
+        echo "Calls passed default filter criteria: $calls_pass" >> {params.logfile}
+        echo "Lost calls: $calls_lost\n" >> {params.logfile}
+        
+
+        # Ploting boxplot for filter criteria (LRR, BAF_drift, WF, NumCNV)      
+        Rscript {libdir}/qc_plots.R \
+            {output.samplesummaryfile} \
+            {params.graphicdir}/qc_plot
+
+
+        """
+
+
+# Remove CNVs from spurious regions
+# 1.Input: quality cnv
+# 2.output: cnv not in immonoglobulin and centromere and telomere regions
+rule REMOVE_SPURIOUS_CNVs:
+     input: 
+        samplepassfile = config['sample_pass_file'],
+     output:
+        samplepasscleanfile = config['sample_clean_file']
+     params:
+        immregionfile = config['immunoglobulin_region_file'],
+        centro_telo_file = config['centromere_telomere_region_file'],
+        graphicdir = config['graphic_qc_path'],
+        outputdir =  config['data_clean_path'],
+        logfile = config['log_path'] + '/' + 'data_clean.log'
+     message: "Removing CNVs from spurious regions from {input}"
+
+        shell:
+            """
+            # Cleaning spurious regions
+            echo "##### Removing CNVs from spurious regions ... #####"
+            echo "##### Cleaning immunuglobulin regions ... #####"
+            scan_region.pl \
+                {input.samplepassfile} \
+                {params.immregionfile} \
+                -minqueryfrac 0.5 > {params.outputdir}/immunoglobulin.regions 
+
+            fgrep -v -f {params.outputdir}/immunoglobulin.regions {input.samplepassfile} > {params.outputdir}/immonuglobulin.clean
+
+            # log
+            calls_before=`wc -l {input.samplepassfile} | cut -f1 -d' '`
+            calls_after=`wc -l {params.outputdir}/immonuglobulin.clean | cut -f1 -d' '`
+            calls_lost=`wc -l {params.outputdir}/immunoglobulin.regions | cut -f1 -d' '`
+            samples_before=`awk '{{print $5}}' {input.samplepassfile} | sort -u | wc -l`
+            samples_after=`awk '{{print $5}}' {params.outputdir}/immonuglobulin.clean | sort -u | wc -l`
+            samples_lost=$(( $samples_before-$samples_after ))
+            echo "Cleanning immunoglobulin regions ..." >> {params.logfile}
+            echo "Initial calls: $calls_before" >> {params.logfile}
+            echo "Calls remained: $calls_after" >> {params.logfile}
+            echo "Calls lost: $calls_lost\n" >> {params.logfile}
+            echo "Initial samples: $samples_before"  >> {params.logfile}
+            echo "Final samples: $samples_after"  >> {params.logfile}
+            echo "lost samples: $samples_lost\n"  >> {params.logfile}
+
+            echo "##### Cleaning centromere and telomere regions ... #####"
+            scan_region.pl\
+                {params.outputdir}/immonuglobulin.clean \
+                {params.centro_telo_file} \
+                -minqueryfrac 0.5 > {params.outputdir}/centromere_telomere.regions 
+            
+            fgrep -v -f {params.outputdir}/centromere_telomere.regions {params.outputdir}/immonuglobulin.clean > {output.samplepasscleanfile}
+
+            
+            # log
+            calls_before=`wc -l {params.outputdir}/immonuglobulin.clean | cut -f1 -d' '`
+            calls_after=`wc -l {output.samplepasscleanfile} | cut -f1 -d' '`
+            calls_lost=`wc -l {params.outputdir}/centromere_telomere.regions | cut -f1 -d' '`
+            samples_before=`awk '{{print $5}}' {params.outputdir}/immonuglobulin.clean | sort -u | wc -l`
+            samples_after=`awk '{{print $5}}'  {output.samplepasscleanfile} | sort -u | wc -l`
+            samples_lost=$(( $samples_before-$samples_after ))
+            echo "Cleanning centromere and telomere regions ..." >> {params.logfile}
+            echo "Initial calls: $calls_before" >> {params.logfile}
+            echo "Calls remained: $calls_after" >> {params.logfile}
+            echo "Calls lost: $calls_lost\n" >> {params.logfile}
+            echo "Initial samples: $samples_before"  >> {params.logfile}
+            echo "Final samples: $samples_after"  >> {params.logfile}
+            echo "lost samples: $samples_lost\n"  >> {params.logfile}
+
+          
+
+            """
+
+# Merging adjacent CNV calls.
+# Suppose there are three genomic segments, A, B and C, whereas A and C are called as deletion by PennCNV. 
+# If you divide the length of the gap B (measured by base pairs) by the length of A+B+C, and if this fraction <=50%, 
+# then it is recommended to merge A+B+C as a single deletion call.
+# 1.Input: file with good quality samples and CNVs not located on spurious regions
+# 2.output: merged samples
+rule MERGING_ADJACENT_CNV:
+        input:
+            samplepasscleanfile = config['sample_clean_file']
+           
+        output:
+            samplespassmergedfile = config['sample_merged_file'],
+        params:
+            pfbfile = config['pfb_file'],
+            logfile = config['log_path'] + '/' + 'data_clean.log',
+            outputdir = config['data_clean_path'],
+            graphicdir = config['graphic_qc_path'],
+        message: "Merging regions from {input}"
+
+         shell:
+            """
+            # Merging adjacent CNV calls
+            echo "##### Merging 50% adjacent CNV calls ... #####"
+            clean_cnv.pl \
+                -fraction 0.5 \
+                -bp \
+                -signalfile {params.pfbfile} \
+                combineseg \
+                {input.samplepasscleanfile} \
+                -output {output.samplespassmergedfile}.50
+
+
+            echo "##### Merging 40% adjacent CNV calls ... #####"
+            clean_cnv.pl \
+                -fraction 0.4 \
+                -bp \
+                -signalfile {params.pfbfile} \
+                combineseg \
+                {output.samplespassmergedfile}.50 \
+                -output {output.samplespassmergedfile}
+            
+            
+
+            echo "##### Generating files for mergeing comparison... #####"
+            awk '{{sample=$5; sub(/.*\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' {input.samplepasscleanfile} \
+            | sort -k1 -V > {params.outputdir}/call_by_sample_before_merge.txt
+            awk '{{sample=$5; sub(/.*\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' \
+            {output.samplespassmergedfile} | sort -k1 -V > {params.outputdir}/call_by_sample_after_merge.txt
+            
+	    echo -e "ID\tCalls_before_merging\tCalls_after_merging" > {params.outputdir}/call_comparison_merged.txt
+	    awk 'NR==FNR{{a[$1]=$2;next}}{{print $1"\t"$2"\t"a[$1]}}' {params.outputdir}/call_by_sample_after_merge.txt \
+            {params.outputdir}/call_by_sample_before_merge.txt >> {params.outputdir}/call_comparison_merged.txt
+
+            echo "##### Creating Merging R plots ... #####"
+            Rscript {libdir}/qc_merge_plot.R \
+                {params.outputdir}/call_comparison_merged.txt \
+                {params.graphicdir}
+
+            
+            
+            # log for merging
+            calls_before=`wc -l  {input.samplepasscleanfile} | cut -f1 -d' '`
+            calls_after=`wc -l {output.samplespassmergedfile} | cut -f1 -d' '`
+            calls_lost=$(($calls_before-$calls_after))
+            samples_before=`awk '{{print $5}}' {input.samplepasscleanfile} | sort -u | wc -l`
+            samples_after=`awk '{{print $5}}' {output.samplespassmergedfile} | sort -u | wc -l`
+            samples_lost=$(( $samples_before-$samples_after ))            
+            echo "Merging calls ..." >> {params.logfile}
+            echo "Initial calls: $calls_before" >> {params.logfile}
+            echo "Calls remained: $calls_after" >> {params.logfile}
+            echo "Calls lost: $calls_lost" >> {params.logfile}
+            echo "Initial samples: $samples_before"  >> {params.logfile}
+            echo "Final samples: $samples_after"  >> {params.logfile}
+            echo "lost samples: $samples_lost\n"  >> {params.logfile}
+            
+
+            """
+            

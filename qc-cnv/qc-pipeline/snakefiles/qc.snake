@@ -1,0 +1,16 @@
+# Config files containing hard coded variables
+configfile: os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), 'snakefiles/config.json'))
+
+# Runtime variables
+include: "variables.py"
+    
+# rule all
+rule all:
+    input:
+        samplespassmergedfile = config['sample_merged_file']
+
+
+# Include modules
+include: "module1-data-conversion.snake"
+include: "module2-data-calling.snake"
+include: "module3-data-clean.snake"
