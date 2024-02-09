@@ -1,13 +1,15 @@
-#Rare CNVs Analysis Pipeline
+Rare CNVs Analysis Pipeline
+======
+
 Overwiew
 -----------------------------
 This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs the CNV detection and quality control, followed by the burden analysis, the rare CNV frequency analysis and the enrichment CNV analysis (see workflow).
 
 Dependencies
 -----------------------------
-Snakemake 5.22.1
-Python 3.8.5
-R 3.6.3
+- Snakemake 5.22.1
+- Python 3.8.5
+- R 3.6.3
 
 Installation
 -----------------------------
@@ -16,7 +18,7 @@ Installation via Conda:
 - conda install -n base -c conda-forge mamba
 - mamba create -c conda-forge -c bioconda -n snakemake snakemake
 - conda activate snakemake
-Find other options in [https://snakemake.readthedocs.io/en/stable/getting_started/installation.html]
+Find other options in [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 
 2. R dependencies
 ``` r
