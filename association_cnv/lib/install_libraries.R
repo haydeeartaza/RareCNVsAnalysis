@@ -1,6 +1,6 @@
 #Install all libraries used in this pipeline
 # Package names
-packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr")
+packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "introdataviz")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
