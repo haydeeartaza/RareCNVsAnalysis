@@ -35,17 +35,12 @@ if (any(installed_packages == FALSE)) {
 Pipeline Execution
 -----------------------------
 Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
-Go to file
-t
-Latest commit
-author
-Haydee Maribel Artaza Alvarez
 
-Detection calls and QC analysis: 
+Detection calls and QC analysis execution: 
 ```
 $ snakemake -s qc-pipeline/snakefiles/qc.snake
 ```
-Rare CNVs analysis
+Rare CNVs analysis execution:
 ```
 $ snakemake -s association-pipeline/snakefiles/association.snake
 ```
