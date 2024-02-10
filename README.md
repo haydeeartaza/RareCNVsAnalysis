@@ -3,7 +3,7 @@ Rare CNVs Analysis Pipeline
 
 Overwiew
 -----------------------------
-This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs the CNV detection and quality control, followed by the burden analysis, the rare CNV frequency analysis and the enrichment CNV analysis (see workflow).
+This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs the CNV detection and quality control, followed by the burden analysis, the rare CNV frequency analysis and the enrichment CNV analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline-drawio.png).
 
 Dependencies
 -----------------------------
@@ -34,7 +34,7 @@ if (any(installed_packages == FALSE)) {
 ```
 Pipeline Execution
 -----------------------------
-Details about config, input/output files and a module/rule description see ![user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
+Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
 Go to file
 t
 Latest commit
