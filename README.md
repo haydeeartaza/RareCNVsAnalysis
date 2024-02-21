@@ -34,17 +34,26 @@ if (any(installed_packages == FALSE)) {
 ```
 Pipeline Execution
 -----------------------------
-Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
-
+Download the git project:
+```
+$ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
+```
 Detection calls and QC analysis execution: 
+```
+$ cd qc-cnv
+```
+Modify the config.json and variables.json files in qc-pipeline/snakefiles, and then excute
 ```
 $ snakemake -s qc-pipeline/snakefiles/qc.snake
 ```
 Rare CNVs analysis execution:
+Modify the config.json and variables.json files in association-pipeline/snakefiles, and then excute
 ```
 $ snakemake -s association-pipeline/snakefiles/association.snake
 ```
 ![Output directroies](manual/images/pipeline_output_dirs.png)
+
+Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
 
 Pipeline Structure
 -----------------------------
