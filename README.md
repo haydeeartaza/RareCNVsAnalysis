@@ -47,6 +47,9 @@ Modify the config.json and variables.json files in qc-pipeline/snakefiles, and t
 $ snakemake -s qc-pipeline/snakefiles/qc.snake
 ```
 Rare CNVs analysis execution:
+```
+$ cd association-cnv
+```
 Modify the config.json and variables.json files in association-pipeline/snakefiles, and then excute
 ```
 $ snakemake -s association-pipeline/snakefiles/association.snake
