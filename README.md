@@ -43,9 +43,11 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 $ cd qc-cnv
 ```
 Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file)
+
 ![config.json](manual/images/config_QC_file.png)
 
 Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, parameters and ouput paths.
+
 ![variable.py](manual/images/variables_QC_file.png)
 
 Excute:
