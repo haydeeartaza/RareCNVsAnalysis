@@ -42,7 +42,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd qc-cnv
 ```
-2.1 Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file) and 
+  2.1 Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file) and 
 ``` json
 {
         "final_report_file": "/path_to/CNV/GSA2016_308_025_FinalReport.txt",
@@ -73,11 +73,11 @@ $ cd qc-cnv
 ```
 ![config.json](manual/images/config_QC_file.png)
 
-2.2 Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, parameters and ouput paths.
+  2.2 Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, parameters and ouput paths.
 
 ![variable.py](manual/images/variables_QC_file.png)
 
-2.3 Excute the pipeline with the comman line:
+  2.3 Excute the pipeline with the comman line:
 ```
 $ snakemake -s qc-pipeline/snakefiles/qc.snake
 ```
