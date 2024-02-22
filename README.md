@@ -42,10 +42,10 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd qc-cnv
 ```
-  2.1 Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file) and 
+- Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file) and to specify the ouput directory, in this example directory `Results` will contains all files generted in this pipeline.
 ``` json
 {
-        "final_report_file": "/path_to/CNV/GSA2016_308_025_FinalReport.txt",
+        "final_report_file": "/path_to/GSA2016_308_025_FinalReport.txt",
         "signal_intensity_file": "/path_to/signal_intensity.txt",
         "list_signal_files_file": "/Results/data_conversion/list.txt",
         "map_file": "/Results/data_conversion/sample_map.txt",   
@@ -71,13 +71,50 @@ $ cd qc-cnv
     
 }
 ```
-![config.json](manual/images/config_QC_file.png)
+- Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, set files prefixes and PennCNV parameters. Pipeline will create the output directories specified in this file and previously set in `config.json` file.
+``` phyton
+  ### snakemake_workflows initialization ########################################
+  libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
+  resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
 
-  2.2 Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, parameters and ouput paths.
+  ### programs ########################################
+  plink = "/home/programs/plink"
+  bcftools = "/home/programs/bcftools/bcftools-1.8/bin/bcftools"
 
-![variable.py](manual/images/variables_QC_file.png)
+  ### prefix ########################################
+  ### module 1,2 and 3
+  signal_prefix = "split"
+  calling_prefix = "sampleall"
 
-  2.3 Excute the pipeline with the comman line:
+  ### Workflow parameters ##################################
+  ### extensions 
+  PLINK_EXT =['.bed','.bim','.fam']
+  TPLINK_EXT =['.tped','.tfam']
+
+  ### PennCNV parameters
+  qcnumcnv = "50"
+  wf = "0.05"
+  qcbafdrift = "0.01"
+  qclrrsd = "0.3"
+
+  ### Create paths if don't exist ###################################
+
+  if not os.path.exists(config['log_path']):
+    os.makedirs(config['log_path'])
+  if not os.path.exists(config['data_conversion_path']):
+    os.makedirs(config['data_conversion_path'])
+  if not os.path.exists(config['data_intensity_path']):
+    os.makedirs(config['data_intensity_path'])
+  if not os.path.exists(config['data_calling_path']):
+    os.makedirs(config['data_calling_path'])
+  if not os.path.exists(config['data_clean_path']):
+    os.makedirs(config['data_clean_path'])
+  if not os.path.exists(config['graphic_path']):
+    os.makedirs(config['graphic_path'])
+  if not os.path.exists(config['graphic_qc_path']):
+    os.makedirs(config['graphic_qc_path'])
+```
+- Excute the pipeline with the comman line:
 ```
 $ snakemake -s qc-pipeline/snakefiles/qc.snake
 ```
