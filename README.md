@@ -42,7 +42,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd qc-cnv
 ```
-- Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `Results` will contains all files generted in this pipeline and \path_to` refers the directory containing requeried files for the pipeline execution.
+- Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `Results` will contains all files generted in this pipeline and `path_to` refers to the directory containing requeried files for the pipeline execution.
 ``` json
 {
         "final_report_file": "/path_to/GSA2016_308_025_FinalReport.txt",
@@ -71,7 +71,7 @@ $ cd qc-cnv
     
 }
 ```
-- Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location, setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
+- Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location and setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
 ```python
   ### snakemake_workflows initialization ########################################
   libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
