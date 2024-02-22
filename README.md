@@ -43,7 +43,34 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 $ cd qc-cnv
 ```
 2.1 Modify the config.json [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json) to include the genotyping files path (report file and intensity signal file) and 
-
+``` json
+{
+        "final_report_file": "/path_to/CNV/GSA2016_308_025_FinalReport.txt",
+        "signal_intensity_file": "/path_to/signal_intensity.txt",
+        "list_signal_files_file": "/Results/data_conversion/list.txt",
+        "map_file": "/Results/data_conversion/sample_map.txt",   
+        "snp_file": "/Results/data_conversion/SNPfile.txt",
+        "pfb_file": "/Results/data_conversion/model.pfb",
+        "gcmodel_file": "/Results/data_conversion/hg19.gcmodel",
+        "gc_content_file": "/path_to/gc5Base.sorted.txt",
+        "hmm_file": "/path_to/hhall.hmm",
+        "sample_pass_list_file": "/Results/data_clean/samples_qcpass.list",
+        "sample_pass_file": "/Results/data_clean/samples_qcpass.rawcn",
+        "sample_summary_file": "/Results/data_clean/samples_qcsum.list",
+        "immunoglobulin_region_file": "/path_to/immunoglobulin_penncnv.txt",
+        "centromere_telomere_region_file": "/path_to/centromere_telomere_penncnv.txt",
+        "sample_clean_file": "/Results/data_clean/samples_qcpass.clean.rawcn",
+        "sample_merged_file": "/Results/data_clean/samples_qcpass.clean.merged.rawcn",
+        "data_conversion_path": "/Results/data_conversion",
+        "data_intensity_path" :  "/Results/data_conversion/data_intensity",
+        "data_calling_path": "/Results/data_calling",
+        "data_clean_path": "/Results/data_clean",
+        "graphic_path": "/Results/graphic",
+        "graphic_qc_path": "/Results/graphic/qc",
+        "log_path": "/Results/logs"
+    
+}
+```
 ![config.json](manual/images/config_QC_file.png)
 
 2.2 Modify the variables.py [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) to include the programs location, parameters and ouput paths.
