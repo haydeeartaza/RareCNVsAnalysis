@@ -49,7 +49,7 @@ COPY ./requirements.txt .
 RUN Rscript -e 'install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org")'
 
 # Copy over your pipeline files
-COPY . /app/*_cnv
+COPY . /app/pipeline
 WORKDIR /app/pipeline
 
 # Add tool directories to PATH
