@@ -1,4 +1,4 @@
-FROM ubuntu:focal-20220426 as base
+FROM ubuntu:22.04 as base
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -9,12 +9,15 @@ RUN apt-get update && \
     gnupg \
     ca-certificates \
     unzip \
+    gfortran \
+    build-essential checkinstall \
+    libcurl4-gnutls-dev zlib1g-dev libssl-dev libxml2-dev libxslt1-dev libffi-dev libreadline-dev tk-dev libncursesw5-dev xz-utils \
     python3 \
     python3-pip \
-    gfortran \
-    build-essential libcurl4-gnutls-dev zlib1g-dev libssl-dev libxml2-dev libxslt1-dev libffi-dev libreadline-dev tk-dev libncursesw5-dev xz-utils \
     libbz2-dev \
     liblzma-dev \
+    xorg-dev \
+    libcurl4-gnutls-dev \
     tar \
     git \
     git-lfs \
@@ -27,7 +30,14 @@ RUN apt-get update && \
     libpcre++-dev
 
 
-RUN pip3 install snakemake
+#RUN pip3 install snakemake
+
+# Install pipenv and project dependencies
+RUN pip install pipenv
+
+# Copy Pipfile and Pipfile.lock into the container
+COPY Pipfile Pipfile.lock  /app/
+RUN pipenv install --ignore-pipfile
 
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
        echo "LANG=en_US.UTF-8" > /etc/locale.conf
@@ -48,12 +58,11 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
 COPY ./requirements.txt .
 RUN Rscript -e 'install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org")'
 
+# library(devtools); devtools::install_github("psyteachr/introdataviz")
+
 # Copy over your pipeline files
 COPY . /app/pipeline
 WORKDIR /app/pipeline
 
 # Add tool directories to PATH
 ENV PATH "/usr/lib/R/bin:$PATH"
-
-# Set default command
-CMD ["snakemake"]
