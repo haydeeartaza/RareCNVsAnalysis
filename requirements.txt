@@ -1,0 +1,6 @@
+ggplot2
+fmsb
+gridExtra
+dplyr
+reshape
+introdataviz
