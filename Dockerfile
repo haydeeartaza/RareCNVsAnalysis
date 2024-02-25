@@ -32,9 +32,6 @@ RUN apt-get update && \
     locales \
     libpcre++-dev
 
-
-#RUN pip3 install snakemake
-
 # Install pipenv and project dependencies
 RUN pip install pipenv
 
