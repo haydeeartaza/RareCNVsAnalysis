@@ -32,7 +32,7 @@ rule DETECT_CNVs:
         shell:
             """
             #Calling from PennCNV command
-            detect_cnv.pl \
+            {pennCNV}/detect_cnv.pl \
                 -test \
                 -conf \
                 -hmm {params.hmmfile} \

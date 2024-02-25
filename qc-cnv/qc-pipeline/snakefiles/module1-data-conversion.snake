@@ -19,7 +19,7 @@ rule CREATE_INTENSITY_FILES:
         """
         
         # Create signal intensity files from  GenomeStudio Report
-        split_illumina_report.pl \
+        {pennCNV}/split_illumina_report.pl \
            -numeric \
            -prefix {params.outputdir}/ {input.final_report_file}
             
@@ -64,7 +64,7 @@ rule CREATE_PennCNV_INPUT_FILES:
             # Get PBF file using PennCNV command
             currentdir=`pwd`
             cd {params.signalintensitydir}
-            compile_pfb.pl \
+            {pennCNV}/compile_pfb.pl \
                 -listfile {input.listfile} \
                 -snpposfile {input.snpfile} \
                 -output {output.pfbfile}
@@ -73,7 +73,7 @@ rule CREATE_PennCNV_INPUT_FILES:
 
            # Get GC model  file using PennCNV command
            echo "##### Get GC model file ... #####"
-           cal_gc_snp.pl \
+           {pennCNV}/cal_gc_snp.pl \
                 {params.gccontentfile} {input.snpfile} \
                 -output {output.gcmodelfile}
 

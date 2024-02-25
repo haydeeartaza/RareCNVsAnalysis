@@ -3,9 +3,10 @@ libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib
 resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
 
 ### programs ########################################
-plink = "plink"
-vcf_sort = "/home/haydee.artaza/programs/vcftools_0.1.13/perl/vcf-sort"
-bcftools = "/mnt/archive/tools/bcftools/bcftools-1.8/bin/bcftools"
+#Include here all programs and versions.You can run the specific program/version
+#calling it as {program_version} insede the code. E.g {pennCNV1_0_4}
+pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
+pennCNV1_0_4 = "/home/haydee.artaza/programs/PennCNV-1.0.4"
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"

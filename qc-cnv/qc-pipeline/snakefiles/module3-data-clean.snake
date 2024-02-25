@@ -25,7 +25,7 @@ rule FILTER_LOW_QUALITY_SAMPLES:
         
         # Filtering calls by LRR_SD, BAF_drift, WF, NumCNVt
         echo "##### Filtering samples by LRR_SD, BAF_drift, WF, NumCNVt ... #####"
-        filter_cnv.pl {input.callrawfile} \
+        {pennCNV}/filter_cnv.pl {input.callrawfile} \
             -qcnumcnv {qcnumcnv} \
             -qcwf {wf} \
             -qcbafdrift {qcbafdrift} \
@@ -82,7 +82,7 @@ rule REMOVE_SPURIOUS_CNVs:
             # Cleaning spurious regions
             echo "##### Removing CNVs from spurious regions ... #####"
             echo "##### Cleaning immunuglobulin regions ... #####"
-            scan_region.pl \
+            {pennCNV}/scan_region.pl \
                 {input.samplepassfile} \
                 {params.immregionfile} \
                 -minqueryfrac 0.5 > {params.outputdir}/immunoglobulin.regions 
@@ -105,7 +105,7 @@ rule REMOVE_SPURIOUS_CNVs:
             echo "lost samples: $samples_lost\n"  >> {params.logfile}
 
             echo "##### Cleaning centromere and telomere regions ... #####"
-            scan_region.pl\
+            {pennCNV}/scan_region.pl\
                 {params.outputdir}/immonuglobulin.clean \
                 {params.centro_telo_file} \
                 -minqueryfrac 0.5 > {params.outputdir}/centromere_telomere.regions 
@@ -155,7 +155,7 @@ rule MERGING_ADJACENT_CNV:
             """
             # Merging adjacent CNV calls
             echo "##### Merging 50% adjacent CNV calls ... #####"
-            clean_cnv.pl \
+            {pennCNV}/clean_cnv.pl \
                 -fraction 0.5 \
                 -bp \
                 -signalfile {params.pfbfile} \
@@ -165,7 +165,7 @@ rule MERGING_ADJACENT_CNV:
 
 
             echo "##### Merging 40% adjacent CNV calls ... #####"
-            clean_cnv.pl \
+            {pennCNV}/clean_cnv.pl \
                 -fraction 0.4 \
                 -bp \
                 -signalfile {params.pfbfile} \
