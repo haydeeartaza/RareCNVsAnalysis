@@ -78,8 +78,10 @@ $ cd qc-cnv
   resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
 
   ### programs ########################################
-  plink = "/home/programs/plink"
-  bcftools = "/home/programs/bcftools/bcftools-1.8/bin/bcftools"
+  #Include here all programs and versions.You can run the specific program/version
+  #calling it as {program_version} inside the code. E.g {pennCNV1_0_4}
+  pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
+  pennCNV1_0_4 = "/home/haydee.artaza/programs/PennCNV-1.0.4"
 
   ### prefix ########################################
   ### module 1,2 and 3
