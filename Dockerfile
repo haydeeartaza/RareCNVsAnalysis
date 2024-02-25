@@ -40,7 +40,7 @@ RUN pip install pipenv
 
 # Copy Pipfile and Pipfile.lock into the container
 COPY Pipfile Pipfile.lock  /app/
-RUN pipenv install --system --deploy --ignore-pipfile
+RUN pipenv install --ignore-pipfile
 
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
        echo "LANG=en_US.UTF-8" > /etc/locale.conf
