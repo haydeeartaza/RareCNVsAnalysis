@@ -10,7 +10,7 @@ Dependencies
 - Mambaforge3
 - Snakemake 5.22.1
 - Python 3.8.5
-- R 3.6.3
+- R (>=3.6.3)
 - Python (>=3.8.5)
 - BedTools
 - plink (1.7)
