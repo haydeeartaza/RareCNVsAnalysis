@@ -25,7 +25,7 @@ $ bash Miniforge3-$(uname)-$(uname -m).sh
 ```
 Set environment path:
 ```
-$ MINIFORGE="/home/haydee/miniforge3/bin/"
+$ MINIFORGE="/path/miniforge3/bin/"
 $ export PATH="$PATH:$MINIFORGE"
 ```
 3. Snakemake
