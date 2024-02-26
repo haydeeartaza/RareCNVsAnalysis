@@ -7,30 +7,58 @@ This pipeline is a generic bioinformatic solution to identify rare CNVs in case-
 
 Dependencies
 -----------------------------
+- Mambaforge3
 - Snakemake 5.22.1
 - Python 3.8.5
 - R 3.6.3
+- Python (>=3.8.5)
+- BedTools
+- plink (1.7)
+- PennCNV (1.0.5)
 
 Installation
 -----------------------------
-1. Snakemake
+1. Mambaforge
+$ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+$ bash Miniforge3-$(uname)-$(uname -m).sh
+Set environment path:
+$ MINIFORGE="/home/haydee/miniforge3/bin/"
+$ export PATH="$PATH:$MINIFORGE"
+
+2. Snakemake
 Installation via Conda:
-- conda install -n base -c conda-forge mamba
-- mamba create -c conda-forge -c bioconda -n snakemake snakemake
-- conda activate snakemake
+$ conda install -n base -c conda-forge mamba
+$ mamba create -c conda-forge -c bioconda -n snakemake snakemake
+$ conda activate snakemake
 Find other options in [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 
-2. R dependencies
+3. PennCNV
+$ wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz
+$ tar xvfz v1.0.5.tar.gz
+$ cd PennCNV-1.0.5/kext
+$ make
+More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
+
+3. R dependencies
 ``` r
 #Install all libraries used in this pipeline
 # Package names
-packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "introdataviz")
+packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "devtools")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {
   install.packages(packages[!installed_packages])
 }
+devtools::install_github("psyteachr/introdataviz")
+## Before install devtools library
+## apt-get install libssl-dev
+## apt-get install libfontconfig1-dev
+## apt-get install libharfbuzz-dev libfribidi-dev
+## apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+## apt-get install libcurl4-openssl-dev
+## apt-get install cmake
+
 ```
 Pipeline Execution
 -----------------------------
@@ -116,7 +144,7 @@ if not os.path.exists(config['graphic_qc_path']):
 ```
 - Excute the pipeline with the comman line:
 ```
-$ snakemake -s qc-pipeline/snakefiles/qc.snake
+$ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
 
 3. Rare CNVs analysis execution:
@@ -125,7 +153,7 @@ $ cd association-cnv
 ```
 Modify the config.json and variables.json files in association-pipeline/snakefiles, and then excute
 ```
-$ snakemake -s association-pipeline/snakefiles/association.snake
+$ snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
