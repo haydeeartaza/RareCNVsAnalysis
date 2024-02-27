@@ -21,42 +21,48 @@ args = commandArgs(trailingOnly = TRUE)
 sample_qcsum_list = args[1]
 prefix_output_file = args[2]
 
-default_parametes_output_file = paste(prefix_output_file,"QC_default_parametes_PennCNV.png", sep="_")
-numCNV_output_file = paste(prefix_output_file,"NumCNV_vs_parametres.png", sep="_")
-histogram_output_file = paste(prefix_output_file,"histogram_LRR_SSD_and_NumCNV.png", sep="_")
+default_parametes_output_file = paste(prefix_output_file,"QC_default_parametes_PennCNV.png", sep = "_")
+numCNV_output_file = paste(prefix_output_file,"NumCNV_vs_parametres.png", sepi = "_")
+histogram_output_file = paste(prefix_output_file,"histogram_LRR_SSD_and_NumCNV.png", sep = "_")
 data <- read.table(sample_qcsum_list, header = T, sep = "\t")
 
-data$filter<-(data$LRR_SD<0.3 & data$BAF_drift<0.01 & abs(data$WF)<0.05) #sample does not pass if this result is FALSE (it have to meet with the three of them)
-data$filter[data$filter==TRUE]="PASS"
-data$filter[data$filter==FALSE]="FAIL"
-datamelt<-melt(data,measure.vars=(c("LRR_mean","LRR_SD","BAF_mean","BAF_SD","BAF_drift","WF")))
+data$filter<-(data$LRR_SD < 0.3 & data$BAF_drift < 0.01 & abs(data$WF) < 0.05) #sample does not pass if this result is FALSE (it have to meet with the three of them)
+data$filter[data$filter == TRUE] = "PASS"
+data$filter[data$filter == FALSE] = "FAIL"
+datamelt<-melt(data, measure.vars = (c("LRR_mean", "LRR_SD", "BAF_mean", "BAF_SD", "BAF_drift", "WF")))
 
 png(default_parametes_output_file, width = 780, height = 580)
-ggplot(datamelt, aes(x=filter, y=value, fill=filter)) +  geom_boxplot() +
-scale_fill_discrete(name = "QC") +
-theme_bw() + theme(axis.text.x=element_blank()) +
+
+cbPalette <- c("#56B4E9", "#D55E00")
+ggplot(datamelt, aes(x = filter, y = value, fill = filter)) +  geom_boxplot() +
+theme_bw() + theme(axis.text.x = element_blank()) +
 facet_wrap( ~ variable, scales = "free", ncol=6) + 
-labs(title="Raw data QC",  subtitle="Default PennCNV parameters: LRR_SD < 0.3, BAF_drift < 0.01, |WF| < 0.05", x="QC parameters")  
+labs(title = "Raw data QC",  subtitle = "Default PennCNV parameters: LRR_SD < 0.3, BAF_drift < 0.01, |WF| < 0.05", x = "QC parameters") +
+scale_fill_manual(values = cbPalette, name = "QC")
 dev.off()  
   
 # Number of CNV calls and PennCNV reported statistics which taken together are indicators of the quality of samples 
 
 png(numCNV_output_file, width = 780, height = 580)
-p1<-ggplot(data, aes(x=LRR_mean, y=NumCNV, color=filter)) + geom_point() + #ylim(NA, 500) +
-    theme_bw() + theme(legend.position = "none") + labs(title="Mean of Log2 R Ratio",  x="LRR_mean", y="NumCNV")
+p1<-ggplot(data, aes(x = LRR_mean, y = NumCNV, color = filter)) + geom_point() + #ylim(NA, 500) +
+    theme_bw() + theme(legend.position = "none") + labs(title = "Mean of Log2 R Ratio",  x = "LRR_mean", y = "NumCNV") + 
+    scale_colour_manual(values = cbPalette)
 
 # Graph CNV calls and the LRR_SD measure to find a good threshold to use for filtering for a particular data set
-p2<-ggplot(data, aes(x=LRR_SD, y=NumCNV, color=filter)) + geom_point()   + #ylim(NA, 500) + 
-    theme_bw() + theme(legend.position = "none") + labs(title="Standar deviatiion of Log2 R Ratio",  x="LRR SD", y="NumCNV")  +
-    geom_vline(xintercept=c(0.3), linetype="dotted") + scale_x_continuous(breaks = c(seq(from = 0, to = 1, by = 0.1)))
+p2<-ggplot(data, aes(x = LRR_SD, y = NumCNV, color = filter)) + geom_point()   + #ylim(NA, 500) + 
+    theme_bw() + theme(legend.position = "none") + labs(title = "Standard deviation of Log2 R Ratio",  x = "LRR SD", y = "NumCNV")  +
+    geom_vline(xintercept = c(0.3), linetype = "dotted") + scale_x_continuous(breaks = c(seq(from = 0, to = 1, by = 0.1))) +
+    scale_colour_manual(values = cbPalette)
   
-p3<-ggplot(data, aes(x=WF, y=NumCNV, color=filter)) + geom_point()  + #ylim(NA, 500) +
-    theme_bw() + theme(legend.position = "none") +labs(title="Waviness factor",  x="WF", y="NumCNV") +
-    geom_vline(xintercept=c(-0.05,0.05), linetype="dotted") + scale_x_continuous(breaks = c(seq(from = -0.2, to = 0.1, by = 0.05)))
+p3<-ggplot(data, aes(x = WF, y = NumCNV, color = filter)) + geom_point()  + #ylim(NA, 500) +
+    theme_bw() + theme(legend.position = "none") + labs(title = "Waviness factor",  x = "WF", y = "NumCNV") +
+    geom_vline(xintercept = c(-0.05,0.05), linetype = "dotted") + scale_x_continuous(breaks = c(seq(from = -0.2, to = 0.1, by = 0.05))) +
+    scale_colour_manual(values = cbPalette)
     
-p4<-ggplot(data, aes(x=BAF_drift, y=NumCNV, color=filter)) + geom_point()  + # ylim(NA, 500) +
-    scale_color_discrete(name = "QC") +  theme_bw() + labs(title="B Allele Frequency drift",  x="BAF_drift", y="NumCNV") +
-    geom_vline(xintercept=c(0.01), linetype="dotted") + scale_x_continuous(breaks = c(seq(from = 0, to = 0.08, by = 0.01)))
+p4<-ggplot(data, aes(x = BAF_drift, y = NumCNV, color = filter)) + geom_point()  + # ylim(NA, 500) +
+    theme_bw() + labs(title = "B Allele Frequency drift",  x = "BAF_drift", y = "NumCNV") +
+    geom_vline(xintercept = c(0.01), linetype = "dotted") + scale_x_continuous(breaks = c(seq(from = 0, to = 0.08, by = 0.01))) +
+    scale_colour_manual(values = cbPalette, name = "QC")
 
 grid.arrange(p1, p2, p3, p4, ncol = 2)
 dev.off()
