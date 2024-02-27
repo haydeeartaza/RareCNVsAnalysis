@@ -21,6 +21,7 @@ RUN apt-get update && \
     libcurl4-gnutls-dev \
     libharfbuzz-dev libfribidi-dev \
     libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+    libperl-dev \
     tar \
     git \
     git-lfs \
@@ -55,6 +56,14 @@ RUN wget -q https://s3.amazonaws.com/plink1-assets/dev/plink_linux_x86_64.zip &&
     unzip plink_linux_x86_64.zip -d /usr/local/bin/ && \
     ln -s /usr/local/bin/plink /usr/bin/plink2 && \
     rm plink_linux_x86_64.zip
+
+# Download and install PennCNV v1.0.5 in the root directory
+RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
+    tar xvfz v1.0.5.tar.gz && \
+    cd PennCNV-1.0.5/kext && \
+    make && \
+    cd ../.. \
+    mv PennCNV-1.0.5 /usr/bin
 
 # Install R and required packages
 ENV R_VERSION 3.6.3
