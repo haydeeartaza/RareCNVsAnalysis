@@ -22,7 +22,7 @@ sample_qcsum_list = args[1]
 prefix_output_file = args[2]
 
 default_parametes_output_file = paste(prefix_output_file,"QC_default_parametes_PennCNV.png", sep = "_")
-numCNV_output_file = paste(prefix_output_file,"NumCNV_vs_parametres.png", sepi = "_")
+numCNV_output_file = paste(prefix_output_file,"NumCNV_vs_parametres.png", sep = "_")
 histogram_output_file = paste(prefix_output_file,"histogram_LRR_SSD_and_NumCNV.png", sep = "_")
 data <- read.table(sample_qcsum_list, header = T, sep = "\t")
 
@@ -33,7 +33,7 @@ datamelt<-melt(data, measure.vars = (c("LRR_mean", "LRR_SD", "BAF_mean", "BAF_SD
 
 png(default_parametes_output_file, width = 780, height = 580)
 
-cbPalette <- c("#56B4E9", "#D55E00")
+cbPalette <- c("#D55E00", "#56B4E9")
 ggplot(datamelt, aes(x = filter, y = value, fill = filter)) +  geom_boxplot() +
 theme_bw() + theme(axis.text.x = element_blank()) +
 facet_wrap( ~ variable, scales = "free", ncol=6) + 
@@ -59,7 +59,7 @@ p3<-ggplot(data, aes(x = WF, y = NumCNV, color = filter)) + geom_point()  + #yli
     geom_vline(xintercept = c(-0.05,0.05), linetype = "dotted") + scale_x_continuous(breaks = c(seq(from = -0.2, to = 0.1, by = 0.05))) +
     scale_colour_manual(values = cbPalette)
     
-p4<-ggplot(data, aes(x = BAF_drift, y = NumCNV, color = filter)) + geom_point()  + # ylim(NA, 500) +
+p4<-ggplot(data, aes(x = BAF_drift, y = NumCNV, color = filter)) + geom_point()  +  #ylim(NA, 500) +
     theme_bw() + labs(title = "B Allele Frequency drift",  x = "BAF_drift", y = "NumCNV") +
     geom_vline(xintercept = c(0.01), linetype = "dotted") + scale_x_continuous(breaks = c(seq(from = 0, to = 0.08, by = 0.01))) +
     scale_colour_manual(values = cbPalette, name = "QC")
