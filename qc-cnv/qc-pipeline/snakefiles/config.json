@@ -1,13 +1,13 @@
 {
     "final_report_file": "/mnt/AAD_WGS2/CNV/GSA2016_308_025_FinalReport.txt",
     "signal_intensity_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/signal_intensity.txt",
-    "list_signal_files_file": "/mnt/work/hartaza/projects/addison_CNV/pipeline/pipeQCresults/data_conversion/list.txt",
     
     "gc_content_file": "/mnt/work/hartaza/projects/CNV_pipeline/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "/mnt/work/hartaza/projects/CNV_pipeline/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "/mnt/work/hartaza/projects/CNV_pipeline/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "/mnt/work/hartaza/projects/CNV_pipeline/qc-cnv/resources/centromere_telomere_penncnv.txt",
 
+    "list_signal_files_file": "/mnt/work/hartaza/projects/addison_CNV/pipeline/pipeQCresults/data_conversion/list.txt",
     "map_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_conversion/sample_map.txt",   
     "snp_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_conversion/SNPfile.txt",
     "pfb_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_conversion/model.pfb",
