@@ -294,13 +294,13 @@ function plot_samples_distribution {
 
     # Ratio of samples with X CNVs in cases and controls. Ratio=(Num_samples)/(Total_cases|Total_controls) 
     # a[$3][$4]=a[case|control][num_CNVs]
-    echo -e "CLASE\tNUM_SAMPLES\tRATIO_SAMPLES\tNUM_CNVS" > $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv
+    echo -e "CLASS\tNUM_SAMPLES\tRATIO_SAMPLES\tNUM_CNVS" > $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv
     awk -v cses=$cases -v ctrls=$controls '{if(NR>1 && $NF!=0) a[$3][$4]++}END{for(i in a){ if(i==1) n=ctrls; else n=cses; for(j in a[i]) print i"\t"a[i][j]"\t"a[i][j]/n"\t"j }}' \
     $rarecnvsindvfile >>  $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv
 
 
     limits=($3)
-    echo -e "INTERVAL\tCLASE\tNUM_SAMPLES\tRATIO_SAMPLES" > $forplotsdir/Individuals_per_CNVs_Interval_Average_length_$prefix.tsv
+    echo -e "INTERVAL\tCLASS\tNUM_SAMPLES\tRATIO_SAMPLES" > $forplotsdir/Individuals_per_CNVs_Interval_Average_length_$prefix.tsv
     #a[$3]: a[case|control]++ counts how many samples (in cases or controls) have CNVs with average length in each interval.
     #$NF contains the average length of CNVs per individual
     length=$((${#limits[@]} - 1));

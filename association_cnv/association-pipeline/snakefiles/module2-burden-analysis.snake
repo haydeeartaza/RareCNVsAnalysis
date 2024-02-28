@@ -3,6 +3,7 @@
 # Output: burden test result in *.summary.mperm and grp.summary files.
 rule BURDEN_CNVs:
     input:
+	#samplescnvcorefinal = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}' , prefix = cnv_prefix, ext=CNV_PLINK_EXT),
         samplescnvfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv', prefix = cnv_prefix),
 	samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
         samplescnvmapfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv.map', prefix = cnv_prefix)

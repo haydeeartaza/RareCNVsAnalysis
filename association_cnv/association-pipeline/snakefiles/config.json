@@ -1,13 +1,13 @@
 {
-    "map_file": "/mnt/work/hartaza/projects//CNV_pipeline/pipeQCresults/data_conversion/sample_map.txt",
-    "allpheno_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/ALL_phenotypes_09052019.tsv",
-    "core_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/21h_positive_core.txt",
+    "map_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_conversion/sample_map.txt",
     "sample_all_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_calling/sampleall.rawcn",
     "sample_merged_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_clean/samples_qcpass.clean.merged.rawcn",
-    "sample_XKbYSNPs_file": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_clean/samples_qcpass.clean.merged.50Kb5SNPs.rawcn",
+    
     "controls_random_file": "/mnt/work/hartaza/projects/CNV_pipeline/association_cnv/resources/controls_random_sampling.txt",
     "genes_ref_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/enrichment/glist-hg19.dat",
+    "core_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/21h_positive_core.txt",
     "pathway_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/enrichment/PanelApp/panelApp_AI_genes.dat",
+    "allpheno_file": "/mnt/work/hartaza/projects/addison_CNV/resources-private/ALL_phenotypes_09052019.tsv",
 
     "data_conversion_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/data_conversion",
     "burden_analysis_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeAssociationresults/burden_analysis",

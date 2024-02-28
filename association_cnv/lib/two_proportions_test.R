@@ -24,8 +24,8 @@ output.file <- args[5]
 library(fmsb)
 
 
-data.in <- read.table(cnv.data,header=TRUE, sep=',')
-data.in <- data.in[order(data.in$CAT, decreasing=T),]
+data.in <- read.table(cnv.data,header = TRUE, sep = ',')
+data.in <- data.in[order(data.in$CAT, decreasing = T),]
 #1,10: controls 10 cnvs
 #2,51: cases 51 cnvs
 
@@ -34,18 +34,18 @@ total_controls = as.numeric(total_controls)
 
 
 
-n1_cases = sum(data.in[grep("^2",data.in$CAT),]$VALUE)
+n1_cases = sum(data.in[grep("^2", data.in$CAT),]$VALUE)
 n2_cases = total_cases - n1_cases
-n1_controls = sum(data.in[grep("^1",data.in$CAT),]$VALUE)
+n1_controls = sum(data.in[grep("^1", data.in$CAT),]$VALUE)
 n2_controls = total_controls - n1_controls
 
 # Proportion test
-test <-prop.test(c(n1_cases, n1_controls), n=c(total_cases,total_controls))
+test <-prop.test(c(n1_cases, n1_controls), n = c(total_cases, total_controls))
 
 # Odds Ratio test
 OR <- oddsratio(n1_cases, n2_cases, n1_controls, n2_controls)
 
-OR_conf_inter <- paste(OR$conf.int[1], OR$conf.int[2], sep=",")
+OR_conf_inter <- paste(OR$conf.int[1], OR$conf.int[2], sep = ",")
 
 data.out<-data.frame("Length" = length, 
                       "Cases" =  n1_cases, 
@@ -58,5 +58,5 @@ data.out<-data.frame("Length" = length,
                       "P" = OR$p.value
                       )
 
- write.table(data.out, file = output.file, sep="\t", quote=F, row.names=F)
+ write.table(data.out, file = output.file, sep = "\t", quote = F, row.names = F)
 
