@@ -114,7 +114,35 @@ $ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
 $ cd association-cnv
 ```
-Modify the config.json and variables.json files in association-pipeline/snakefiles, and then excute
+Modify the config.json file in association-pipeline/snakefiles. In this example directory `QCResults` refers the directory with the QC and detection calls results, directory `RareCNVsResults` will contain all files generted in this pipeline and `Resources` refers to the directory containing the input files for this pipeline.
+``` json
+{
+    "map_file": "/QCResults/data_conversion/sample_map.txt",
+    "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
+    "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+
+    "controls_random_file": "/Resources/controls_random_sampling.txt",
+    "genes_ref_file": "/Resources/enrichment/glist-hg19.dat",
+    "core_file": "/Resources/21h_positive_core.txt",
+    "pathway_file": "/Resources/enrichment/PanelApp/panelApp_AI_genes.dat",
+    "allpheno_file": "/Resources/ALL_phenotypes_09052019.tsv",
+
+    "data_conversion_path": "/RareCNVsResults/data_conversion",
+    "burden_analysis_path": "/RareCNVsResults/burden_analysis",
+    "burden_temp_path": "/RareCNVsResults/burden_analysis/temp",
+    "burden_graph_path": "/RareCNVsResults/graphics/burden_analysis",
+    "rare_cnvs_path": "/RareCNVsResults/rare_cnvs",
+    "rare_cnvs_summary_path": "/RareCNVsResults/rare_cnvs/summary",
+    "rare_cnvs_reference_path": "/RareCNVsResults/rare_cnvs/Reference",
+    "rare_cnvs_reference_summary_path": "/RareCNVsResults/rare_cnvs/Reference/summary",
+    "rare_cnvs_forplots_path": "/RareCNVsResults/rare_cnvs/forplots",
+    "rare_cnvs_graph_path": "/RareCNVsResults/graphics/rare_cnvs",
+    "enrichment_rare_cnvs_path": "/RareCNVsResults/enrichment_rare_cnvs",
+    "enrichment_rare_cnvs_genic_path": "/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
+    "enrichment_rare_cnvs_pathway_path": "/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
+    "log_path": "/RareCNVsResults/logs"
+ 
+}
 ```
 $ snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
