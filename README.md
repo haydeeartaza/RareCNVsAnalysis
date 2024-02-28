@@ -144,6 +144,7 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
  
 }
 ```
+```
 $ snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
 ![Output directroies](manual/images/pipeline_output_dirs.png)
