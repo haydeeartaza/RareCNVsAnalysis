@@ -13,14 +13,15 @@ $ bash Miniforge3-$(uname)-$(uname -m).sh
 $ MINIFORGE="/path/miniforge3/bin/"
 $ export PATH="$PATH:$MINIFORGE"
 ```
+
 2. Snakemake
-  Installation via Conda:
+&ensp;Installation via Conda:
 ```
 $ conda install -n base -c conda-forge mamba
 $ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 $ conda activate snakemake
 ```
-  Find other options in [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
+&ensp;Find other options in [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 
 3. PennCNV
 ```
@@ -29,7 +30,7 @@ $ tar xvfz v1.0.5.tar.gz
 $ cd PennCNV-1.0.5/kext
 $ make
 ```
-  More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
+&ensp;More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
 
 4. Bedtools
 ```
