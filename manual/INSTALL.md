@@ -29,6 +29,8 @@ $ wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz
 $ tar xvfz v1.0.5.tar.gz
 $ cd PennCNV-1.0.5/kext
 $ make
+$ add path “bedtools2/bin” to qc-cnv/qc-pipeline/snakefiles/variables.py 
+
 ```
 &ensp;More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
 
@@ -38,7 +40,7 @@ $ wget https://github.com/arq5x/bedtools2/releases/download/v2.29.1/bedtools-2.3
 $ tar -xvzf bedtools-2.31.1.tar.gz
 $ cd bedtools2/
 $ make
-$ Add path “bedtools2/bin” to variables.py 
+$ add path “bedtools2/bin” to association_cnv/association-pipeline/snakefiles/variables.py 
 
 5. R dependencies
 ``` r
