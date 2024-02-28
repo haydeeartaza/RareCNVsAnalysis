@@ -8,7 +8,7 @@ Installation
 $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 $ bash Miniforge3-$(uname)-$(uname -m).sh
 ```
-  Set environment path:
+&nbsp;Set environment path:
 ```
 $ MINIFORGE="/path/miniforge3/bin/"
 $ export PATH="$PATH:$MINIFORGE"
