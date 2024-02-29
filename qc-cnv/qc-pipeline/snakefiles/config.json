@@ -23,6 +23,6 @@
     "data_calling_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_calling",
     "data_clean_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/data_clean",
     "graphic_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/graphic",
-    "graphic_qc_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/graphic/qc",
+    "graphic_qc_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/graphics/qc",
     "log_path": "/mnt/work/hartaza/projects/CNV_pipeline/pipeQCresults/logs"
 }
