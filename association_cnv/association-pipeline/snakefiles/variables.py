@@ -7,6 +7,7 @@ resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '
 #calling it as {program_version} inside the code. E.g {plink17}
 plink = "plink"
 plink17 = "/home/haydee.artaza/programs/plink-1.07-x86_64/plink"
+bedtools = "/home/haydee.artaza/programs/bedtools2/bin/bedtools"
 
 ### Prefix file names #######################################
 ### module 1,2 and 3

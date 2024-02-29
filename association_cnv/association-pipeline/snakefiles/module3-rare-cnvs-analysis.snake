@@ -287,7 +287,7 @@ rule GET_RARE_CNVs:
            # Check if first column of the last four or "The number of features in B that overlapped (by at least 50%) the A interval" has != 0 value. 
            # That means: a CNV have at least 50% of its region inside of one or more CNVs belong to common variants (and vice versa) and should be removed.
             
-           bedtools coverage -f 0.5 -r \
+           {bedtools} coverage -f 0.5 -r \
 	    -a {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed \
             -b {params.referencedir}/$refcontrols"_track".cnv.temp.bed \
             | awk '$12!=0' | cut -f1-11 | tr "\t" " " >  {params.referencedir}/cnvs_overlapping_common_variants_$type.bed
@@ -370,9 +370,9 @@ rule FREQUENCY_CNVs_INSPECTION:
              rarecnvsfinalprefix={cnv_prefix}"_rare_"$type
 
              echo "##### Merging $type in CNVR... #####"
-             bedtools merge -i <(bedtools sort -i <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t")) > {params.outputdir}/$rarecnvsfinalprefix"_merged.bed"
+             {bedtools} merge -i <({bedtools} sort -i <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t")) > {params.outputdir}/$rarecnvsfinalprefix"_merged.bed"
              echo "##### Intersect $type in CNVR... #####"
-             bedtools intersect -wa -wb -a <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t") -b {params.outputdir}/$rarecnvsfinalprefix"_merged.bed" > \
+             {bedtools} intersect -wa -wb -a <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t") -b {params.outputdir}/$rarecnvsfinalprefix"_merged.bed" > \
              {params.outputdir}/$rarecnvsfinalprefix"_regions.bed"
             
 	     # Get cnv file to CNVR

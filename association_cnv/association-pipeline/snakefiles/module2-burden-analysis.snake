@@ -5,7 +5,7 @@ rule BURDEN_CNVs:
     input:
 	#samplescnvcorefinal = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}' , prefix = cnv_prefix, ext=CNV_PLINK_EXT),
         samplescnvfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv', prefix = cnv_prefix),
-	samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
+        samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
         samplescnvmapfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv.map', prefix = cnv_prefix)
     output:
         burdencnvsfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden' + '{ext}', ext = CNV_EXT, prefix = cnv_prefix),
@@ -63,15 +63,15 @@ rule SPLIT_CNVs_DEL_AND_DUP:
         samplescnvfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv', prefix = cnv_prefix),
         samplescnvfamfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.fam', prefix = cnv_prefix),
         samplescnvmapfile = expand(config['data_conversion_path'] + '/' + '{prefix}' + '.cnv.map', prefix = cnv_prefix),
-	burdencnvsfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden' + '{ext}', ext = CNV_EXT, prefix = cnv_prefix)
+        burdencnvsfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden' + '{ext}', ext = CNV_EXT, prefix = cnv_prefix)
     output:
         burdendelfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_del' + '.cnv.indiv', prefix = cnv_prefix),
-	burdendupfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_dup' + '.cnv.indiv', prefix = cnv_prefix),
+        burdendupfile = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden_dup' + '.cnv.indiv', prefix = cnv_prefix),
     params:
         prefix = expand(config['burden_analysis_path'] + '/' + '{prefix}' + '_burden',  prefix = cnv_prefix),
         outputdir = config['burden_analysis_path'],
         graphdir = config['burden_graph_path'],
-	tempdir = config['burden_temp_path'],
+        tempdir = config['burden_temp_path'],
         logfile =  config['log_path'] + '/' + 'burden_analysis.log',
 
     message: "Split CNVs in Deletions and Duplications"

@@ -55,7 +55,7 @@ rule CONVERT_PENNCNV_TO_PLINK_FORMAT:
 rule EXTRACT_CORE_SAMPLES:
     input:
         samplesallcnv = expand(config['data_conversion_path'] + '/' + '{prefix}' + '{ext}', prefix = cnv_all_prefix, ext=CNV_PLINK_EXT),
-	samplespassmerged = config['sample_merged_file']
+        samplespassmerged = config['sample_merged_file']
     output:
         samplescnvcore = expand(config['data_conversion_path'] + '/' + '{prefix}' + '_qc_merged' + '{ext}', prefix = cnv_prefix, ext=CNV_PLINK_EXT),
     params:
