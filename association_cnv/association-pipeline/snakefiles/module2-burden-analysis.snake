@@ -135,14 +135,14 @@ rule SPLIT_CNVs_DEL_AND_DUP:
 	    # Extracting number of CNVs by length and its ratio (numCNVs/total_cases | numCNVs/total_controls)
             # DELETIONS
             echo -e "pheno\tlength\tnumCNV\tratio" > {params.outputdir}/case_control_CNVs_length_del.tsv
-            for file in `ls {params.tempdir}/*KB_del*indiv`;  do class=`echo $file | cut -f4 -d'_' | cut -f1 -d'.'`; 
+            for file in `ls {params.tempdir}/*KB_del*indiv`;  do class=`echo $file | sed 's/.*_\(.*KB\)_.*/\\1/'`; 
                 awk -v c="$class" -v cses="$cases" -v ctrls="$controls" '{{if($6!=0 && $6!~/KB/) a[$3][c]=a[$3][c]+$4}} 
                     END{{for(i in a) for(j in a[i]) if(i==1) print i"\t"j"\t"a[i][j]"\t"a[i][j]/ctrls; else print i"\t"j"\t"a[i][j]"\t"a[i][j]/cses }}' $file; 
             done | sort -k1,2 -V >> {params.outputdir}/case_control_CNVs_length_del.tsv
             
 	    # DUPLICATIONS
             echo -e "pheno\tlength\tnumCNV\tratio" > {params.outputdir}/case_control_CNVs_length_dup.tsv
-            for file in `ls {params.tempdir}/*KB_dup*indiv`;  do class=`echo $file | cut -f4 -d'_' | cut -f1 -d'.'`; 
+            for file in `ls {params.tempdir}/*KB_dup*indiv`;  do class=`echo $file | sed 's/.*_\(.*KB\)_.*/\\1/'`; 
                 awk -v c="$class" -v cses="$cases" -v ctrls="$controls" '{{if($6!=0 && $6!~/KB/) a[$3][c]=a[$3][c]+$4}} 
                     END{{for(i in a) for(j in a[i]) if(i==1) print i"\t"j"\t"a[i][j]"\t"a[i][j]/ctrls; else print i"\t"j"\t"a[i][j]"\t"a[i][j]/cses }}' $file; 
             done | sort -k1,2 -V >> {params.outputdir}/case_control_CNVs_length_dup.tsv
