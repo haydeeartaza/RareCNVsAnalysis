@@ -62,8 +62,9 @@ RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
     tar xvfz v1.0.5.tar.gz && \
     cd PennCNV-1.0.5/kext && \
     make && \
-    cd ../.. \
-    mv PennCNV-1.0.5 /usr/bin
+    cd ../..
+
+#COPY PennCNV-1.0.5 /app/PennCNV-1.0.5
 
 # Install R and required packages
 ENV R_VERSION 3.6.3
@@ -86,4 +87,4 @@ COPY . /app/pipeline
 WORKDIR /app/pipeline
 
 # Add tool directories to PATH
-ENV PATH "/usr/lib/R/bin:/usr/bin/python3:/usr/local/bin:$PATH"
+ENV PATH "/usr/lib/R/bin:/usr/bin/python3:/usr/local/bin:/PennCNV-1.0.5$PATH"
