@@ -3,18 +3,18 @@ Rare CNVs Analysis Pipeline
 
 Overwiew
 -----------------------------
-This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs the CNV detection and quality control, followed by the burden analysis, the rare CNV frequency analysis and the enrichment CNV analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline-drawio.png).
+This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs the CNV detection and quality control, followed by the burden analysis, the rare CNV frequency analysis and the enrichment CNV analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline.png).
 
 Dependencies
 -----------------------------
 - Mambaforge3
 - Snakemake 5.22.1
-- Python 3.8.5
 - R (>=3.6.3)
 - Python (>=3.8.5)
 - BedTools
 - plink (1.7)
 - PennCNV (1.0.5)
+- Gawk
 
 Installation
 -----------------------------
