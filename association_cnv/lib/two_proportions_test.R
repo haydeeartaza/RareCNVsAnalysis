@@ -32,20 +32,10 @@ data.in <- data.in[order(data.in$CAT, decreasing = T),]
 total_cases = as.numeric(total_cases)
 total_controls = as.numeric(total_controls)
 
-
-
 n1_cases = sum(data.in[grep("^2", data.in$CAT),]$VALUE)
 n2_cases = total_cases - n1_cases
 n1_controls = sum(data.in[grep("^1", data.in$CAT),]$VALUE)
 n2_controls = total_controls - n1_controls
-
-# Proportion test
-test <-prop.test(c(n1_cases, n1_controls), n = c(total_cases, total_controls))
-
-# Odds Ratio test
-OR <- oddsratio(n1_cases, n2_cases, n1_controls, n2_controls)
-
-OR_conf_inter <- paste(OR$conf.int[1], OR$conf.int[2], sep = ",")
 
 if( (total_cases > n1_cases) & (total_controls > n1_controls) ) { 
 	# Proportion test
