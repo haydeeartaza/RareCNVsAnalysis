@@ -30,19 +30,24 @@ $ tar xvfz v1.0.5.tar.gz
 $ cd PennCNV-1.0.5/kext
 $ make
 $ add path “bedtools2/bin” to qc-cnv/qc-pipeline/snakefiles/variables.py 
-
 ```
 &ensp;More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
 
-4. Bedtools
+4. Plink
+```
+$ wget  https://zzz.bwh.harvard.edu/plink/dist/plink-1.07-x86_64.zip
+$ unzip plink-1.07-x86_64.zip
+$ add path “plink-1.07-x86_64/plink” to association_cnv/association-pipeline/snakefiles/variables.py
+```
+5. Bedtools
 ```
 $ wget https://github.com/arq5x/bedtools2/releases/download/v2.29.1/bedtools-2.31.1.tar.gz
 $ tar -xvzf bedtools-2.31.1.tar.gz
 $ cd bedtools2/
 $ make
-$ add path “bedtools2/bin” to association_cnv/association-pipeline/snakefiles/variables.py 
-
-5. R dependencies
+$ add path “bedtools2/bin” to association_cnv/association-pipeline/snakefiles/variables.py
+```
+6. R dependencies
 ``` r
 #Install all libraries used in this pipeline
 # Package names
@@ -63,4 +68,7 @@ devtools::install_github("psyteachr/introdataviz")
 ## apt-get install cmake
 
 ```
-
+7. Gawk
+```
+$ sudo apt install gawk
+```
