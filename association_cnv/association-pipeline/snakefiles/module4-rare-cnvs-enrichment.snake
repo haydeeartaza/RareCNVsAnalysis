@@ -25,7 +25,7 @@ rule GENIC_ENRICHMENT_ANALYSIS:
            
            echo "##### Genic RARE CNVs enrichment analysis #####" > {params.logfile} 
            for type in {cnv_type}; do
-            echo "##### Generating enrichment files for $type in ... #####"  
+            echo "##### Generating enrichment files for $type... #####"  
             rarecnvsprefix={cnv_prefix}"_rare_"$type
             rarecnvsenrichprefix=$rarecnvsprefix"_genic_CNVs_enrichment"
 
@@ -54,7 +54,7 @@ rule GENIC_ENRICHMENT_ANALYSIS:
 
 
             #Get a summary table of genes affected group by cat and chr
-            echo "##### Get a summary table of genes affected group by cat and chr... #####"
+            echo "##### Get a summary table of genes affected group by cat and chr in $type of genic enrichment... #####"
             echo -e "CHR\tBP1-BP2\tGene\tCases\tControls" > {params.outputgenicdir}/$rarecnvsenrichprefix"_by_cat_spanning_genes.txt"
             for i in `grep RANGE {params.outputgenicdir}/$rarecnvsenrichprefix"_intersect.reg" | awk '{{print $6"_"$9}}'`; do
                 awk -v chr_gene=$i 'BEGIN{{pass=0}}
@@ -113,7 +113,7 @@ rule PATHWAY_ENRICHMENT_ANALYSIS:
            
            echo "Rare CNVs enrichment analysis" > {params.logfile} 
            for type in {cnv_type}; do
-            echo "##### Generating enrichment files for $type in ... #####"  
+            echo "##### Generating enrichment files for $type... #####"  
 	    rarecnvsprefix={cnv_prefix}"_rare_"$type
             rarecnvsenrichprefix=$rarecnvsprefix"_pathway_CNVs_enrichment"
             echo "##### Generating enrichment of pathways genes CNVs files for $type in $rarecnvsenrichprefix... #####"
@@ -141,9 +141,9 @@ rule PATHWAY_ENRICHMENT_ANALYSIS:
 
 
             #Get a summary table of genes affected group by cat and chr
-            echo "##### Get a summary table of genes affected group by cat and chr... #####"
+            echo "##### Get a summary table of genes affected group by cat and chr in $type of pathway enrichment... #####"
             echo -e "CHR\tBP1-BP2\tGene\tCases\tControls" > {params.outputpathwaydir}/$rarecnvsenrichprefix"_by_cat_spanning_genes.txt"
-            for i in `grep RANGE {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | awk '{{print $6"_"$9}}'`; do
+            for i in `grep RANGE {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | awk '{{print $6"_"$9}}' || true`; do
                 awk -v chr_gene=$i 'BEGIN{{pass=0}}
                         {{if($0 ~ /^RANGE/ && pass==0){{
                             split($0,a," "); cgene=a[6]"_"a[9] 
@@ -161,8 +161,8 @@ rule PATHWAY_ENRICHMENT_ANALYSIS:
 
             #log
             echo -e "\n########### ENRICHMENT in pathway genic CNVs $type ###########" >> {params.logfile}
-            genes_affected=`grep RANGE {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | wc -l`
-            num_cnvs=`grep split {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | wc -l`
+            genes_affected=`grep RANGE {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | wc -l || true`
+            num_cnvs=`grep split {params.outputpathwaydir}/$rarecnvsenrichprefix"_intersect.reg" | wc -l || true`
             num_individuals=`awk '$NF!=0' {params.outputpathwaydir}/$rarecnvsenrichprefix".cnv.indiv"  | wc -l`
             echo -e "Genes affected: $genes_affected" >> {params.logfile}
             echo -e "Total $type: $num_cnvs" >> {params.logfile}

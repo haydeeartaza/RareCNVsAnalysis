@@ -89,7 +89,7 @@ function create_summary_by_cnvs_lengths_exclusive {
         end=$(($start + 1))
         I1=${limits[$start]}; I2=${limits[($end)]}
         interval=$I1"KB_"$I2"KB"
-        
+        echo "##### Processing summary CNVs > $interval in $outfile #####";
         if [[ $end -eq ${#limits[@]} ]]; then I2=1000000; interval=echo $I1"KB"; fi
         Rscript $libdir/two_proportions_test.R \
                  $3"/"$2"_"$interval"_statistics.csv" \
@@ -102,6 +102,7 @@ function create_summary_by_cnvs_lengths_exclusive {
     done
  
     # Plot OR distribution
+    echo "##### Generating forest plots... #####"
     cut -f1,6-10  $outfile | sed 's/X95.CI/X95.CI.lower\tX95.CI.upper/' | sed 's/,/\t/' > temp
     Rscript $libdir/plot_forest_OR.R \
         temp \

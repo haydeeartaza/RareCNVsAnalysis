@@ -47,7 +47,15 @@ OR <- oddsratio(n1_cases, n2_cases, n1_controls, n2_controls)
 
 OR_conf_inter <- paste(OR$conf.int[1], OR$conf.int[2], sep = ",")
 
-data.out<-data.frame("Length" = length, 
+if( (total_cases > n1_cases) & (total_controls > n1_controls) ) { 
+	# Proportion test
+	test <-prop.test(c(n1_cases, n1_controls), n = c(total_cases, total_controls))
+
+	# Odds Ratio test
+	OR <- oddsratio(n1_cases, n2_cases, n1_controls, n2_controls)
+	OR_conf_inter <- paste(OR$conf.int[1], OR$conf.int[2], sep = ",")
+
+	data.out<-data.frame("Length" = length, 
                       "Cases" =  n1_cases, 
                       "Controls" =  n1_controls, 
                       "Cases_freq" = test$estimate[[1]], 
@@ -58,5 +66,18 @@ data.out<-data.frame("Length" = length,
                       "P" = OR$p.value
                       )
 
- write.table(data.out, file = output.file, sep = "\t", quote = F, row.names = F)
+}else{
+	data.out<-data.frame("Length" = length,
+                      "Cases" =  n1_cases,
+                      "Controls" =  n1_controls,
+                      "Cases_freq" = 0,
+                      "Controls_freq" = 0,
+                      "P-value" = 0,
+                      "OR" = 0,
+                      "95%CI" = "0,0",
+                      "P" = 0
+                      )
+}
+
+write.table(data.out, file = output.file, sep = "\t", quote = F, row.names = F)
 
