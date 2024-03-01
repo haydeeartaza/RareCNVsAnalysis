@@ -25,7 +25,7 @@ Pipeline Execution
 ```
 $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
-1. Detection of CNV calls and QC analysis: 
+2. Detection of CNV calls and QC analysis: 
 ```
 $ cd qc-cnv
 ```
