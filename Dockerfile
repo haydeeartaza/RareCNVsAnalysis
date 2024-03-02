@@ -18,6 +18,8 @@ RUN apt-get update && \
     libbz2-dev \
     liblzma-dev \
     xorg-dev \
+    xauth \
+    libx11-dev \
     libcurl4-gnutls-dev \
     libharfbuzz-dev libfribidi-dev \
     libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
@@ -38,7 +40,7 @@ RUN pip install pipenv
 
 # Copy Pipfile and Pipfile.lock into the container
 COPY Pipfile Pipfile.lock  /app/
-RUN pipenv install --ignore-pipfile
+RUN pipenv install --system --deploy --ignore-pipfile
 
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
        echo "LANG=en_US.UTF-8" > /etc/locale.conf
@@ -84,11 +86,5 @@ RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive
 COPY . /app/pipeline
 WORKDIR /app/pipeline
 
-# Add a user in the container with UID 1000
-RUN useradd -u 1000 my_user
-
-# Set the default user to my_user
-USER my_user
-
 # Add tool directories to PATH, including PennCNV scripts
-ENV PATH "/usr/lib/R/bin:/usr/bin/python3:/usr/local/bin:/PennCNV-1.0.5$PATH"
+ENV PATH "/usr/lib/R/bin:/usr/bin/python3:/usr/local/bin:/PennCNV-1.0.5:$PATH"
