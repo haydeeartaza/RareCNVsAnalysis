@@ -64,8 +64,6 @@ RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
     make && \
     cd ../..
 
-#COPY PennCNV-1.0.5 /app/PennCNV-1.0.5
-
 # Install R and required packages
 ENV R_VERSION 3.6.3
 RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
@@ -86,5 +84,11 @@ RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive
 COPY . /app/pipeline
 WORKDIR /app/pipeline
 
-# Add tool directories to PATH
+# Add a user in the container with UID 1000
+RUN useradd -u 1000 my_user
+
+# Set the default user to my_user
+USER my_user
+
+# Add tool directories to PATH, including PennCNV scripts
 ENV PATH "/usr/lib/R/bin:/usr/bin/python3:/usr/local/bin:/PennCNV-1.0.5$PATH"
