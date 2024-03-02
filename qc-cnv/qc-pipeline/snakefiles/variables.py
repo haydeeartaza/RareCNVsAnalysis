@@ -5,8 +5,8 @@ resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '
 ### programs ########################################
 #Include here all programs and versions.You can run the specific program/version
 #calling it as {program_version} inside the code. E.g {R_3_4}
-pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
-R_4_1 = "/home/haydee.artaza/programs/R_4_1"
+#pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
+#R_4_1 = "/home/haydee.artaza/programs/R_4_1"
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"
@@ -22,20 +22,11 @@ wf = "0.05"
 qcbafdrift = "0.01"
 qclrrsd = "0.3"
 
-### Create paths if don't exist ###################################
+### Create paths if they don't exist ###################################
 
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['data_intensity_path']):
-    os.makedirs(config['data_intensity_path'])
-if not os.path.exists(config['data_calling_path']):
-    os.makedirs(config['data_calling_path'])
-if not os.path.exists(config['data_clean_path']):
-    os.makedirs(config['data_clean_path'])
-if not os.path.exists(config['graphic_path']):
-    os.makedirs(config['graphic_path'])
-if not os.path.exists(config['graphic_qc_path']):
-    os.makedirs(config['graphic_qc_path'])
+dirs_to_create = ["data_conversion_path", "data_intensity_path", "data_calling_path",
+                          "data_clean_path", "graphic_path", "graphic_qc_path", "log_path"]
+for directory in dirs_to_create:
+    if not os.path.exists(config[directory]):
+        os.makedirs(config[directory])
 
