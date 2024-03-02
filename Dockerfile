@@ -39,7 +39,7 @@ RUN apt-get update && \
 RUN pip install pipenv
 
 # Copy Pipfile and Pipfile.lock into the container
-COPY Pipfile Pipfile.lock  /app/
+COPY Pipfile Pipfile.lock  .
 RUN pipenv install --system --deploy --ignore-pipfile
 
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
