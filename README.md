@@ -35,11 +35,14 @@ docker build -t rarecnvs_image:latest .
 Pipeline Execution
 -----------------------------
 
-1. Detection of CNV calls and QC analysis: 
+### 1. Detection of CNV calls and QC analysis:
+
+```bash
+cd qc-cnv
 ```
-$ cd qc-cnv
-```
+
 - Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `data` should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline and `RareCNVsAnalysis` refers to the directory containing the pipeline project.
+  
 ``` json
 {
     "final_report_file": "/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
@@ -70,7 +73,9 @@ $ cd qc-cnv
     "log_path": "/QCResults/logs"
 }
 ```
+
 - Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location and setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
+
 ```python
   ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -121,7 +126,7 @@ conda activate snakemake
 snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
 
-1. Rare CNVs analysis execution:
+### 2. Rare CNVs analysis execution:
 
 ```bash
 cd association-cnv
