@@ -17,15 +17,25 @@ Dependencies
 
 Installation
 -----------------------------
-See Snakemake and dependencies installation [here](manual/INSTALL.md)
+
+Download the git project:
+
+```bash
+git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
+```
+
+For direct installation on the system see instructions for Snakemake and dependencies [here](manual/INSTALL.md).
+
+If you are going to use Docker, you simply need to build the image:
+
+```bash
+docker build -t rarecnvs_image:latest .
+```
 
 Pipeline Execution
 -----------------------------
-**1. Download the git project:**
-```
-$ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
-```
-2. Detection of CNV calls and QC analysis: 
+
+1. Detection of CNV calls and QC analysis: 
 ```
 $ cd qc-cnv
 ```
@@ -103,16 +113,22 @@ if not os.path.exists(config['graphic_path']):
 if not os.path.exists(config['graphic_qc_path']):
     os.makedirs(config['graphic_qc_path'])
 ```
+
 - Excute the pipeline with the comman line:
+
+```bash
+conda activate snakemake
+snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
-$ conda activate snakemake
-$ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
+
+1. Rare CNVs analysis execution:
+
+```bash
+cd association-cnv
 ```
-**3. Rare CNVs analysis execution:**
-```
-$ cd association-cnv
-```
+
 Modify the config.json file in association-pipeline/snakefiles. In this example directory `QCResults` refers the directory with the QC and detection calls results, directory `RareCNVsResults` will contain all files generted in this pipeline and `Resources` refers to the directory containing the input files for this pipeline.
+
 ``` json
 {
     "map_file": "/QCResults/data_conversion/sample_map.txt",
@@ -142,6 +158,9 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
  
 }
 ```
+
+```bash
+snakemake -s association-pipeline/snakefiles/association.snake --core 1
 **NOTE:**
 > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
 ```
@@ -153,8 +172,7 @@ D   4   2   NA12891 0   15  2
 ```
 - Excute the pipeline with the comman line:
 ```
-$ snakemake -s association-pipeline/snakefiles/association.snake --core 1
-```  
+
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
 Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
