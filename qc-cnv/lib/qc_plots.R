@@ -54,7 +54,6 @@ savePlot(filename=default_parametes_output_file, plot=p0, width=1900, height=110
   
 # Number of CNV calls and PennCNV reported statistics which taken together are indicators of the quality of samples 
 
-#png(numCNV_output_file, width = 780, height = 580)
 p1<-ggplot(data, aes(x = LRR_mean, y = NumCNV)) + 
 	geom_point(aes(colour=filter), shape = 16, alpha = 0.6) +
 	scale_colour_manual(values = cbPalette) + 
@@ -112,5 +111,4 @@ p4<-ggplot(data, aes(x = BAF_drift, y = NumCNV)) +
 
 pp1 <- ggarrange(p1, p2, p3, p4, ncol = 2, nrow = 2, common.legend=T, legend="bottom")
 savePlot(filename=numCNV_output_file,plot=pp1, width=1700, height=1100)
-#dev.off()
 
