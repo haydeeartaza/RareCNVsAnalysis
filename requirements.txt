@@ -1,9 +1,7 @@
-ggplot2
 fmsb
+ggplot2
 gridExtra
 dplyr
 reshape
-devtools
-glossary
 ggtext
-ggpubr
+

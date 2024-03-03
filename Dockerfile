@@ -80,10 +80,14 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
         cd ..
 
 # Install additional R packages
-COPY ./requirements.txt .
-RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pbkrtest/pbkrtest_0.4-7.tar.gz", repos=NULL, type="source"); \
+# package from archive necessary for few other packages
+COPY ./requirements.txt ./
+RUN Rscript -e 'install.packages("devtools", repos="https://cloud.r-project.org", dependencies = TRUE); \
     install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org"); \
-    library(devtools); devtools::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
+    library(devtools); devtools::install_version(package="pbkrtest", version="0.4.7", repos="https://cloud.r-project.org"); \
+    install.packages("glossary", repos="https://cloud.r-project.org"); \ 
+    devtools::install_version(package="ggpubr", version = "0.6.0", repos="https://cloud.r-project.org"); \
+    devtools::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
 
 # Copy over your pipeline files
 COPY . /app/pipeline
