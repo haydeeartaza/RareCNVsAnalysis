@@ -60,7 +60,10 @@ Note that for docker-based run you can just replace the input data filenames.
 ```bash
 cd qc-cnv
 ```
-- Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `data` should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline and `RareCNVsAnalysis` refers to the directory containing the pipeline project.
+
+- Modify [`config.json`](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (`final_report_file` and `signal_intensity_file` respectively) and specifying the ouput directory. In this example directory `tes/data` at the root of the repository should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline.
+- Note that the `config.json` in this example is adapted for running with docker, if you run it on the native system, you need to replace `/app/pipeline/` with the full path to where you want to write your output.
+  
 ``` json
 {
     "final_report_file": "test/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
@@ -90,7 +93,9 @@ cd qc-cnv
     "log_path": "/app/pipeline/QCResults/logs"
 }
 ```
-- Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location and setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
+
+- Modify [`variables.py`](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location, setting files prefixes and PennCNV parameters. This script will also create the output directories that were previously set in `config.json` file.
+
 ```python
   ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -129,7 +134,7 @@ for directory in dirs_to_create:
 
 - Execute the pipeline as shown above either on the native system, or using Docker.
 
-### 2. Rare CNVs analysis execution
+### 2. Rare CNVs analysis
 
 ```bash
 cd association-cnv
@@ -181,11 +186,7 @@ D   4   2   NA12891 0   15  2
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
-Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
-
-Test
------------------------------
-See test instructions [here](test/Test.md)
+For details about config, input/output files and modules/rules description see [the user guide manual](manual/Rare_CNVs_pipeline_guide.pdf).
 
 Pipeline Structure
 -----------------------------
