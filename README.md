@@ -17,7 +17,6 @@ Dependencies
 
 Installation
 -----------------------------
-
 Download the git project:
 
 ```bash
@@ -26,7 +25,7 @@ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 
 For direct installation on the system see instructions for Snakemake and dependencies [here](manual/INSTALL.md).
 
-If you are going to use Docker, you simply need to build the image:
+If you are going to use Docker, you simply need to build the image (it will take a moment first time):
 
 ```bash
 docker build -t rarecnvs_image:latest .
@@ -34,48 +33,64 @@ docker build -t rarecnvs_image:latest .
 
 Pipeline Execution
 -----------------------------
+### 1. Detection of CNV calls and QC analysis
 
-### 1. Detection of CNV calls and QC analysis:
+To run the pipeline on the supplied test data on the native system:
+
+```bash
+conda activate snakemake
+snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
+```
+
+To run the pipeline on the supplied test data using docker (after you have built the image):
+
+```bash
+docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s qc-cnv/qc-pipeline/snakefiles/qc.snake --core 1
+```
+
+### Pipeline settings
+
+To configure the pipeline for your own dataset you need to adjust two files: 
+
+- [qc-pipeline/snakefiles/config.json](qc-cnv/qc-pipeline/snakefiles/config.json)
+- [qc-pipeline/snakefiles/variables.py](qc-cnv/qc-pipeline/snakefiles/variables.py)
+
+Note that for docker-based run you can just replace the input data filenames.
 
 ```bash
 cd qc-cnv
 ```
-
 - Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `data` should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline and `RareCNVsAnalysis` refers to the directory containing the pipeline project.
-  
 ``` json
 {
-    "final_report_file": "/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
-    "signal_intensity_file": "/data/SNPs_Table.txt",
+    "final_report_file": "test/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
+    "signal_intensity_file": "test/data/SNPs_Table.txt",
     
-    "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
-    "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
-    "immunoglobulin_region_file": "/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
-    "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
+    "gc_content_file": "qc-cnv/resources/gc5Base.sorted.txt",
+    "hmm_file": "qc-cnv/resources/hhall.hmm",
+    "immunoglobulin_region_file": "qc-cnv/resources/immunoglobulin_penncnv.txt",
+    "centromere_telomere_region_file": "qc-cnv/resources/centromere_telomere_penncnv.txt",
 
-    "list_signal_files_file": "/QCResults/data_conversion/list.txt",
-    "map_file": "/QCResults/data_conversion/sample_map.txt",   
-    "snp_file": "/QCResults/data_conversion/SNPfile.txt",
-    "pfb_file": "/QCResults/data_conversion/model.pfb",
-    "gcmodel_file": "/QCResults/data_conversion/hg19.gcmodel",
-    "sample_pass_list_file": "/QCResults/data_clean/samples_qcpass.list",
-    "sample_pass_file": "/QCResults/data_clean/samples_qcpass.rawcn",
-    "sample_summary_file": "/QCResults/data_clean/samples_qcsum.list",
-    "sample_clean_file": "/QCResults/data_clean/samples_qcpass.clean.rawcn",
-    "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
-   
-    "data_conversion_path": "/QCResults/data_conversion",
-    "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
-    "data_calling_path": "/QCResults/data_calling",
-    "data_clean_path": "/QCResults/data_clean",
-    "graphic_path": "/QCResults/graphics",
-    "graphic_qc_path": "/QCResults/graphics/qc",
-    "log_path": "/QCResults/logs"
+    "list_signal_files_file": "/app/pipeline/QCResults/data_conversion/list.txt",
+    "map_file": "/app/pipeline/QCResults/data_conversion/sample_map.txt",   
+    "snp_file": "/app/pipeline/QCResults/data_conversion/SNPfile.txt",
+    "pfb_file": "/app/pipeline/QCResults/data_conversion/model.pfb",
+    "gcmodel_file": "/app/pipeline/QCResults/data_conversion/hg19.gcmodel",
+    "sample_pass_list_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.list",
+    "sample_pass_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.rawcn",
+    "sample_summary_file": "/app/pipeline/QCResults/data_clean/samples_qcsum.list",
+    "sample_clean_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.clean.rawcn",
+    "sample_merged_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+    "data_conversion_path": "/app/pipeline/QCResults/data_conversion",
+    "data_intensity_path" :  "/app/pipeline/QCResults/data_conversion/data_intensity",
+    "data_calling_path": "/app/pipeline/QCResults/data_calling",
+    "data_clean_path": "/app/pipeline/QCResults/data_clean",
+    "graphic_path": "/app/pipeline/QCResults/graphic",
+    "graphic_qc_path": "/app/pipeline/QCResults/graphic/qc",
+    "log_path": "/app/pipeline/QCResults/logs"
 }
 ```
-
 - Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location and setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
-
 ```python
   ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -84,8 +99,10 @@ resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '
 ### programs ########################################
 #Include here all programs and versions.You can run the specific program/version
 #calling it as {program_version} inside the code. E.g {R_3_4}
-pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
-R_4_1 = "/home/haydee.artaza/programs/R_4_1"
+pennCNV = "/PennCNV-1.0.5"
+# this is needed for using X11 graphic device for plotting in docker
+# if running on the native system just set it to "Rscript"
+Rscript = "xvfb-run Rscript"
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"
@@ -101,37 +118,22 @@ wf = "0.05"
 qcbafdrift = "0.01"
 qclrrsd = "0.3"
 
-### Create paths if don't exist ###################################
+### Create paths if they don't exist ###################################
 
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['data_intensity_path']):
-    os.makedirs(config['data_intensity_path'])
-if not os.path.exists(config['data_calling_path']):
-    os.makedirs(config['data_calling_path'])
-if not os.path.exists(config['data_clean_path']):
-    os.makedirs(config['data_clean_path'])
-if not os.path.exists(config['graphic_path']):
-    os.makedirs(config['graphic_path'])
-if not os.path.exists(config['graphic_qc_path']):
-    os.makedirs(config['graphic_qc_path'])
+dirs_to_create = ["data_conversion_path", "data_intensity_path", "data_calling_path",
+                          "data_clean_path", "graphic_path", "graphic_qc_path", "log_path"]
+for directory in dirs_to_create:
+    if not os.path.exists(config[directory]):
+        os.makedirs(config[directory])
 ```
 
-- Excute the pipeline with the comman line:
+- Execute the pipeline as shown above either on the native system, or using Docker.
 
-```bash
-conda activate snakemake
-snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
-```
-
-### 2. Rare CNVs analysis execution:
+### 2. Rare CNVs analysis execution
 
 ```bash
 cd association-cnv
 ```
-
 Modify the config.json file in association-pipeline/snakefiles. In this example directory `QCResults` refers the directory with the QC and detection calls results, directory `RareCNVsResults` will contain all files generted in this pipeline and `Resources` refers to the directory containing the input files for this pipeline.
 
 ``` json
@@ -163,7 +165,6 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
  
 }
 ```
-
 ```bash
 snakemake -s association-pipeline/snakefiles/association.snake --core 1
 **NOTE:**
@@ -188,7 +189,8 @@ See test instructions [here](test/Test.md)
 
 Pipeline Structure
 -----------------------------
-The pipeline executs two major tasks: 
+The pipeline executes two major tasks:
+
 - 1. Quality control analysis, which uses SNP-array genotyping data (green box) as an input to obtain high-quality samples and CNV calls. 
 - 2. Rare CNV analysis, which takes samples and CNV calls from the QC pipeline output, and after the data format conversion, consists of burden, rare CNV and enrichment analysis. 
 

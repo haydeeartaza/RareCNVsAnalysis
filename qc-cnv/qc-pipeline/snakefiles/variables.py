@@ -6,8 +6,9 @@ resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '
 #Include here all programs and versions.You can run the specific program/version
 #calling it as {program_version} inside the code. E.g {R_3_4}
 pennCNV = "/PennCNV-1.0.5"
+# this is needed for using X11 graphic device for plotting in docker
+# if running on the native system just set it to "Rscript"
 Rscript = "xvfb-run Rscript"
-#R_4_1 = "/home/haydee.artaza/programs/R_4_1"
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"
