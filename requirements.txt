@@ -5,3 +5,5 @@ dplyr
 reshape
 devtools
 glossary
+ggtext
+ggpubr

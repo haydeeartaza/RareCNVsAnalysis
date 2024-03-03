@@ -20,6 +20,9 @@ RUN apt-get update && \
     xorg-dev \
     xauth \
     libx11-dev \
+    x11-apps \
+    xvfb xauth xfonts-base \
+    cmake \  
     libcurl4-gnutls-dev \
     libharfbuzz-dev libfribidi-dev \
     libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
