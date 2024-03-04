@@ -413,13 +413,21 @@ rule FREQUENCY_CNVs_INSPECTION:
              # Extracting denominator for frequency calculation. It includea  samples with 0 CNVs
              samplesize=$(wc -l {input.samplescnvcorefamfile} | cut -f1 -d' ')
 	         # Remove the {random_controls} used for rare variants extraction
-	         samplesize=$(($samplesize - {random_controls}))             
+	         samplesize=$(($samplesize - {random_controls}))
+             echo "plot_frequency_distribution \
+                 {params.outputdir}/${{rarecnvsfinalprefix}}_regions_freq.cnv \
+                 ${{rarecnvsfinalprefix}}_regions_freq \
+                 ${{samplesize}} \
+                 {params.forplotsdir} \
+                 {params.graphicsdir}"
+
              plot_frequency_distribution \
                  {params.outputdir}/$rarecnvsfinalprefix"_regions_freq.cnv" \
                  $rarecnvsfinalprefix"_regions_freq" \
                  $samplesize \
                  {params.forplotsdir} \
                  {params.graphicsdir}
+
            
 	    done     
 	"""
