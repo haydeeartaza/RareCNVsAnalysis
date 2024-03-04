@@ -376,16 +376,16 @@ rule FREQUENCY_CNVs_INSPECTION:
              {bedtools} intersect -wa -wb -a <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t") -b {params.outputdir}/$rarecnvsfinalprefix"_merged.bed" > \
              {params.outputdir}/$rarecnvsfinalprefix"_regions.bed"
             
-	     # Get cnv file to CNVR
-	     echo "##### Creating "$rarecnvsfinalprefix"_regions.cnv... #####" 
-	     echo -e "FID\tIID\tCHR\tBP1\tBP2\tTYPE\tSCORE\tSITES" > {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
+	        # Get cnv file to CNVR
+	        echo "##### Creating "$rarecnvsfinalprefix"_regions.cnv... #####" 
+	        echo -e "FID\tIID\tCHR\tBP1\tBP2\tTYPE\tSCORE\tSITES" > {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
              awk '$0!~/track/ {{chr=$1; gsub(/chr/,"",chr); fid=$4; gsub(/_.*/,"",fid); iid=$4; gsub(/.*_/,"",iid);  print fid"\t"iid"\t"chr"\t"$13"\t"($14-1)"\t"$10"\t"$5"\t"$11}}' \
-	     {params.outputdir}/$rarecnvsfinalprefix"_regions.bed" >> {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
+	        {params.outputdir}/$rarecnvsfinalprefix"_regions.bed" >> {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
 
              # Get fam file to CNVR
              echo "##### Creating "$rarecnvsfinalprefix"_regions.fam... #####"
              for idd in `awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix"_regions".cnv  | sort -u`; do
-		grep -w $idd {params.outputdir}/$rarecnvsfinalprefix.fam 
+		     grep -w $idd {params.outputdir}/$rarecnvsfinalprefix.fam 
              done > {params.outputdir}/$rarecnvsfinalprefix"_regions".fam
             
              # Get map file to CNVR
@@ -399,7 +399,7 @@ rule FREQUENCY_CNVs_INSPECTION:
              # Get frequency based on Regions
              echo "##### Obtaining the frequencies for all regions... #####"
              $plink \
-		--cfile {params.outputdir}/$rarecnvsfinalprefix"_regions" \
+		        --cfile {params.outputdir}/$rarecnvsfinalprefix"_regions" \
                 --allow-no-sex \
                 --noweb \
                 --cnv-seglist \
@@ -412,8 +412,8 @@ rule FREQUENCY_CNVs_INSPECTION:
              echo "##### Plot frequency distribution in rare cnvs (del,dup) region freq file... #####"
              # Extracting denominator for frequency calculation. It includea  samples with 0 CNVs
              samplesize=$(wc -l {input.samplescnvcorefamfile} | cut -f1 -d' ')
-	     # Remove the {random_controls} used for rare variants extraction
-	     samplesize=$(($samplesize - {random_controls}))             
+	         # Remove the {random_controls} used for rare variants extraction
+	         samplesize=$(($samplesize - {random_controls}))             
              plot_frequency_distribution \
                  {params.outputdir}/$rarecnvsfinalprefix"_regions_freq.cnv" \
                  $rarecnvsfinalprefix"_regions_freq" \
