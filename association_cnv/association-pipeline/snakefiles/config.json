@@ -6,7 +6,7 @@
     "controls_random_file": "test/resources/controls_random_sampling.txt",
     "genes_ref_file": "test/resources/glist-hg19.dat",
     "core_file": "test/resources/core.txt",
-    "pathway_file": "test/resources/PanelApp/panelApp_AI_genes.dat",
+    "pathway_file": "test/resources/panelApp_AI_genes.dat",
     "allpheno_file": "test/resources/pheno.tsv",
 
     "data_conversion_path": "/app/pipeline/output_association/data_conversion",
