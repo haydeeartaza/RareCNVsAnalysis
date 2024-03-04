@@ -362,9 +362,9 @@ rule FREQUENCY_CNVs_INSPECTION:
        shell:
          """ 
 	    libdir={libdir}
-            source {libdir}/functions.sh
-            plink={plink17}
-            Rscript={Rscript}	
+        source {libdir}/functions.sh
+        plink={plink17}
+        Rscript={Rscript}	
 
 	    for type in {cnv_type}; do
              echo "##### Processing CNV: ${{type}} #####"
@@ -379,13 +379,13 @@ rule FREQUENCY_CNVs_INSPECTION:
 	        # Get cnv file to CNVR
 	        echo "##### Creating "$rarecnvsfinalprefix"_regions.cnv... #####" 
 	        echo -e "FID\tIID\tCHR\tBP1\tBP2\tTYPE\tSCORE\tSITES" > {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
-             awk '$0!~/track/ {{chr=$1; gsub(/chr/,"",chr); fid=$4; gsub(/_.*/,"",fid); iid=$4; gsub(/.*_/,"",iid);  print fid"\t"iid"\t"chr"\t"$13"\t"($14-1)"\t"$10"\t"$5"\t"$11}}' \
+            awk '$0!~/track/ {{chr=$1; gsub(/chr/,"",chr); fid=$4; gsub(/_.*/,"",fid); iid=$4; gsub(/.*_/,"",iid);  print fid"\t"iid"\t"chr"\t"$13"\t"($14-1)"\t"$10"\t"$5"\t"$11}}' \
 	        {params.outputdir}/$rarecnvsfinalprefix"_regions.bed" >> {params.outputdir}/$rarecnvsfinalprefix"_regions.cnv"
 
              # Get fam file to CNVR
              echo "##### Creating "$rarecnvsfinalprefix"_regions.fam... #####"
-             for idd in `awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix"_regions".cnv  | sort -u`; do
-		     grep -w $idd {params.outputdir}/$rarecnvsfinalprefix.fam 
+             for idd in `awk '$1!="FID" {{print $2}}' {params.outputdir}/$rarecnvsfinalprefix"_regions".cnv | sort -u`; do
+		        grep -w $idd {params.outputdir}/$rarecnvsfinalprefix.fam 
              done > {params.outputdir}/$rarecnvsfinalprefix"_regions".fam
             
              # Get map file to CNVR
@@ -410,16 +410,10 @@ rule FREQUENCY_CNVs_INSPECTION:
 
              # plots
              echo "##### Plot frequency distribution in rare cnvs (del,dup) region freq file... #####"
-             # Extracting denominator for frequency calculation. It includea  samples with 0 CNVs
+             # Extracting denominator for frequency calculation. It includes  samples with 0 CNVs
              samplesize=$(wc -l {input.samplescnvcorefamfile} | cut -f1 -d' ')
 	         # Remove the {random_controls} used for rare variants extraction
 	         samplesize=$(($samplesize - {random_controls}))
-             echo "plot_frequency_distribution \
-                 {params.outputdir}/${{rarecnvsfinalprefix}}_regions_freq.cnv \
-                 ${{rarecnvsfinalprefix}}_regions_freq \
-                 ${{samplesize}} \
-                 {params.forplotsdir} \
-                 {params.graphicsdir}"
 
              plot_frequency_distribution \
                  {params.outputdir}/$rarecnvsfinalprefix"_regions_freq.cnv" \
@@ -427,7 +421,6 @@ rule FREQUENCY_CNVs_INSPECTION:
                  $samplesize \
                  {params.forplotsdir} \
                  {params.graphicsdir}
-
            
 	    done     
 	"""
