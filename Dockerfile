@@ -36,7 +36,11 @@ RUN apt-get update && \
     vcftools \
     bcftools \
     locales \
-    libpcre++-dev
+    libpcre++-dev \
+    gawk 
+
+# Use the right falour of awk
+RUN ln -sf /usr/bin/gawk awk
 
 # Install pipenv and project dependencies
 RUN pip install pipenv
@@ -49,18 +53,6 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
        echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 ENV LANG en_US.UTF-8
-
-# Download and install PLINK v1.7 in the root directory
-RUN wget -q https://s3.amazonaws.com/plink1-assets/1.07/plink1_linux_x86_64.zip && \
-    unzip plink1_linux_x86_64.zip -d /usr/local/bin/ && \
-    ln -s /usr/local/bin/plink-1.07-x86_64/plink /usr/bin/plink && \
-    rm plink1_linux_x86_64.zip
-
-# Download and install PLINK v1.9 in the root directory
-RUN wget -q https://s3.amazonaws.com/plink1-assets/dev/plink_linux_x86_64.zip && \
-    unzip plink_linux_x86_64.zip -d /usr/local/bin/ && \
-    ln -s /usr/local/bin/plink /usr/bin/plink2 && \
-    rm plink_linux_x86_64.zip
 
 # Download and install PennCNV v1.0.5 in the root directory
 RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
@@ -81,6 +73,7 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
 
 # Install additional R packages
 # package from archive necessary for few other packages
+# the versions were picked to build and work within the given R version
 COPY ./requirements.txt ./
 RUN Rscript -e 'install.packages("devtools", repos="https://cloud.r-project.org", dependencies = TRUE); \
     install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org"); \
@@ -88,6 +81,18 @@ RUN Rscript -e 'install.packages("devtools", repos="https://cloud.r-project.org"
     install.packages("glossary", repos="https://cloud.r-project.org"); \ 
     devtools::install_version(package="ggpubr", version = "0.6.0", repos="https://cloud.r-project.org"); \
     devtools::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
+
+# Download and install PLINK v1.7 in the root directory
+# the default one did not work on this system, using official Debian build for Ubuntu
+RUN wget http://archive.ubuntu.com/ubuntu/pool/universe/p/plink/plink_1.07+dfsg-3build1_amd64.deb && \
+    dpkg -i plink_1.07+dfsg-3build1_amd64.deb && \
+    rm plink_1.07+dfsg-3build1_amd64.deb
+
+# Download and install PLINK v1.9 in the root directory
+RUN wget -q https://s3.amazonaws.com/plink1-assets/dev/plink_linux_x86_64.zip && \
+    unzip plink_linux_x86_64.zip -d /usr/local/bin/ && \
+    ln -s /usr/local/bin/plink /usr/bin/plink2 && \
+    rm plink_linux_x86_64.zip
 
 # Copy over your pipeline files
 COPY . /app/pipeline
