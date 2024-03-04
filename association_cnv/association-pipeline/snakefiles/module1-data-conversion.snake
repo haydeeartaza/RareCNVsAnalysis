@@ -17,7 +17,7 @@ rule CONVERT_PENNCNV_TO_PLINK_FORMAT:
 
     shell:
         """
-        source {libdir}/functions.sh
+        source {libdir}/functions.sh {Rscript}
         plink={plink17}
 	echo "{params.outputdir} - {params.prefix}"
     
@@ -70,7 +70,7 @@ rule EXTRACT_CORE_SAMPLES:
     shell:
         """
 
-        source {libdir}/functions.sh
+        source {libdir}/functions.sh {Rscript}
         plink={plink17}
 
         # Extract core samples and their CNVs
@@ -122,7 +122,7 @@ rule EXTRACT_FINAL_CNVs:
 
     shell:
         """
-	source {libdir}/functions.sh
+	source {libdir}/functions.sh {Rscript}
         plink={plink17}
 	
 	SNPs=$(({cnvSNPs} + 1))

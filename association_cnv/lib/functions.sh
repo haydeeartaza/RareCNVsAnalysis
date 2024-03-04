@@ -9,6 +9,8 @@
 # 2.Mapping file: two columns file original id sample and PennCNV id
 # 3.Core file: file including list core samples  
 # 4.Core rawcn  dir+file: core rawcn file after QC and merging name + out dir 
+Rscript=$1
+
 function get_qc_core_cnvs_rawcn {
     rawcnfile=$1
     mapfile=$2
@@ -91,7 +93,7 @@ function create_summary_by_cnvs_lengths_exclusive {
         interval=$I1"KB_"$I2"KB"
         echo "##### Processing summary CNVs > $interval in $outfile #####";
         if [[ $end -eq ${#limits[@]} ]]; then I2=1000000; interval=echo $I1"KB"; fi
-        Rscript $libdir/two_proportions_test.R \
+        ${Rscript} $libdir/two_proportions_test.R \
                  $3"/"$2"_"$interval"_statistics.csv" \
                  $5 \
                  $6 \
@@ -104,7 +106,7 @@ function create_summary_by_cnvs_lengths_exclusive {
     # Plot OR distribution
     echo "##### Generating forest plots... #####"
     cut -f1,6-10  $outfile | sed 's/X95.CI/X95.CI.lower\tX95.CI.upper/' | sed 's/,/\t/' > temp
-    Rscript $libdir/plot_forest_OR.R \
+    ${Rscript} $libdir/plot_forest_OR.R \
         temp \
         $7"/"$2"_forest_OR.png"
   
@@ -138,7 +140,7 @@ function create_summary_by_cnvs_overall_exclusive {
     
     outfile=$3"/"$2"_ALL_summary_statistics.csv"
     echo "##### Processing CNVs in $outfile #####";
-    Rscript $libdir/two_proportions_test.R \
+    ${Rscript} $libdir/two_proportions_test.R \
         $3"/"$2"_ALL_statistics.csv" \
         $4 \
         $5 \
@@ -270,7 +272,7 @@ function plot_frequency_distribution {
 	   END{print "CNVR_FREQ_COUNTS\tTOTAL_CNVR_IN_FREQ\tFREQ_IN_POP"; for(i in a) b[a[i]]++; for(i in b) {freq=(i/pop); print i"\t"b[i]"\t"freq} }' \
 	   $rarecnvsallfrqfile > $forplotsdir/CNVs_frequencies_$prefix.tsv
      
-    Rscript $libdir/plot_frequency_distribution.R \
+    ${Rscript} $libdir/plot_frequency_distribution.R \
            $forplotsdir/CNVs_frequencies_$prefix.tsv \
            $graphicsdir/CNVs_frequencies_$prefix.png
 
