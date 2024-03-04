@@ -22,11 +22,11 @@ See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
 Pipeline Execution
 -----------------------------
-1. Download the git project:
+**1. Download the git project:**
 ```
 $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
-2. Detection calls and QC analysis execution: 
+**2. Detection calls and QC analysis execution:**
 ```
 $ cd qc-cnv
 ```
@@ -109,8 +109,7 @@ if not os.path.exists(config['graphic_qc_path']):
 $ conda activate snakemake
 $ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
-
-3. Rare CNVs analysis execution:
+**3. Rare CNVs analysis execution:**
 ```
 $ cd association-cnv
 ```
@@ -145,13 +144,13 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
 }
 ```
 NOTE:
-> Phenotype file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh)](association-cnv/lib/functions.sh) can be modified to adjust these positions.
+> Phenotype file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association-cnv/lib/functions.sh) can be modified to adjust these positions.
 ```
-NAT	REG	CAT PID     FID AGE SEX
-A	1	1	NA06985	0	10	1
-B	2	2	NA12717	0	25	2
-C	3	1	NA12873	0	45	1
-D	4	2	NA12891	0	15	2
+NAT REG	CAT PID     FID AGE SEX
+A   1   1   NA06985	0	10	1
+B   2   2   NA12717 0   25  2
+C   3   1   NA12873 0   45  1
+D   4   2   NA12891 0   15  2
 ```
 - Excute the pipeline with the comman line:
 ```
