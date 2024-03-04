@@ -362,13 +362,13 @@ rule FREQUENCY_CNVs_INSPECTION:
        shell:
          """ 
 	    libdir={libdir}
-        plink={plink17}
-        Rscript={Rscript}	
-	    source {libdir}/functions.sh
+            source {libdir}/functions.sh
+            plink={plink17}
+            Rscript={Rscript}	
 
 	    for type in {cnv_type}; do
-             echo "##### Processing CNV: $type #####"
-             rarecnvsfinalprefix={cnv_prefix}"_rare_"$type
+             echo "##### Processing CNV: ${{type}} #####"
+             rarecnvsfinalprefix={cnv_prefix}"_rare_"${{type}}
 
              echo "##### Merging $type in CNVR... #####"
              {bedtools} merge -i <({bedtools} sort -i <(cat {params.outputdir}/$rarecnvsfinalprefix.bed | tr " " "\t")) > {params.outputdir}/$rarecnvsfinalprefix"_merged.bed"
