@@ -160,7 +160,7 @@ rule SPLIT_CNVs_DEL_AND_DUP:
             >> {params.outputdir}/case_control_CNVs_tot_length_mean_dup.tsv
 
             # Plot            
-            {libdir}/plot_distribution_cnv_by_length.R \
+            {Rscript} {libdir}/plot_distribution_cnv_by_length.R \
                 {params.outputdir}/case_control_CNVs_length_del.tsv \
                 {params.outputdir}/case_control_CNVs_length_dup.tsv \
                 {params.graphdir}
