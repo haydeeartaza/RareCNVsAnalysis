@@ -13,7 +13,7 @@
 
 ## set global variable for how to run Rscript
 # this is defined in variables.py
-Rscript=${Rscript}
+Rscript=$Rscript
 
 function get_qc_core_cnvs_rawcn {
     rawcnfile=$1
@@ -320,7 +320,7 @@ function plot_samples_distribution {
             END{for(i in a){ if(i==1) n=ctrls; else n=cses; print inte"\t"i"\t"a[i]"\t"a[i]/n} }' $rarecnvsindvfile
     done >> $forplotsdir/Individuals_per_CNVs_Interval_Average_length_$prefix.tsv 
 
-    $libdir/plot_samples_distribution.R \
+    ${Rscript} $libdir/plot_samples_distribution.R \
         $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv \
         $graphicsdir/numCNVs_by_numIndividual_$prefix.png \
         $forplotsdir/Individuals_per_CNVs_Interval_Average_length_$prefix.tsv \

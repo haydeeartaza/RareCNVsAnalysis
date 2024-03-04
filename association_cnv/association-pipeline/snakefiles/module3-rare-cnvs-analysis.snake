@@ -362,7 +362,8 @@ rule FREQUENCY_CNVs_INSPECTION:
        shell:
          """ 
 	    libdir={libdir}
-            plink={plink17}	
+        plink={plink17}
+        Rscript={Rscript}	
 	    source {libdir}/functions.sh
 
 	    for type in {cnv_type}; do
@@ -449,6 +450,7 @@ rule FREQUENCY_CNVs_ASSESSMENT:
        shell:
          """
 	    libdir={libdir}
+            Rscript={Rscript}
             plink={plink17}
             source {libdir}/functions.sh
 
