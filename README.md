@@ -143,8 +143,8 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
  
 }
 ```
-NOTE:
-> Phenotype file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
+**NOTE:**
+> **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
 ```
 NAT REG	CAT PID     FID AGE SEX
 A   1   1   NA06985 0   10  1
