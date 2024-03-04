@@ -9,7 +9,7 @@
 # 2.Mapping file: two columns file original id sample and PennCNV id
 # 3.Core file: file including list core samples  
 # 4.Core rawcn  dir+file: core rawcn file after QC and merging name + out dir 
-Rscript=$1
+#Rscript=$1
 
 function get_qc_core_cnvs_rawcn {
     rawcnfile=$1
