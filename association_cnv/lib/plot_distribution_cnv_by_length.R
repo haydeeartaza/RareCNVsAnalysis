@@ -11,6 +11,7 @@
 
 library(ggplot2)
 library(gridExtra)
+source(file.path(getwd(), "association_cnv/lib/plots_functions.R"))
 
 args = commandArgs(TRUE)
 case_control_CNVs_length_del = args[1]
@@ -24,12 +25,15 @@ data$length <- factor(data$length, levels = unique(data$length))
 data[data$pheno == 1,]$pheno = "CONTROL"
 data[data$pheno == 2,]$pheno = "CASE"
 
-png(case_control_length_samples_output, width = 880, height = 580)
+#png(case_control_length_samples_output, width = 880, height = 580)
 
 cbPalette <- c("#D55E00", "#56B4E9")
-p1 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = factor(pheno))) + geom_line() + geom_point() + 
+p1 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = factor(pheno))) + 
+	geom_line() + 
+	geom_point() + 
+	scale_colour_manual(values = cbPalette) +
 	labs(title="Number of CNVs (DELETIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)",y = "CNVs") +
-	theme(legend.position = "none") +   scale_colour_manual(values = cbPalette)
+	theme(legend.position = "none") 
 
 data <- read.table(case_control_CNVs_length_dup, header = T, sep = "\t")
 data$length <- factor(data$length, levels = unique(data$length))
@@ -37,10 +41,14 @@ data[data$pheno == 1,]$pheno = "CONTROL"
 data[data$pheno == 2,]$pheno = "CASE"
 
 
-p2 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = factor(pheno))) + geom_line() + geom_point() + 
+p2 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = factor(pheno))) + 
+	geom_line() + 
+	geom_point() + 
+	scale_colour_manual(name = "CLASS", labels = c("CASE","CONTROL"), values = cbPalette) +
 	labs(title = "Number of CNVs (DUPLICATIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)", y = "CNVs") + 
-	theme(legend.position = "bottom") +   scale_colour_manual(name = "CLASS", labels = c("CASE","CONTROL"), values = cbPalette)
+	theme(legend.position = "bottom") 
 
-grid.arrange(p1, p2, ncol = 1)
+p3 <- grid.arrange(p1, p2, ncol = 1)
 
-dev.off()
+savePlot(filename=case_control_length_samples_output,plot=p3, width=1900, height=1100)
+#dev.off()
