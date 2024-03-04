@@ -11,6 +11,10 @@
 # 4.Core rawcn  dir+file: core rawcn file after QC and merging name + out dir 
 #Rscript=$1
 
+## set global variable for how to run Rscript
+# this is defined in variables.py
+Rscript=${Rscript}
+
 function get_qc_core_cnvs_rawcn {
     rawcnfile=$1
     mapfile=$2
