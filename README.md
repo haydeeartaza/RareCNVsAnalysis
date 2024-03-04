@@ -147,7 +147,7 @@ NOTE:
 > Phenotype file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
 ```
 NAT REG	CAT PID     FID AGE SEX
-A   1   1   NA06985	0   10  1
+A   1   1   NA06985 0   10  1
 B   2   2   NA12717 0   25  2
 C   3   1   NA12873 0   45  1
 D   4   2   NA12891 0   15  2
