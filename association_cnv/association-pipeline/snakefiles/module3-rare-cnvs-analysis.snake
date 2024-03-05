@@ -393,6 +393,12 @@ rule GET_RARE_CNVs:
             # Check if first column of the last four or "The number of features in B that overlapped (by at least 50%) the A interval" has != 0 value. 
             # That means: a CNV have at least 50% of its region inside of one or more CNVs belong to common variants (and vice versa) and should be removed.
             
+            # pre-sort input bed files for optimal memory usage
+            {bedtools} sort -i {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed > {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.sorted.bed
+            mv {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.sorted.bed {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed
+            {bedtools} sort -i {params.referencedir}/$refcontrols"_track".cnv.temp.bed > {params.referencedir}/$refcontrols"_track".cnv.temp.sorted.bed
+            mv {params.referencedir}/$refcontrols"_track".cnv.temp.sorted.bed {params.referencedir}/$refcontrols"_track".cnv.temp.bed
+
             {bedtools} coverage -f 0.5 -r \
                 -a {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed \
                 -b {params.referencedir}/$refcontrols"_track".cnv.temp.bed \
