@@ -140,7 +140,7 @@ function create_summary_by_cnvs_overall_exclusive {
     
     outfile=$3"/"$2"_ALL_summary_statistics.csv"
     echo "##### Processing CNVs in $outfile #####";
-    ${Rscript} $libdir/two_proportions_test.R \
+    Rscript $libdir/two_proportions_test.R \
         $3"/"$2"_ALL_statistics.csv" \
         $4 \
         $5 \

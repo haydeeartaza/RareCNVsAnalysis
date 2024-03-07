@@ -500,10 +500,11 @@ rule FREQUENCY_CNVs_INSPECTION:
         "Frequency inspection for RARE CNVs"
     shell:
         """ 
-        libdir={libdir}
+        set +o pipefail
+	libdir={libdir}
         source {libdir}/functions.sh
         plink={plink17}
-        Rscript={Rscript}    
+        Rscript="{Rscript}"    
 
         for type in {cnv_type}; do
              echo "##### Processing CNV: ${{type}} #####"
@@ -627,7 +628,7 @@ rule FREQUENCY_CNVs_ASSESSMENT:
     shell:
         """
         libdir={libdir}
-        Rscript={Rscript}
+        Rscript="{Rscript}"
         plink={plink17}
         source {libdir}/functions.sh
 

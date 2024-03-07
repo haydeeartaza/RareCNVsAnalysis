@@ -26,8 +26,8 @@ CNV_EXT=['.cnv.indiv','.cnv.summary']
 cnvKB = "50" # bigger than 50 kb
 cnvSNPs = "5" # bigger than 5 snps
 # Common CNV frequency: frequencies greater than or equal to (high_freq) from a subset of healthy control individuals (random_controls)
-high_freq = "4" # 2% of 200, change these values according your strategy
-random_controls = "200"
+high_freq = "1" # 2% of 200, change these values according your strategy
+random_controls = "2"
 
 ### Create paths if they don't exist ###################################
 paths = [
