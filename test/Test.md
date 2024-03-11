@@ -20,7 +20,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
 
 2. Replace config.js and variables.py in **qc-pipeline**:
-- **config.js**. Replace `.` with your mounting point, e.g. `/home/username`
+- **config.js**: Replace `.` with your mounting point, e.g. `/home/username`
 ```json
 {
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
@@ -51,7 +51,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
     "log_path": "./QCResults/logs"
 }
 ```
-- **variables.py** Replace `path` with your programs path, e.g. `/home/userme/software`
+- **variables.py**: Replace `path` with your programs path, e.g. `/home/userme/software`
 ```python
 ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -96,7 +96,7 @@ if not os.path.exists(config['graphic_qc_path']):
 
 ```
 3. Replace config.js and variables.py in **association-pipeline**:
-- **config.js**. Replace `.` with your mounting point, e.g. `/home/username`
+- **config.js**: Replace `.` with your mounting point, e.g. `/home/username`
 ```json
 {
     "map_file": "./QCResults/data_conversion/sample_map.txt",
@@ -126,7 +126,7 @@ if not os.path.exists(config['graphic_qc_path']):
  
 } 
 ```
-- **variables.py** Replace `path` with your programs path, e.g. `/home/userme/software`
+- **variables.py**: Replace `path` with your programs path, e.g. `/home/userme/software`
 ```python
 ### Snakemake_workflows initialization #######################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
