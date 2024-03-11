@@ -11,16 +11,16 @@ Test
 ├── QCResults
 └── RareCNVsResults
 ```
-&ensp;**RareCNVsAnalysis**: Pipeline project download from:
+- **RareCNVsAnalysis**: Pipeline project download from:
 ```
 $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
-&ensp;**data**: Directory with SNP-array genotyping data. Download [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE)
-&ensp;**QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
-&ensp;**RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
+- **data**: Directory with SNP-array genotyping data. Download [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE)
+- **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
+- **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
 
-2. Replace config.js and variables.py in ***qc-pipeline**:
-&ensp;**config.js**. Replace `**.**` with your mounting point, e.g. `/home/userme`
+2. Replace config.js and variables.py in **qc-pipeline**:
+- **config.js**. Replace `**.**` with your mounting point, e.g. `/home/userme`
 ```json
 {
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
@@ -51,7 +51,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
     "log_path": "./QCResults/logs"
 }
 ```
-&ensp;**variables.py** Replace `**path**` with your programs path, e.g. `/home/userme/software`
+- **variables.py** Replace `**path**` with your programs path, e.g. `/home/userme/software`
 ```python
 ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -96,7 +96,7 @@ if not os.path.exists(config['graphic_qc_path']):
 
 ```
 3. Replace config.js and variables.py in ***association-pipeline**:
-&ensp;**config.js**. Replace `**.**` with your mounting point, e.g. `/home/userme`
+- **config.js**. Replace `**.**` with your mounting point, e.g. `/home/userme`
 ```
 {
     "map_file": "./QCResults/data_conversion/sample_map.txt",
@@ -126,7 +126,7 @@ if not os.path.exists(config['graphic_qc_path']):
  
 } 
 ```
-&ensp;**variables.py** Replace `**path**` with your programs path, e.g. `/home/userme/software`
+- **variables.py** Replace `**path**` with your programs path, e.g. `/home/userme/software`
 ```
 ### Snakemake_workflows initialization #######################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -194,6 +194,6 @@ $ cd association-cnv
 $ snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
 5. Notes
-- This test just show the pipeline execution. As data input size (12 samples) is small sample size we can obtain meaninful results.
+- This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can obtain meaninful results.
 - If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
 - Frequency (high_freq) and controls reference (random_controls) value should be modified according the study requeriments and the number of reference controls as well. See (Rare copy number variation in autoimmune Addison’s disease) [doi:10.3389/fimmu.2024.1374499]
