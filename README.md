@@ -56,8 +56,8 @@ $ cd qc-cnv
     "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
     "data_calling_path": "/QCResults/data_calling",
     "data_clean_path": "/QCResults/data_clean",
-    "graphic_path": "/QCResults/graphic",
-    "graphic_qc_path": "/QCResults/graphic/qc",
+    "graphic_path": "/QCResults/graphics",
+    "graphic_qc_path": "/QCResults/graphics/qc",
     "log_path": "/QCResults/logs"
 }
 ```
