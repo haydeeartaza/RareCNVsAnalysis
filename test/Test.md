@@ -97,7 +97,7 @@ if not os.path.exists(config['graphic_qc_path']):
 ```
 3. Replace config.js and variables.py in **association-pipeline**:
 - **config.js**. Replace `.` with your mounting point, e.g. `/home/username`
-```
+```json
 {
     "map_file": "./QCResults/data_conversion/sample_map.txt",
     "sample_all_file": "./QCResults/data_calling/sampleall.rawcn",
@@ -127,7 +127,7 @@ if not os.path.exists(config['graphic_qc_path']):
 } 
 ```
 - **variables.py** Replace `path` with your programs path, e.g. `/home/userme/software`
-```
+```python
 ### Snakemake_workflows initialization #######################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
 resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
