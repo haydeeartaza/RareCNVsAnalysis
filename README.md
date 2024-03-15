@@ -137,6 +137,18 @@ for directory in dirs_to_create:
 Step 2: Rare CNVs analysis
 -----------------------------
 
+To run the pipeline on the supplied test data on the native system:
+
+```bash
+snakemake -s association-pipeline/snakefiles/association.snake --core 1
+```
+
+To run the pipeline on the supplied test data via Docker:
+
+```bash
+docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-pipeline/snakefiles/association.snake --core 1
+```
+
 ### Pipeline configuration
 
 ```bash
@@ -189,18 +201,6 @@ A   1   1   NA06985 0   10  1
 B   2   2   NA12717 0   25  2
 C   3   1   NA12873 0   45  1
 D   4   2   NA12891 0   15  2
-```
-
-Execute the pipeline on the native system:
-
-```bash
-snakemake -s association-pipeline/snakefiles/association.snake --core 1
-```
-
-Or via Docker:
-
-```bash
-docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
 
 User guide
