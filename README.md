@@ -31,9 +31,9 @@ If you are going to use Docker, you simply need to build the image (it will take
 docker build -t rarecnvs_image:latest .
 ```
 
-Pipeline Execution
+Step 1: CNV detection and QC
 -----------------------------
-### 1. Detection of CNV calls and QC analysis
+
 
 To run the pipeline on the supplied test data on the native system:
 
@@ -42,13 +42,13 @@ conda activate snakemake
 snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
 
-To run the pipeline on the supplied test data using docker (after you have built the image):
+To run the pipeline on the supplied test data using Docker (after you have built the image):
 
 ```bash
 docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s qc-cnv/qc-pipeline/snakefiles/qc.snake --core 1
 ```
 
-### Pipeline settings
+### Pipeline configuration
 
 To configure the pipeline for your own dataset you need to adjust two files: 
 
@@ -134,59 +134,82 @@ for directory in dirs_to_create:
 
 - Execute the pipeline as shown above either on the native system, or using Docker.
 
-### 2. Rare CNVs analysis
+Step 2: Rare CNVs analysis
+-----------------------------
+
+### Pipeline configuration
 
 ```bash
 cd association-cnv
 ```
-Modify the config.json file in association-pipeline/snakefiles. In this example directory `QCResults` refers the directory with the QC and detection calls results, directory `RareCNVsResults` will contain all files generted in this pipeline and `Resources` refers to the directory containing the input files for this pipeline.
+
+To configure the pipeline for your own dataset you need to adjust two files: 
+
+- [association-pipeline/snakefiles/config.json](association_cnv/association-pipeline/snakefiles/config.json)
+- [association-pipeline/snakefiles/variables.py](association_cnv/association-pipeline/snakefiles/variables.py)
+
+Modify the [`config.json`](association_cnv/association-pipeline/snakefiles/config.json) file. In this example directory `output_qc` refers the directory with the quality controlled CNV calls from the previous step, directory `output_association` will contain all files generted in this pipeline and `test/resources` refers to the directory containing the input files for this step of the pipeline.
 
 ``` json
 {
-    "map_file": "/QCResults/data_conversion/sample_map.txt",
-    "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
-    "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+    "map_file": "/app/pipeline/output_qc/data_conversion/sample_map.txt",
+    "sample_all_file": "/app/pipeline/output_qc/data_calling/sampleall.rawcn",
+    "sample_merged_file": "/app/pipeline/output_qc/data_clean/samples_qcpass.clean.merged.rawcn",
+    
+    "controls_random_file": "test/resources/controls_random_sampling.txt",
+    "genes_ref_file": "test/resources/glist-hg19.dat",
+    "core_file": "test/resources/core.txt",
+    "pathway_file": "test/resources/panelApp_AI_genes.dat",
+    "allpheno_file": "test/resources/pheno.tsv",
 
-    "controls_random_file": "/Resources/controls_random_sampling.txt",
-    "genes_ref_file": "/Resources/enrichment/glist-hg19.dat",
-    "core_file": "/Resources/21h_positive_core.txt",
-    "pathway_file": "/Resources/enrichment/PanelApp/panelApp_AI_genes.dat",
-    "allpheno_file": "/Resources/ALL_phenotypes_09052019.tsv",
-
-    "data_conversion_path": "/RareCNVsResults/data_conversion",
-    "burden_analysis_path": "/RareCNVsResults/burden_analysis",
-    "burden_temp_path": "/RareCNVsResults/burden_analysis/temp",
-    "burden_graph_path": "/RareCNVsResults/graphics/burden_analysis",
-    "rare_cnvs_path": "/RareCNVsResults/rare_cnvs",
-    "rare_cnvs_summary_path": "/RareCNVsResults/rare_cnvs/summary",
-    "rare_cnvs_reference_path": "/RareCNVsResults/rare_cnvs/Reference",
-    "rare_cnvs_reference_summary_path": "/RareCNVsResults/rare_cnvs/Reference/summary",
-    "rare_cnvs_forplots_path": "/RareCNVsResults/rare_cnvs/forplots",
-    "rare_cnvs_graph_path": "/RareCNVsResults/graphics/rare_cnvs",
-    "enrichment_rare_cnvs_path": "/RareCNVsResults/enrichment_rare_cnvs",
-    "enrichment_rare_cnvs_genic_path": "/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
-    "enrichment_rare_cnvs_pathway_path": "/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
-    "log_path": "/RareCNVsResults/logs"
+    "data_conversion_path": "/app/pipeline/output_association/data_conversion",
+    "burden_analysis_path": "/app/pipeline/output_association/burden_analysis",
+    "burden_temp_path": "/app/pipeline/output_association/burden_analysis/temp",
+    "burden_graph_path": "/app/pipeline/output_association/graphics/burden_analysis",
+    "rare_cnvs_path": "/app/pipeline/output_association/rare_cnvs",
+    "rare_cnvs_summary_path": "/app/pipeline/output_association/rare_cnvs/summary",
+    "rare_cnvs_reference_path": "/app/pipeline/output_association/rare_cnvs/Reference",
+    "rare_cnvs_reference_summary_path": "/app/pipeline/output_association/rare_cnvs/Reference/summary",
+    "rare_cnvs_forplots_path": "/app/pipeline/output_association/rare_cnvs/forplots",
+    "rare_cnvs_graph_path": "/app/pipeline/output_association/graphics/rare_cnvs",
+    "enrichment_rare_cnvs_path": "/app/pipeline/output_association/enrichment_rare_cnvs",
+    "enrichment_rare_cnvs_genic_path": "/app/pipeline/output_association/enrichment_rare_cnvs/genic_CNVs",
+    "enrichment_rare_cnvs_pathway_path": "/app/pipeline/output_association/enrichment_rare_cnvs/pathway_CNVs",
+    "log_path": "/app/pipeline/output_association/logs"
  
 }
 ```
-```bash
-snakemake -s association-pipeline/snakefiles/association.snake --core 1
+
 **NOTE:**
 > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
-```
+
+```R
 NAT REG	CAT PID     FID AGE SEX
 A   1   1   NA06985 0   10  1
 B   2   2   NA12717 0   25  2
 C   3   1   NA12873 0   45  1
 D   4   2   NA12891 0   15  2
 ```
-- Excute the pipeline with the comman line:
+
+Execute the pipeline on the native system:
+
+```bash
+snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ```
+
+Or via Docker:
+
+```bash
+docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-pipeline/snakefiles/association.snake --core 1
+```
+
+User guide
+-----------------------------
+
+For details about config, input/output files (see example image below) and modules/rules description see [the user guide manual](manual/Rare_CNVs_pipeline_guide.pdf).
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
-For details about config, input/output files and modules/rules description see [the user guide manual](manual/Rare_CNVs_pipeline_guide.pdf).
 
 Pipeline Structure
 -----------------------------
