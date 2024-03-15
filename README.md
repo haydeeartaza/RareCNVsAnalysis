@@ -11,9 +11,9 @@ Dependencies
 - Snakemake (5.22.1)
 - bcftools
 - vcftools
-- plink (1.7 and 1.9)
+- plink (1.7)
 - PennCNV (1.0.5)
-- R (3.6.3, see package list below and in requirements.txt) 
+- R (3.6.3, see requirements.txt and Dockerfile for the list of packages) 
 
 Installation
 -----------------------------
