@@ -32,7 +32,7 @@ p0<- ggplot(df, aes(x = Length, y = log2(OR), ymin = log2(X95.CI.lower), ymax = 
         #scale_y_continuous(breaks = c(-3,-2, -1, 0, 1, 2, 3, 4, 5, 6), labels = c("1/8", "1/4", "1/2", "1", "2", "4", "8", "16", "32", 64), limits = c(-4, 6)) +
         #facet_wrap(~CN) + 
         theme_bw()  + 
-        theme(axis.text = element_text(size = 15, face = "bold"), axis.title = element_text(size = 22)) 
+        theme(axis.text = element_text(size = 14, face = "bold"), axis.title = element_text(size = 20)) 
         #theme(legend.position="bottom")
 
 #dev.off()

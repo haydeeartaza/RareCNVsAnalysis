@@ -29,14 +29,15 @@ df[df$CLASS == 2,]$CLASS = "CASE"
 cbPalette <- c("#D55E00", "#56B4E9")
 p1 <- ggplot(data = df, aes(x = NUM_CNVS, y = RATIO_SAMPLES, fill = CLASS)) +  
 	  	geom_bar(stat = "identity", position = position_dodge2(width = 0.9, preserve = 'single')) + 
-		labs(title = "Number of CNVs per Individual", x = "Number of CNVs", y = "Individuals (proportion)") + 
 		geom_text(aes(label = NUM_SAMPLES), size = 3.5, position = position_dodge2(width = 0.9, preserve = "single"), vjust = -0.5) + 
 		scale_fill_manual(values = cbPalette) + scale_x_continuous(breaks = seq(0, 20, by = 1)) +
+		theme_bw() +
 		theme(legend.position ="bottom",
 		      plot.title = element_textbox(hjust=0.5,
 			  				               width = unit(0.9, "npc"),
 					                       size = 7)) +
-		theme_bw() 
+		labs(title = "Number of CNVs per Individual", x = "Number of CNVs", y = "Individuals (proportion)") 
+
 
 savePlot(filename=output1, plot=p1, width=1900, height=1100)
 
@@ -48,13 +49,13 @@ df$INTERVAL[df$INTERVAL == "1000KB_1000000KB"] <- "1000KB_>"
 
 p2 <- ggplot(data = df, aes(x = factor(INTERVAL, factor(unique(INTERVAL))), y = RATIO_SAMPLES, fill = CLASS)) +  
 	  	geom_bar(stat = "identity", position = position_dodge2(width = 0.9, preserve = 'single')) +
-		labs(title = "Ratio of individulas with AVERAGE length of CNVs in five intervals", x = "CNVs length intervals", y = "Proportion of Individuals") + 
     	geom_text(aes(label = NUM_SAMPLES), size = 3.5, position = position_dodge2(width = 0.9, preserve = "single"), vjust = -0.5) +
     	scale_fill_manual(values = cbPalette) +
+		theme_bw() +
     	theme(legend.position = "bottom", 
 			  plot.title = element_textbox(hjust=0.5,
 			  				               width = unit(0.9, "npc"),
 					                       size = 7)) +
-		theme_bw() 
+		labs(title = "Ratio of individulas with AVERAGE length of CNVs in five intervals", x = "CNVs length intervals", y = "Proportion of Individuals") + 
 
 savePlot(filename=output2, plot=p2, width=1900, height=1100)

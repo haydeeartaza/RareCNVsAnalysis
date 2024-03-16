@@ -10,6 +10,7 @@
 
 
 library(ggplot2)
+library(ggpubr)
 library(gridExtra)
 source(file.path(getwd(), "association_cnv/lib/plots_functions.R"))
 
@@ -32,8 +33,11 @@ p1 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = fa
 	geom_line() + 
 	geom_point() + 
 	scale_colour_manual(values = cbPalette) +
-	labs(title="Number of CNVs (DELETIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)",y = "CNVs") +
-	theme(legend.position = "none") 
+	theme_bw() +
+    theme(plot.title = element_textbox(hjust=0.5,
+			  				           width = unit(0.9, "npc"),
+					                   size = 7)) +
+	labs(title="Number of CNVs (DELETIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)",y = "CNVs")
 
 data <- read.table(case_control_CNVs_length_dup, header = T, sep = "\t")
 data$length <- factor(data$length, levels = unique(data$length))
@@ -45,10 +49,14 @@ p2 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = fa
 	geom_line() + 
 	geom_point() + 
 	scale_colour_manual(name = "CLASS", labels = c("CASE","CONTROL"), values = cbPalette) +
+	theme_bw() +
+    theme(plot.title = element_textbox(hjust=0.5,
+			  				           width = unit(0.9, "npc"),
+					                   size = 7)) +
 	labs(title = "Number of CNVs (DUPLICATIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)", y = "CNVs") + 
-	theme(legend.position = "bottom") 
 
 p3 <- grid.arrange(p1, p2, ncol = 1)
+p3 <- ggarrange(p1, p2, ncol = 1, nrow = 2, common.legend=T, legend="bottom")
 
-savePlot(filename=case_control_length_samples_output,plot=p3, width=1900, height=1100)
+savePlot(filename=case_control_length_samples_output, plot=p3, width=1900, height=1100)
 #dev.off()
