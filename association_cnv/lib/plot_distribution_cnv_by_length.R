@@ -54,9 +54,8 @@ p2 <- ggplot(data = data, aes(x = length, y = numCNV, group = pheno, colour = fa
     theme(plot.title = element_textbox(hjust=0.5,
 			  				           width = unit(0.9, "npc"),
 					                   size = 7)) +
-	labs(title = "Number of CNVs (DUPLICATIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)", y = "CNVs") + 
+	labs(title = "Number of CNVs (DUPLICATIONS) distributed by length and grouped by Case/Control category", x = "CNVs length (Kb)", y = "CNVs")
 
-p3 <- grid.arrange(p1, p2, ncol = 1)
 p3 <- ggarrange(p1, p2, ncol = 1, nrow = 2, common.legend=T, legend="bottom")
 
 savePlot(filename=case_control_length_samples_output, plot=p3, width=1900, height=1100)
