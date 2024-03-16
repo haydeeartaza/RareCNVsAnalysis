@@ -21,7 +21,7 @@ case_control_CNVs_length_dup = args[2]
 outputdir = args[3]
 
      
-case_control_length_samples_output = paste(outputdir, "CNVs_distributin_by_length.png", sep = '/')
+case_control_length_samples_output = paste(outputdir, "CNVs_distribution_by_length.png", sep = '/')
 data <- read.table(case_control_CNVs_length_del, header = T, sep = "\t")
 data$length <- factor(data$length, levels = unique(data$length))
 data[data$pheno == 1,]$pheno = "CONTROL"
