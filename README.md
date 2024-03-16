@@ -39,7 +39,7 @@ To run the pipeline on the supplied test data on the native system:
 
 ```bash
 conda activate snakemake
-snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
+snakemake -s qc-cnv/qc-pipeline/snakefiles/qc.snake --core 1
 ```
 
 To run the pipeline on the supplied test data using Docker (after you have built the image):
@@ -52,18 +52,14 @@ docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s 
 
 To configure the pipeline for your own dataset you need to adjust two files: 
 
-- [qc-pipeline/snakefiles/config.json](qc-cnv/qc-pipeline/snakefiles/config.json)
-- [qc-pipeline/snakefiles/variables.py](qc-cnv/qc-pipeline/snakefiles/variables.py)
+- [qc-cnv/qc-pipeline/snakefiles/config.json](qc-cnv/qc-pipeline/snakefiles/config.json)
+- [qc-cnv/qc-pipeline/snakefiles/variables.py](qc-cnv/qc-pipeline/snakefiles/variables.py)
 
 Note that for docker-based run you can just replace the input data filenames.
 
-```bash
-cd qc-cnv
-```
+Modify [`config.json`](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (`final_report_file` and `signal_intensity_file` respectively) and specifying the ouput directory. In this example directory `test/data` at the root of the repository should contain the SNP-array files, directory `output_qc` will contain all files generted in this pipeline.
 
-Modify [`config.json`](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (`final_report_file` and `signal_intensity_file` respectively) and specifying the ouput directory. In this example directory `tes/data` at the root of the repository should contain the SNP-array files, directory `output_qc` will contain all files generted in this pipeline.
-
-Note that the `config.json` in this example is adapted for running with docker, if you run it on the native system, you need to replace `/app/pipeline/` with the full path to where you want to write your output.
+Note that the `config.json` in this example is adapted for running with Docker, if you run it on the native system, you need to replace `/app/pipeline/` with the full path to where you want to write your output.
   
 ``` json
 {
@@ -152,14 +148,10 @@ docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s 
 
 ### Pipeline configuration
 
-```bash
-cd association-cnv
-```
-
 To configure the pipeline for your own dataset you need to adjust two files: 
 
-- [association-pipeline/snakefiles/config.json](association_cnv/association-pipeline/snakefiles/config.json)
-- [association-pipeline/snakefiles/variables.py](association_cnv/association-pipeline/snakefiles/variables.py)
+- [association-cnv/association-pipeline/snakefiles/config.json](association_cnv/association-pipeline/snakefiles/config.json)
+- [association-cnv/association-pipeline/snakefiles/variables.py](association_cnv/association-pipeline/snakefiles/variables.py)
 
 Modify the [`config.json`](association_cnv/association-pipeline/snakefiles/config.json) file. In this example directory `output_qc` refers the directory with the quality controlled CNV calls from the previous step, directory `output_association` will contain all files generted in this pipeline and `test/resources` refers to the directory containing the input files for this step of the pipeline.
 
