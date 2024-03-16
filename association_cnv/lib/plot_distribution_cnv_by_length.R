@@ -11,6 +11,7 @@
 
 library(ggplot2)
 library(ggpubr)
+library(ggtext)
 library(gridExtra)
 source(file.path(getwd(), "association_cnv/lib/plots_functions.R"))
 
