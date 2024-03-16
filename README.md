@@ -140,13 +140,13 @@ Step 2: Rare CNVs analysis
 To run the pipeline on the supplied test data on the native system:
 
 ```bash
-snakemake -s association-pipeline/snakefiles/association.snake --core 1
+snakemake -s association-cnv/association-pipeline/snakefiles/association.snake --core 1
 ```
 
 To run the pipeline on the supplied test data via Docker:
 
 ```bash
-docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-pipeline/snakefiles/association.snake --core 1
+docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-cnv/association-pipeline/snakefiles/association.snake --core 1
 ```
 
 ### Pipeline configuration
