@@ -95,7 +95,7 @@ Note that the `config.json` in this example is adapted for running with docker, 
 }
 ```
 
-- Modify [`variables.py`](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location, setting files prefixes and PennCNV parameters. This script will also create the output directories that were previously set in `config.json` file.
+Modify [`variables.py`](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location, setting files prefixes and PennCNV parameters. This script will also create the output directories that were previously set in `config.json` file.
 
 ```python
   ### snakemake_workflows initialization ########################################
@@ -133,7 +133,7 @@ for directory in dirs_to_create:
         os.makedirs(config[directory])
 ```
 
-- Execute the pipeline as shown above either on the native system, or using Docker.
+Execute the pipeline as shown above either on the native system, or using Docker.
 
 Step 2: Rare CNVs analysis
 -----------------------------
