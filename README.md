@@ -61,8 +61,9 @@ Note that for docker-based run you can just replace the input data filenames.
 cd qc-cnv
 ```
 
-- Modify [`config.json`](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (`final_report_file` and `signal_intensity_file` respectively) and specifying the ouput directory. In this example directory `tes/data` at the root of the repository should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline.
-- Note that the `config.json` in this example is adapted for running with docker, if you run it on the native system, you need to replace `/app/pipeline/` with the full path to where you want to write your output.
+Modify [`config.json`](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (`final_report_file` and `signal_intensity_file` respectively) and specifying the ouput directory. In this example directory `tes/data` at the root of the repository should contain the SNP-array files, directory `output_qc` will contain all files generted in this pipeline.
+
+Note that the `config.json` in this example is adapted for running with docker, if you run it on the native system, you need to replace `/app/pipeline/` with the full path to where you want to write your output.
   
 ``` json
 {
@@ -74,23 +75,23 @@ cd qc-cnv
     "immunoglobulin_region_file": "qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "qc-cnv/resources/centromere_telomere_penncnv.txt",
 
-    "list_signal_files_file": "/app/pipeline/QCResults/data_conversion/list.txt",
-    "map_file": "/app/pipeline/QCResults/data_conversion/sample_map.txt",   
-    "snp_file": "/app/pipeline/QCResults/data_conversion/SNPfile.txt",
-    "pfb_file": "/app/pipeline/QCResults/data_conversion/model.pfb",
-    "gcmodel_file": "/app/pipeline/QCResults/data_conversion/hg19.gcmodel",
-    "sample_pass_list_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.list",
-    "sample_pass_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.rawcn",
-    "sample_summary_file": "/app/pipeline/QCResults/data_clean/samples_qcsum.list",
-    "sample_clean_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.clean.rawcn",
-    "sample_merged_file": "/app/pipeline/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
-    "data_conversion_path": "/app/pipeline/QCResults/data_conversion",
-    "data_intensity_path" :  "/app/pipeline/QCResults/data_conversion/data_intensity",
-    "data_calling_path": "/app/pipeline/QCResults/data_calling",
-    "data_clean_path": "/app/pipeline/QCResults/data_clean",
-    "graphic_path": "/app/pipeline/QCResults/graphic",
-    "graphic_qc_path": "/app/pipeline/QCResults/graphic/qc",
-    "log_path": "/app/pipeline/QCResults/logs"
+    "list_signal_files_file": "/app/pipeline/output_qc/data_conversion/list.txt",
+    "map_file": "/app/pipeline/output_qc/data_conversion/sample_map.txt",   
+    "snp_file": "/app/pipeline/output_qc/data_conversion/SNPfile.txt",
+    "pfb_file": "/app/pipeline/output_qc/data_conversion/model.pfb",
+    "gcmodel_file": "/app/pipeline/output_qc/data_conversion/hg19.gcmodel",
+    "sample_pass_list_file": "/app/pipeline/output_qc/data_clean/samples_qcpass.list",
+    "sample_pass_file": "/app/pipeline/output_qc/data_clean/samples_qcpass.rawcn",
+    "sample_summary_file": "/app/pipeline/output_qc/data_clean/samples_qcsum.list",
+    "sample_clean_file": "/app/pipeline/output_qc/data_clean/samples_qcpass.clean.rawcn",
+    "sample_merged_file": "/app/pipeline/output_qc/data_clean/samples_qcpass.clean.merged.rawcn",
+    "data_conversion_path": "/app/pipeline/output_qc/data_conversion",
+    "data_intensity_path" :  "/app/pipeline/output_qc/data_conversion/data_intensity",
+    "data_calling_path": "/app/pipeline/output_qc/data_calling",
+    "data_clean_path": "/app/pipeline/output_qc/data_clean",
+    "graphic_path": "/app/pipeline/output_qc/graphic",
+    "graphic_qc_path": "/app/pipeline/output_qc/graphic/qc",
+    "log_path": "/app/pipeline/output_qc/logs"
 }
 ```
 
