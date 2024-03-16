@@ -56,6 +56,6 @@ p2 <- ggplot(data = df, aes(x = factor(INTERVAL, factor(unique(INTERVAL))), y = 
 			  plot.title = element_textbox(hjust=0.5,
 			  				               width = unit(0.9, "npc"),
 					                       size = 7)) +
-		labs(title = "Ratio of individulas with AVERAGE length of CNVs in five intervals", x = "CNVs length intervals", y = "Proportion of Individuals") + 
+		labs(title = "Ratio of individulas with AVERAGE length of CNVs in five intervals", x = "CNVs length intervals", y = "Proportion of Individuals")
 
 savePlot(filename=output2, plot=p2, width=1900, height=1100)
