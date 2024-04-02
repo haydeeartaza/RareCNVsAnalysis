@@ -4,17 +4,20 @@ Rare CNVs Analysis Pipeline
 Test
 -----------------------------
 1. Create the test directory structure
-```
-.
-├── RareCNVsAnalysis
-├── data
-├── QCResults
-└── RareCNVsResults
-```
+
+    ```bash
+    .
+    ├── RareCNVsAnalysis
+    ├── data
+    ├── QCResults
+    └── RareCNVsResults
+    ```
+
 - **RareCNVsAnalysis**: Pipeline project download from:
-```
-$ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
-```
+
+    ```bash
+    git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
+    ```
 - **data**: Directory with SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
@@ -77,26 +80,18 @@ wf = "0.05"
 qcbafdrift = "0.01"
 qclrrsd = "0.3"
 
-### Create paths if don't exist ###################################
+### Create paths if they don't exist ###################################
 
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['data_intensity_path']):
-    os.makedirs(config['data_intensity_path'])
-if not os.path.exists(config['data_calling_path']):
-    os.makedirs(config['data_calling_path'])
-if not os.path.exists(config['data_clean_path']):
-    os.makedirs(config['data_clean_path'])
-if not os.path.exists(config['graphic_path']):
-    os.makedirs(config['graphic_path'])
-if not os.path.exists(config['graphic_qc_path']):
-    os.makedirs(config['graphic_qc_path'])
+dirs_to_create = ["data_conversion_path", "data_intensity_path", "data_calling_path",
+                          "data_clean_path", "graphic_path", "graphic_qc_path", "log_path"]
+for directory in dirs_to_create:
+    if not os.path.exists(config[directory]):
+        os.makedirs(config[directory])
 
 ```
-3. Replace config.js and variables.py in **association-pipeline**:
-- **config.js**: Replace `.` with your mounting point, e.g. `/home/username`
+
+3. Replace config.json and variables.py in **association-pipeline**:
+- **config.json**: Replace `.` with your mounting point, e.g. `/home/username`
 ```json
 {
     "map_file": "./QCResults/data_conversion/sample_map.txt",
@@ -186,14 +181,16 @@ if not os.path.exists(config['enrichment_rare_cnvs_pathway_path']):
 ```
 
 4. Run test
-```
-$ conda activate snakemake
-$ cd qc-cnv
-$ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
-$ cd association-cnv
-$ snakemake -s association-pipeline/snakefiles/association.snake --core 1
-```
-5. Notes
+
+    ```bash
+    conda activate snakemake
+    cd qc-cnv
+    snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
+    cd association-cnv
+    snakemake -s association-pipeline/snakefiles/association.snake --core 1
+    ```
+
+## Notes
 - This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
 - If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
 - Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)

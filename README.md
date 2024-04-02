@@ -209,7 +209,7 @@ See test instructions [here](test/Test.md).
 
 Publication and Citation
 -----------------------------
-This project is provisionally described in [Artaza H. *et al.*, doi:10.1101/2024.03.13.584428](https://doi.org/10.1101/2024.03.13.584428)
+This project is provisionally described in [Artaza H. *et al.*, doi:10.1101/2024.03.13.584428](https://doi.org/10.1101/2024.03.13.584428).
 
 Pipeline Structure
 -----------------------------
