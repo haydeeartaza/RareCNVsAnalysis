@@ -1,7 +1,7 @@
 Rare CNVs Analysis Pipeline
 ======
 
-Test
+Test using Docker
 -----------------------------
 ### Set up
 1. Download the source code:

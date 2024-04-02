@@ -1,7 +1,7 @@
 Rare CNVs Analysis Pipeline
 ======
 
-Test
+Test using native system
 -----------------------------
 
 1. Download the source code:
