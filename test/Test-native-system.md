@@ -88,11 +88,18 @@ qclrrsd = "0.3"
 
 ### Create paths if they don't exist ###################################
 
-dirs_to_create = ["data_conversion_path", "data_intensity_path", "data_calling_path",
-                          "data_clean_path", "graphic_path", "graphic_qc_path", "log_path"]
-for directory in dirs_to_create:
-    if not os.path.exists(config[directory]):
-        os.makedirs(config[directory])
+paths = [
+    config['data_conversion_path'],
+    config['data_intensity_path'],
+    config['data_calling_path'],
+    config['data_clean_path'],
+    config['graphic_path'],
+    config['log_path'],
+]
+
+for path in paths:
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 ```
 
