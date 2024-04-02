@@ -212,7 +212,7 @@ For details about config, input/output files (see example image below) and modul
 
 Test
 -----------------------------
-See test instructions [here](test/Test.md).
+See test instructions for run [on the native system](test/Test-native-system.md) and [via Docker](test/Test-docker.md).
 
 Publication and Citation
 -----------------------------
