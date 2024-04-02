@@ -53,7 +53,7 @@ rule FILTER_LOW_QUALITY_SAMPLES:
         
 
         # Ploting boxplot for filter criteria (LRR, BAF_drift, WF, NumCNV)      
-        Rscript {libdir}/qc_plots.R \
+        {Rscript} {libdir}/qc_plots.R \
             {output.samplesummaryfile} \
             {params.graphicdir}/qc_plot
 
@@ -186,7 +186,7 @@ rule MERGING_ADJACENT_CNV:
             {params.outputdir}/call_by_sample_before_merge.txt >> {params.outputdir}/call_comparison_merged.txt
 
             echo "##### Creating Merging R plots ... #####"
-            Rscript {libdir}/qc_merge_plot.R \
+            {Rscript} {libdir}/qc_merge_plot.R \
                 {params.outputdir}/call_comparison_merged.txt \
                 {params.graphicdir}
 

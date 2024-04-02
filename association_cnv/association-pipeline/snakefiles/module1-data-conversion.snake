@@ -17,8 +17,9 @@ rule CONVERT_PENNCNV_TO_PLINK_FORMAT:
 
     shell:
         """
-        source {libdir}/functions.sh
         plink={plink17}
+        source {libdir}/functions.sh
+       
 	echo "{params.outputdir} - {params.prefix}"
     
 	# Create cnv, fam and map format
@@ -69,10 +70,10 @@ rule EXTRACT_CORE_SAMPLES:
 
     shell:
         """
-
-        source {libdir}/functions.sh
+        
         plink={plink17}
-
+        source {libdir}/functions.sh
+        
         # Extract core samples and their CNVs
         get_qc_core_cnvs_rawcn \
             {input.samplespassmerged} \
@@ -122,8 +123,9 @@ rule EXTRACT_FINAL_CNVs:
 
     shell:
         """
-	source {libdir}/functions.sh
         plink={plink17}
+	    source {libdir}/functions.sh
+
 	
 	SNPs=$(({cnvSNPs} + 1))
 	# Get rawcn file for CORE CNVs biger than cnvKB and biger than cnvSNPS

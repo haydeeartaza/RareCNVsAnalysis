@@ -5,8 +5,10 @@ resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '
 ### programs ########################################
 #Include here all programs and versions.You can run the specific program/version
 #calling it as {program_version} inside the code. E.g {R_3_4}
-pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
-R_4_1 = "/home/haydee.artaza/programs/R_4_1"
+pennCNV = "/PennCNV-1.0.5"
+# this is needed for using X11 graphic device for plotting in docker
+# if running on the native system just set it to "Rscript"
+Rscript = "xvfb-run Rscript"
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"
@@ -22,20 +24,18 @@ wf = "0.05"
 qcbafdrift = "0.01"
 qclrrsd = "0.3"
 
-### Create paths if don't exist ###################################
+### Create paths if they don't exist ###################################
 
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['data_intensity_path']):
-    os.makedirs(config['data_intensity_path'])
-if not os.path.exists(config['data_calling_path']):
-    os.makedirs(config['data_calling_path'])
-if not os.path.exists(config['data_clean_path']):
-    os.makedirs(config['data_clean_path'])
-if not os.path.exists(config['graphic_path']):
-    os.makedirs(config['graphic_path'])
-if not os.path.exists(config['graphic_qc_path']):
-    os.makedirs(config['graphic_qc_path'])
+paths = [
+    config['data_conversion_path'],
+    config['data_intensity_path'],
+    config['data_calling_path'],
+    config['data_clean_path'],
+    config['graphic_path'],
+    config['log_path'],
+]
+
+for path in paths:
+    if not os.path.exists(path):
+        os.makedirs(path)
 
