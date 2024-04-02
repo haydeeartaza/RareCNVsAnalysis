@@ -34,8 +34,8 @@ Test
     ```
 
 
-5. Configuration of the  **qc-pipeline**: [config.json](../qc-cnv/qc-pipeline/snakefiles/config.json) and [variables.py](../qc-cnv/qc-pipeline/snakefiles/variables.py) are already set for this dataset
-6. Configuration of the **association-pipeline**: [config.json](../association_cnv/association-pipeline/snakefiles/config.json) and [variables.py](../association_cnv/association-pipeline/snakefiles/variables.py)  are already set for this dataset
+5. Configuration of the  **qc-pipeline**: [config.json](../qc-cnv/qc-pipeline/snakefiles/config.json) and [variables.py](../qc-cnv/qc-pipeline/snakefiles/variables.py) are already set for this dataset.
+6. Configuration of the **association-pipeline**: [config.json](../association_cnv/association-pipeline/snakefiles/config.json) and [variables.py](../association_cnv/association-pipeline/snakefiles/variables.py)  are already set for this dataset.
 7. Run the test:
 
     ```bash
