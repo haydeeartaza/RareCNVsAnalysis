@@ -3,7 +3,14 @@ Rare CNVs Analysis Pipeline
 
 Test
 -----------------------------
-1. Create the test directory structure
+
+1. Download the source code:
+
+    ```bash
+    git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
+    ```
+
+2. Create the test directory structure:
 
     ```bash
     .
@@ -13,17 +20,14 @@ Test
     └── RareCNVsResults
     ```
 
-- **RareCNVsAnalysis**: Pipeline project download from:
-
-    ```bash
-    git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
-    ```
+- **RareCNVsAnalysis**: Pipeline project repository.
 - **data**: Directory with SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
 
-2. Replace config.js and variables.py in **qc-pipeline**:
+3. Replace config.js and variables.py in **qc-pipeline**:
 - **config.js**: Replace `.` with your mounting point, e.g. `/home/username`
+
 ```json
 {
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
@@ -54,7 +58,9 @@ Test
     "log_path": "./QCResults/logs"
 }
 ```
+
 - **variables.py**: Replace `path` with your programs path, e.g. `/home/userme/software`
+
 ```python
 ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -90,8 +96,9 @@ for directory in dirs_to_create:
 
 ```
 
-3. Replace config.json and variables.py in **association-pipeline**:
+4. Replace config.json and variables.py in **association-pipeline**:
 - **config.json**: Replace `.` with your mounting point, e.g. `/home/username`
+
 ```json
 {
     "map_file": "./QCResults/data_conversion/sample_map.txt",
@@ -121,7 +128,9 @@ for directory in dirs_to_create:
  
 } 
 ```
+
 - **variables.py**: Replace `path` with your programs path, e.g. `/home/userme/software`
+
 ```python
 ### Snakemake_workflows initialization #######################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
@@ -151,36 +160,29 @@ cnvSNPs = "5" # bigger than 5 snps
 high_freq = "1" # value just for test
 random_controls = "2" # value just for test
 
-### Create paths if don't exist ###################################
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['burden_analysis_path']):
-    os.makedirs(config['burden_analysis_path'])
-if not os.path.exists(config['burden_temp_path']):
-    os.makedirs(config['burden_temp_path'])
-if not os.path.exists(config['burden_graph_path']):
-    os.makedirs(config['burden_graph_path'])
-if not os.path.exists(config['rare_cnvs_path']):
-    os.makedirs(config['rare_cnvs_path'])
-if not os.path.exists(config['rare_cnvs_summary_path']):
-    os.makedirs(config['rare_cnvs_summary_path'])
-if not os.path.exists(config['rare_cnvs_reference_path']):
-    os.makedirs(config['rare_cnvs_reference_path'])
-if not os.path.exists(config['rare_cnvs_forplots_path']):
-    os.makedirs(config['rare_cnvs_forplots_path'])
-if not os.path.exists(config['rare_cnvs_graph_path']):
-    os.makedirs(config['rare_cnvs_graph_path'])
-if not os.path.exists(config['enrichment_rare_cnvs_path']):
-    os.makedirs(config['enrichment_rare_cnvs_path'])
-if not os.path.exists(config['enrichment_rare_cnvs_genic_path']):
-    os.makedirs(config['enrichment_rare_cnvs_genic_path'])
-if not os.path.exists(config['enrichment_rare_cnvs_pathway_path']):
-    os.makedirs(config['enrichment_rare_cnvs_pathway_path'])
+### Create paths if they don't exist ###################################
+paths = [
+    config['log_path'],
+    config['data_conversion_path'],
+    config['burden_analysis_path'],
+    config['burden_temp_path'],
+    config['burden_graph_path'],
+    config['rare_cnvs_path'],
+    config['rare_cnvs_summary_path'],
+    config['rare_cnvs_reference_path'],
+    config['rare_cnvs_forplots_path'],
+    config['rare_cnvs_graph_path'],
+    config['enrichment_rare_cnvs_path'],
+    config['enrichment_rare_cnvs_genic_path'],
+    config['enrichment_rare_cnvs_pathway_path']
+]
+
+for path in paths:
+    if not os.path.exists(path):
+        os.makedirs(path)
 ```
 
-4. Run test
+5. Run test
 
     ```bash
     conda activate snakemake
