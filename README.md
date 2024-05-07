@@ -109,7 +109,7 @@ if not os.path.exists(config['graphic_qc_path']):
 $ conda activate snakemake
 $ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
 ```
-**3. Rare CNVs analysis analysis:**
+**3. Rare CNVs analysis:**
 ```
 $ cd association-cnv
 ```
