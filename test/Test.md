@@ -105,7 +105,7 @@ if not os.path.exists(config['graphic_qc_path']):
 
     "controls_random_file": "./Resources/controls_random_sampling.txt",
     "genes_ref_file": "./Resources/enrichment/glist-hg19.dat",
-    "core_file": "./Resources/21h_positive_core.txt",
+    "core_file": "./Resources/core_samples.txt",
     "pathway_file": "./Resources/enrichment/PanelApp/panelApp_AI_genes.dat",
     "allpheno_file": "./Resources/ALL_phenotypes_09052019.tsv",
 
