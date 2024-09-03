@@ -51,7 +51,7 @@ $ add path “bedtools2/bin” to association_cnv/association-pipeline/snakefile
 ``` r
 #Install all libraries used in this pipeline
 # Package names
-packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "devtools")
+packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "introdataviz", "devtools")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
