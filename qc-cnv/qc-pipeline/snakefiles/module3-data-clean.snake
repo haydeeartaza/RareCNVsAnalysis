@@ -14,6 +14,8 @@ rule FILTER_LOW_QUALITY_SAMPLES:
         samplepasslistfile = config['sample_pass_list_file'],
         samplepassfile = config['sample_pass_file'],
         samplesummaryfile = config['sample_summary_file']
+    conda:
+        config['dependenciesenv_file']
     params: 
         outputdir = config['data_clean_path'],
         graphicdir = config['graphic_qc_path'],
@@ -105,7 +107,7 @@ rule REMOVE_SPURIOUS_CNVs:
             echo "lost samples: $samples_lost\n"  >> {params.logfile}
 
             echo "##### Cleaning centromere and telomere regions ... #####"
-            {pennCNV}/scan_region.pl\
+            {pennCNV}/scan_region.pl \
                 {params.outputdir}/immonuglobulin.clean \
                 {params.centro_telo_file} \
                 -minqueryfrac 0.5 > {params.outputdir}/centromere_telomere.regions 
@@ -144,6 +146,8 @@ rule MERGING_ADJACENT_CNV:
            
         output:
             samplespassmergedfile = config['sample_merged_file'],
+        conda:
+           config['dependenciesenv_file']
         params:
             pfbfile = config['pfb_file'],
             logfile = config['log_path'] + '/' + 'data_clean.log',
@@ -176,9 +180,9 @@ rule MERGING_ADJACENT_CNV:
             
 
             echo "##### Generating files for mergeing comparison... #####"
-            awk '{{sample=$5; sub(/.*\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' {input.samplepasscleanfile} \
+            awk '{{sample=$5; sub(/.*\\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' {input.samplepasscleanfile} \
             | sort -k1 -V > {params.outputdir}/call_by_sample_before_merge.txt
-            awk '{{sample=$5; sub(/.*\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' \
+            awk '{{sample=$5; sub(/.*\\//,"",sample); a[sample]++}}END{{for(i in a) print i"\t"a[i]}}' \
             {output.samplespassmergedfile} | sort -k1 -V > {params.outputdir}/call_by_sample_after_merge.txt
             
 	    echo -e "ID\tCalls_before_merging\tCalls_after_merging" > {params.outputdir}/call_comparison_merged.txt
