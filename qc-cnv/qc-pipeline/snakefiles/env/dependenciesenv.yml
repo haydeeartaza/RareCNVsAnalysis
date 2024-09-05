@@ -11,3 +11,13 @@ dependencies:
  - r-dplyr
  - r-reshape
  - r-devtools
+ - openssl
+ - fontconfig
+ - harfbuzz
+ - fribidi
+ - freetype
+ - libpng
+ - libtiff
+ - libjpeg-turbo
+ - libcurl
+ - cmake

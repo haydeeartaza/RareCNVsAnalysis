@@ -11,7 +11,11 @@
 # 1.Violing plot with number of calls distribution before and after merging process
 #
 ##
-devtools:::install_github("psyteachr/introdataviz", quiet = TRUE)
+
+if(!("introdataviz" %in% installed.packages())) {
+        devtools:::install_github("psyteachr/introdataviz", quiet = TRUE)
+}
+
 library(ggplot2)
 library(reshape)
 library(introdataviz)
