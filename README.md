@@ -18,6 +18,7 @@ Dependencies
 Installation
 -----------------------------
 Dependencies avalaible via conda were configuring using Integrated Package Management to define isolated software environments per rule (https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
+
 See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
 Pipeline Execution
@@ -57,14 +58,14 @@ Replace config.js and variables.py:
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "./data/SNPs_Table.txt",
   ```
-  Second block refers to external files for the QC evuation included in **resources** directory:
+  Second block refers to external files used for the QC execution:
   ``` json
     "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
   ```
-  Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
+  Third block refers to intermediate files generated in this analysis, which will be used in the Rare CNVs analysis:
   ``` json
     "list_signal_files_file": "/QCResults/data_conversion/list.txt",
     "map_file": "/QCResults/data_conversion/sample_map.txt",   
@@ -140,8 +141,8 @@ Replace config.js and variables.py:
     $ snakemake --sdm conda --conda-create-envs-only -s qc-pipeline/snakefiles/qc.snake 
     $ snakemake --sdm conda --core 1 -s qc-pipeline/snakefiles/qc.snakesnakemake 
     ```
-    --sdm conda: use Conda integration in Snakemake
-    --conda-create-envs-only:  will only install the required Conda environments without running the full workflow
+   - --sdm conda: use Conda integration in Snakemake
+   - --conda-create-envs-only:  will only install the required Conda environments without running the full workflow
     
 **4. Rare CNVs analysis:**
 ```
@@ -150,13 +151,13 @@ $ cd association-cnv
 Replace config.js and variables.py:
 - Modify the config.json file in association-pipeline/snakefiles:
 
-    First block referst to the files generated in the previous detections and QC analysis `QCResults`, which will be the input files for this pipeline.
+    First block referst to the files generated in the previous detections and QC analysis stored at `QCResults`, which will be the input files for this pipeline.
     ``` json
         "map_file": "/QCResults/data_conversion/sample_map.txt",
         "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
         "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
     ```
-    Second block refers to the external files used as imput in the modules.
+    Second block refers to the external files used as imput in the different modules.
     ``` json
         "controls_random_file": "/RareCNVsAnalysis/Resources/controls_random_sampling.txt",
         "genes_ref_file": "/RareCNVsAnalysis/Resources/glist-hg19.dat",
@@ -164,9 +165,9 @@ Replace config.js and variables.py:
         "pathway_file": "/RareCNVsAnalysis/Resources/panelApp_AI_genes.dat",
         "allpheno_file": "/RareCNVsAnalysis/Resources/pheno.tsv",
     ```
-    `glist-hg19.dat`: Genome reference file for the geneset-enrichment test
-    `panelApp_AI_genes.dat`: geneset list (e.g autoimmune related genes from PanelApp)
-    `pheno.ts`: phenotype file 
+    - `glist-hg19.dat`: Genome reference file for the geneset-enrichment test
+    - `panelApp_AI_genes.dat`: geneset list (e.g autoimmune related genes from PanelApp)
+    - `pheno.tsv`: phenotype file 
 
     Last block indicates the output directories for each module and the Conda environment file location:
     ``` json
@@ -202,10 +203,12 @@ Replace config.js and variables.py:
     $ conda activate snakemake
     $ snakemake --sdm conda --conda-create-envs-only -s association-pipeline/snakefiles/association.snake 
     $ snakemake --sdm conda --core 1 -s association-pipeline/snakefiles/association.snake ```  
-> [!CAUTION]
-> -This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
-> -If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
-> -Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
+> [!TIP]
+> This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
+
+> If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
+
+> Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
