@@ -14,10 +14,10 @@ Dependencies
 - BedTools
 - plink (1.7)
 - PennCNV (1.0.5)
-- Gawk
 
 Installation
 -----------------------------
+Dependencies avalaible via conda were configuring using Integrated Package Management to define isolated software environments per rule (https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
 Pipeline Execution
