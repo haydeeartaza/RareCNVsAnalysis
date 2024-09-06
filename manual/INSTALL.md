@@ -8,7 +8,7 @@ Installation
 $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 $ bash Miniforge3-$(uname)-$(uname -m).sh
 ```
-&ensp;Set environment path:
+&ensp;Set environment path (.profile /.bashrc):
 ```
 $ MINIFORGE="/path/miniforge3/bin/"
 $ export PATH="$PATH:$MINIFORGE"
@@ -29,7 +29,7 @@ $ wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz
 $ tar xvfz v1.0.5.tar.gz
 $ cd PennCNV-1.0.5/kext
 $ make
-$ add path “bedtools2/bin” to qc-cnv/qc-pipeline/snakefiles/variables.py 
+$ add path "path_to/PennCNV-1.0.5/" to qc-cnv/qc-pipeline/snakefiles/variables.py 
 ```
 &ensp;More details at [PennCNV documentation](https://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
 
