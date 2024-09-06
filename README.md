@@ -23,21 +23,24 @@ See Snakemake and dependencies installation [here](manual/INSTALL.md)
 Pipeline Execution
 -----------------------------
 **1. Create the test directory structure:**
+```
 .
 ├── data
 ├── QCResults
 └── RareCNVsResults
+```
 
 **2. In the same directory download the git project:**
 ```
 $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
+```
 ```
 .
 ├── RareCNVsAnalysis
 ├── data
 ├── QCResults
 └── RareCNVsResults
-
+```
 - **data**: Directory with SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
@@ -46,9 +49,9 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd RareCNVsResults/qc-cnv
 ```
-a. Replace config.js and variables.py:
+- Replace config.js and variables.py:
 
-- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
+  - Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
 
   First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
 ``` json
@@ -88,7 +91,8 @@ a. Replace config.js and variables.py:
     "graphic_qc_path": "/QCResults/graphics/qc",
     "log_path": "/QCResults/logs"
 ```
-b. Similarly, modify **variables.py** file in qc-pipeline/snakefiles/variables.py, which including programs location and setting files, prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file which were previously set in `config.json` file.
+   - Similarly, modify **variables.py** file in qc-pipeline/snakefiles/variables.py, which including programs location and setting files, prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file which were previously set in `config.json` file.
+
 ```python
 ### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
