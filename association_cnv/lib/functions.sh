@@ -44,7 +44,7 @@ function get_final_core_cnvs_rawcn {
     
     echo "##### Generating rawcn file with CNVs bigger than $kb Kb and $snps SNPs... #####"
     awk -v KB=$kb -v SNPs=$snps '{sample=$5; sub(/.*\//,"",sample); 
-    len=$3; sub(/.*=/,"",len); len=gensub(/,/,"","g",len); len=len/1000;  
+    len=$3; sub(/.*=/,"",len); gsub(/,/,"",len); len=len/1000;  
     numsnp=$2; sub(/.*=/,"",numsnp); numsnp=numsnp*1; 
     if(numsnp>SNPs) if(len>KB) print $0}' $qccorerawcnfile > $corerawcnfile
 }    
