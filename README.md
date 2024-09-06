@@ -3,7 +3,9 @@ Rare CNVs Analysis Pipeline
 
 Overwiew
 -----------------------------
-This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs CNV detection and quality control, followed by the burden analysis, rare CNV frequency analysis and CNV enrichment analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline.png).
+This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs CNV detection and quality control, followed by the burden analysis, rare CNV frequency analysis and CNV enrichment analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline.png). 
+
+Details about modules/rules, input/output files format are described in the [user guide manual](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf)
 
 Dependencies
 -----------------------------
@@ -189,8 +191,8 @@ Replace config.js and variables.py:
         
         "dependenciesenv_file": "/RareCNVsAnalysis/association-cnv/association-pipeline/snakefiles/env/dependenciesenv.yml"
     ```
-    **NOTE:**
-    > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
+> [!IMPORTANT]
+> **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
     
     ```
     NAT REG	CAT PID     FID AGE SEX
@@ -206,8 +208,10 @@ Replace config.js and variables.py:
     $ snakemake --sdm conda --core 1 -s association-pipeline/snakefiles/association.snake ```  
 > [!TIP]
 > This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
+
 > [!TIP]
 > If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
+
 > [!TIP]
 > Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
 
