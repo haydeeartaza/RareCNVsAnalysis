@@ -46,6 +46,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
 
+
 **3. Detection calls and QC analysis execution:**
 ```
 $ cd RareCNVsResults/qc-cnv
@@ -205,9 +206,9 @@ Replace config.js and variables.py:
     $ snakemake --sdm conda --core 1 -s association-pipeline/snakefiles/association.snake ```  
 > [!TIP]
 > This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
-
+> [!TIP]
 > If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
-
+> [!TIP]
 > Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
