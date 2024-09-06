@@ -49,26 +49,23 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd RareCNVsResults/qc-cnv
 ```
-- Replace config.js and variables.py:
+Replace config.js and variables.py:
+- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
 
-Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
-
-First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
-``` json
+  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
+  ``` json
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "./data/SNPs_Table.txt",
-```
-
-Second block refers to external files for the QC evuation included in **resources** directory:
-``` json
+  ```
+  Second block refers to external files for the QC evuation included in **resources** directory:
+  ``` json
     "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
-```
-
-Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
-``` json
+  ```
+  Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
+  ``` json
     "list_signal_files_file": "/QCResults/data_conversion/list.txt",
     "map_file": "/QCResults/data_conversion/sample_map.txt",   
     "snp_file": "/QCResults/data_conversion/SNPfile.txt",
@@ -79,10 +76,10 @@ Third block refers to intermediate files generated in this call and QC analysis,
     "sample_summary_file": "/QCResults/data_clean/samples_qcsum.list",
     "sample_clean_file": "/QCResults/data_clean/samples_qcpass.clean.rawcn",
     "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
-```
+  ```
 
   Last block indicates the output directories for each module:
-``` json
+  ``` json
     "data_conversion_path": "/QCResults/data_conversion",
     "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
     "data_calling_path": "/QCResults/data_calling",
@@ -90,56 +87,59 @@ Third block refers to intermediate files generated in this call and QC analysis,
     "graphic_path": "/QCResults/graphics",
     "graphic_qc_path": "/QCResults/graphics/qc",
     "log_path": "/QCResults/logs"
-```
-   - Similarly, modify **variables.py** file in qc-pipeline/snakefiles/variables.py, which including programs location and setting files, prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file which were previously set in `config.json` file.
+  ```
+- Modify **variables.py** file in qc-pipeline/snakefiles/variables.py with your programs path, prefixes and PennCNV parameters:
 
-```python
-### snakemake_workflows initialization ########################################
-libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
-resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
-
-### programs ########################################
-#Include here all programs and versions.You can run the specific program/version
-#calling it as {program_version} inside the code. E.g {R_3_4}
-pennCNV = "/path/programs/PennCNV-1.0.5"
-
-### prefix ########################################
-### module 1,2 and 3
-signal_prefix = "split"
-calling_prefix = "sampleall"
-
-### Workflow parameters ##################################
-### File extensions
-PLINK_EXT =['.bed','.bim','.fam']
-TPLINK_EXT =['.tped','.tfam']
-### PennCNV
-qcnumcnv = "50"
-wf = "0.05"
-qcbafdrift = "0.01"
-qclrrsd = "0.3"
-
-### Create paths if don't exist ###################################
-
-if not os.path.exists(config['log_path']):
-    os.makedirs(config['log_path'])
-if not os.path.exists(config['data_conversion_path']):
-    os.makedirs(config['data_conversion_path'])
-if not os.path.exists(config['data_intensity_path']):
-    os.makedirs(config['data_intensity_path'])
-if not os.path.exists(config['data_calling_path']):
-    os.makedirs(config['data_calling_path'])
-if not os.path.exists(config['data_clean_path']):
-    os.makedirs(config['data_clean_path'])
-if not os.path.exists(config['graphic_path']):
-    os.makedirs(config['graphic_path'])
-if not os.path.exists(config['graphic_qc_path']):
-    os.makedirs(config['graphic_qc_path'])
-```
+    ```python
+    ### snakemake_workflows initialization ########################################
+    libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
+    resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
+    
+    ### programs ########################################
+    #Include here all programs and versions.You can run the specific program/version
+    #calling it as {program_version} inside the code. E.g {R_3_4}
+    pennCNV = "/path/programs/PennCNV-1.0.5"
+    
+    ### prefix ########################################
+    ### module 1,2 and 3
+    signal_prefix = "split"
+    calling_prefix = "sampleall"
+    
+    ### Workflow parameters ##################################
+    ### File extensions
+    PLINK_EXT =['.bed','.bim','.fam']
+    TPLINK_EXT =['.tped','.tfam']
+    ### PennCNV
+    qcnumcnv = "50"
+    wf = "0.05"
+    qcbafdrift = "0.01"
+    qclrrsd = "0.3"
+    
+    ### Create paths if don't exist ###################################
+    
+    if not os.path.exists(config['log_path']):
+        os.makedirs(config['log_path'])
+    if not os.path.exists(config['data_conversion_path']):
+        os.makedirs(config['data_conversion_path'])
+    if not os.path.exists(config['data_intensity_path']):
+        os.makedirs(config['data_intensity_path'])
+    if not os.path.exists(config['data_calling_path']):
+        os.makedirs(config['data_calling_path'])
+    if not os.path.exists(config['data_clean_path']):
+        os.makedirs(config['data_clean_path'])
+    if not os.path.exists(config['graphic_path']):
+        os.makedirs(config['graphic_path'])
+    if not os.path.exists(config['graphic_qc_path']):
+        os.makedirs(config['graphic_qc_path'])
+    ```
 - Excute the pipeline with the comman line:
-```
-$ conda activate snakemake
-$ snakemake -s qc-pipeline/snakefiles/qc.snake --core 1
-```
+    ```
+    $ conda activate snakemake
+    $ snakemake --sdm conda --conda-create-envs-only -s qc-pipeline/snakefiles/qc.snake 
+    $ snakemake --sdm conda --core 1 -s qc-pipeline/snakefiles/qc.snakesnakemake 
+    ```
+    --sdm conda: use Conda integration in Snakemake
+    --conda-create-envs-only:  will only install the required Conda environments without running the full workflow
 **3. Rare CNVs analysis:**
 ```
 $ cd association-cnv
@@ -178,7 +178,7 @@ Modify the config.json file in association-pipeline/snakefiles. In this example 
 > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
 ```
 NAT REG	CAT PID     FID AGE SEX
-A   1   1   NA06985 0   10  1
+A   1   1   NA06985 0   10  1
 B   2   2   NA12717 0   25  2
 C   3   1   NA12873 0   45  1
 D   4   2   NA12891 0   15  2
@@ -190,10 +190,6 @@ $ snakemake -s association-pipeline/snakefiles/association.snake --core 1
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
 Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
-
-Test
------------------------------
-See test instructions [here](test/Test.md)
 
 Publication and Citation
 -----------------------------
@@ -209,3 +205,11 @@ The pipeline executes two major tasks:
 Black dotted lines split each analysis in their corresponding modules, purple boxes represent a specific task in each module, yellow boxes show representative outputs (files and/or plots), and the blue box represents external functions used by some modules. Dotted purple boxes are optional tasks which could be easily removed or changed to adapt the pipeline with the study requirements.
 
 ![Pipeline workflow](manual/images/Rare_CNV_pipeline.png)
+
+
+
+
+
+
+
+
