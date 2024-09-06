@@ -78,7 +78,7 @@ Replace config.js and variables.py:
     "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
   ```
 
-  Last block indicates the output directories for each module:
+  Last block indicates the output directories for each module and the Conda environment file location:
   ``` json
     "data_conversion_path": "/QCResults/data_conversion",
     "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
@@ -86,7 +86,9 @@ Replace config.js and variables.py:
     "data_clean_path": "/QCResults/data_clean",
     "graphic_path": "/QCResults/graphics",
     "graphic_qc_path": "/QCResults/graphics/qc",
-    "log_path": "/QCResults/logs"
+    "log_path": "/QCResults/logs",
+    
+    "dependenciesenv_file": "/RareCNVsAnalysis/qc-cnv/qc-pipeline/snakefiles/env/dependenciesenv.yml"
   ```
 - Modify **variables.py** file in qc-pipeline/snakefiles/variables.py with your programs path, prefixes and PennCNV parameters:
 
@@ -140,53 +142,71 @@ Replace config.js and variables.py:
     ```
     --sdm conda: use Conda integration in Snakemake
     --conda-create-envs-only:  will only install the required Conda environments without running the full workflow
-**3. Rare CNVs analysis:**
+    
+**4. Rare CNVs analysis:**
 ```
 $ cd association-cnv
 ```
-Modify the config.json file in association-pipeline/snakefiles. In this example directory `QCResults` refers the directory with the QC and detection calls results, directory `RareCNVsResults` will contain all files generted in this pipeline and `Resources` refers to the directory containing the input files for this pipeline.
-``` json
-{
-    "map_file": "/QCResults/data_conversion/sample_map.txt",
-    "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
-    "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+Replace config.js and variables.py:
+- Modify the config.json file in association-pipeline/snakefiles:
 
-    "controls_random_file": "/Resources/controls_random_sampling.txt",
-    "genes_ref_file": "/Resources/enrichment/glist-hg19.dat",
-    "core_file": "/Resources/21h_positive_core.txt",
-    "pathway_file": "/Resources/enrichment/PanelApp/panelApp_AI_genes.dat",
-    "allpheno_file": "/Resources/ALL_phenotypes_09052019.tsv",
+    First block referst to the files generated in the previous detections and QC analysis `QCResults`, which will be the input files for this pipeline.
+    ``` json
+        "map_file": "/QCResults/data_conversion/sample_map.txt",
+        "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
+        "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+    ```
+    Second block refers to the external files used as imput in the modules.
+    ``` json
+        "controls_random_file": "/RareCNVsAnalysis/Resources/controls_random_sampling.txt",
+        "genes_ref_file": "/RareCNVsAnalysis/Resources/glist-hg19.dat",
+        "core_file": "/RareCNVsAnalysis/Resources/core.txt",
+        "pathway_file": "/RareCNVsAnalysis/Resources/panelApp_AI_genes.dat",
+        "allpheno_file": "/RareCNVsAnalysis/Resources/pheno.tsv",
+    ```
+    `glist-hg19.dat`: Genome reference file for the geneset-enrichment test
+    `panelApp_AI_genes.dat`: geneset list (e.g autoimmune related genes from PanelApp)
+    `pheno.ts`: phenotype file 
 
-    "data_conversion_path": "/RareCNVsResults/data_conversion",
-    "burden_analysis_path": "/RareCNVsResults/burden_analysis",
-    "burden_temp_path": "/RareCNVsResults/burden_analysis/temp",
-    "burden_graph_path": "/RareCNVsResults/graphics/burden_analysis",
-    "rare_cnvs_path": "/RareCNVsResults/rare_cnvs",
-    "rare_cnvs_summary_path": "/RareCNVsResults/rare_cnvs/summary",
-    "rare_cnvs_reference_path": "/RareCNVsResults/rare_cnvs/Reference",
-    "rare_cnvs_reference_summary_path": "/RareCNVsResults/rare_cnvs/Reference/summary",
-    "rare_cnvs_forplots_path": "/RareCNVsResults/rare_cnvs/forplots",
-    "rare_cnvs_graph_path": "/RareCNVsResults/graphics/rare_cnvs",
-    "enrichment_rare_cnvs_path": "/RareCNVsResults/enrichment_rare_cnvs",
-    "enrichment_rare_cnvs_genic_path": "/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
-    "enrichment_rare_cnvs_pathway_path": "/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
-    "log_path": "/RareCNVsResults/logs"
- 
-}
-```
-**NOTE:**
-> **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
-```
-NAT REG	CAT PID     FID AGE SEX
-A   1   1   NA06985 0   10  1
-B   2   2   NA12717 0   25  2
-C   3   1   NA12873 0   45  1
-D   4   2   NA12891 0   15  2
-```
+    Last block indicates the output directories for each module and the Conda environment file location:
+    ``` json
+        "data_conversion_path": "/RareCNVsResults/data_conversion",
+        "burden_analysis_path": "/RareCNVsResults/burden_analysis",
+        "burden_temp_path": "/RareCNVsResults/burden_analysis/temp",
+        "burden_graph_path": "/RareCNVsResults/graphics/burden_analysis",
+        "rare_cnvs_path": "/RareCNVsResults/rare_cnvs",
+        "rare_cnvs_summary_path": "/RareCNVsResults/rare_cnvs/summary",
+        "rare_cnvs_reference_path": "/RareCNVsResults/rare_cnvs/Reference",
+        "rare_cnvs_reference_summary_path": "/RareCNVsResults/rare_cnvs/Reference/summary",
+        "rare_cnvs_forplots_path": "/RareCNVsResults/rare_cnvs/forplots",
+        "rare_cnvs_graph_path": "/RareCNVsResults/graphics/rare_cnvs",
+        "enrichment_rare_cnvs_path": "/RareCNVsResults/enrichment_rare_cnvs",
+        "enrichment_rare_cnvs_genic_path": "/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
+        "enrichment_rare_cnvs_pathway_path": "/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
+        "log_path": "/RareCNVsResults/logs",
+        
+        "dependenciesenv_file": "/RareCNVsAnalysis/association-cnv/association-pipeline/snakefiles/env/dependenciesenv.yml"
+    ```
+    **NOTE:**
+    > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
+    
+    ```
+    NAT REG	CAT PID     FID AGE SEX
+    A   1   1   NA06985 0   10  1
+    B   2   2   NA12717 0   25  2
+    C   3   1   NA12873 0   45  1
+    D   4   2   NA12891 0   15  2
+    ```
 - Excute the pipeline with the comman line:
-```
-$ snakemake -s association-pipeline/snakefiles/association.snake --core 1
-```  
+    ```
+    $ conda activate snakemake
+    $ snakemake --sdm conda --conda-create-envs-only -s association-pipeline/snakefiles/association.snake 
+    $ snakemake --sdm conda --core 1 -s association-pipeline/snakefiles/association.snake ```  
+> [!CAUTION]
+> -This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
+> -If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
+> -Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
+
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
 Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
@@ -205,11 +225,3 @@ The pipeline executes two major tasks:
 Black dotted lines split each analysis in their corresponding modules, purple boxes represent a specific task in each module, yellow boxes show representative outputs (files and/or plots), and the blue box represents external functions used by some modules. Dotted purple boxes are optional tasks which could be easily removed or changed to adapt the pipeline with the study requirements.
 
 ![Pipeline workflow](manual/images/Rare_CNV_pipeline.png)
-
-
-
-
-
-
-
-
