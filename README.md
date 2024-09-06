@@ -41,7 +41,7 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ├── QCResults
 └── RareCNVsResults
 ```
-- **data**: Directory with SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
+- **data**: Directory containing the **test** SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
 
@@ -51,15 +51,15 @@ $ cd RareCNVsResults/qc-cnv
 ```
 - Replace config.js and variables.py:
 
-  - Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
+Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
 
-  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
+First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
 ``` json
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "./data/SNPs_Table.txt",
 ```
 
-  Second block refers to external files for the QC evuation included in **resources** directory:
+Second block refers to external files for the QC evuation included in **resources** directory:
 ``` json
     "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
@@ -67,7 +67,7 @@ $ cd RareCNVsResults/qc-cnv
     "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
 ```
 
-  Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
+Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
 ``` json
     "list_signal_files_file": "/QCResults/data_conversion/list.txt",
     "map_file": "/QCResults/data_conversion/sample_map.txt",   
