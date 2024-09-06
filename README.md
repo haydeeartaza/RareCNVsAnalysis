@@ -22,25 +22,50 @@ See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
 Pipeline Execution
 -----------------------------
-**1. Download the git project:**
+**1. Create the test directory structure:**
+.
+├── data
+├── QCResults
+└── RareCNVsResults
+
+**2. In the same directory download the git project:**
 ```
 $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
-**2. Detection calls and QC analysis execution:**
+.
+├── RareCNVsAnalysis
+├── data
+├── QCResults
+└── RareCNVsResults
+
+- **data**: Directory with SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip)
+- **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
+- **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
+
+**3. Detection calls and QC analysis execution:**
 ```
-$ cd qc-cnv
+$ cd RareCNVsResults/qc-cnv
 ```
-- Modify config.json file [(in qc-pipeline/snakefiles/config.json)](qc-cnv/qc-pipeline/snakefiles/config.json)  including the genotyping files path (report file and intensity signal file) and specifying the ouput directory. In this example directory `data` should contain the SNP-array files, directory `QCResults` will contain all files generted in this pipeline and `RareCNVsAnalysis` refers to the directory containing the pipeline project.
+a. Replace config.js and variables.py in (qc-cnv/qc-pipeline/snakefiles):
+
+- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
+  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here(https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf)):
 ``` json
 {
-    "final_report_file": "/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
-    "signal_intensity_file": "/data/SNPs_Table.txt",
-    
+    "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
+    "signal_intensity_file": "./data/SNPs_Table.txt",
+```
+
+  Second block refers to external files for the QC evuation included in **resources** directory:
+``` json
     "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
+```
 
+  Third block refers to intermediate files generated in this call and QC analysis, which will be used in the Rare CNVs analysis:
+``` json
     "list_signal_files_file": "/QCResults/data_conversion/list.txt",
     "map_file": "/QCResults/data_conversion/sample_map.txt",   
     "snp_file": "/QCResults/data_conversion/SNPfile.txt",
@@ -51,7 +76,10 @@ $ cd qc-cnv
     "sample_summary_file": "/QCResults/data_clean/samples_qcsum.list",
     "sample_clean_file": "/QCResults/data_clean/samples_qcpass.clean.rawcn",
     "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
-   
+```
+
+  Last block indicates the output directories for each module:
+``` json
     "data_conversion_path": "/QCResults/data_conversion",
     "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
     "data_calling_path": "/QCResults/data_calling",
@@ -61,17 +89,17 @@ $ cd qc-cnv
     "log_path": "/QCResults/logs"
 }
 ```
-- Modify variables.py file [(in qc-pipeline/snakefiles/variables.py)](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location and setting files prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file that were previously set in `config.json` file.
+b. Similarly, modify **variables.py** file in qc-pipeline/snakefiles/variables.py, which including programs location and setting files, prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file which were previously set in `config.json` file.
 ```python
-  ### snakemake_workflows initialization ########################################
+### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
 resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
 
 ### programs ########################################
 #Include here all programs and versions.You can run the specific program/version
 #calling it as {program_version} inside the code. E.g {R_3_4}
-pennCNV = "/home/haydee.artaza/programs/PennCNV-1.0.5"
-R_4_1 = "/home/haydee.artaza/programs/R_4_1"
+pennCNV = "/path/programs/PennCNV-1.0.5"
+
 ### prefix ########################################
 ### module 1,2 and 3
 signal_prefix = "split"
