@@ -46,12 +46,12 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 ```
 $ cd RareCNVsResults/qc-cnv
 ```
-a. Replace config.js and variables.py in (qc-cnv/qc-pipeline/snakefiles):
+a. Replace config.js and variables.py:
 
 - Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
-  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here(https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf)):
+
+  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
 ``` json
-{
     "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "./data/SNPs_Table.txt",
 ```
@@ -87,7 +87,6 @@ a. Replace config.js and variables.py in (qc-cnv/qc-pipeline/snakefiles):
     "graphic_path": "/QCResults/graphics",
     "graphic_qc_path": "/QCResults/graphics/qc",
     "log_path": "/QCResults/logs"
-}
 ```
 b. Similarly, modify **variables.py** file in qc-pipeline/snakefiles/variables.py, which including programs location and setting files, prefixes and PennCNV parameters. This pipeline will create the output directories specified in this file which were previously set in `config.json` file.
 ```python
