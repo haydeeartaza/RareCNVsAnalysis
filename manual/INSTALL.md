@@ -39,36 +39,3 @@ $ wget  https://zzz.bwh.harvard.edu/plink/dist/plink-1.07-x86_64.zip
 $ unzip plink-1.07-x86_64.zip
 $ add path “plink-1.07-x86_64/plink” to association_cnv/association-pipeline/snakefiles/variables.py
 ```
-5. Bedtools
-```
-$ wget https://github.com/arq5x/bedtools2/releases/download/v2.29.1/bedtools-2.31.1.tar.gz
-$ tar -xvzf bedtools-2.31.1.tar.gz
-$ cd bedtools2/
-$ make
-$ add path “bedtools2/bin” to association_cnv/association-pipeline/snakefiles/variables.py
-```
-6. R dependencies
-``` r
-#Install all libraries used in this pipeline
-# Package names
-packages <- c("ggplot2", "fmsb", "gridExtra", "dplyr", "reshape", "introdataviz", "devtools")
-
-# Install packages not yet installed
-installed_packages <- packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)) {
-  install.packages(packages[!installed_packages])
-}
-devtools::install_github("psyteachr/introdataviz")
-## Before install devtools library
-## apt-get install libssl-dev
-## apt-get install libfontconfig1-dev
-## apt-get install libharfbuzz-dev libfribidi-dev
-## apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
-## apt-get install libcurl4-openssl-dev
-## apt-get install cmake
-
-```
-7. Gawk
-```
-$ sudo apt install gawk
-```
