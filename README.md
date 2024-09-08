@@ -5,7 +5,7 @@ Overwiew
 -----------------------------
 This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs CNV detection and quality control, followed by the burden analysis, rare CNV frequency analysis and CNV enrichment analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline.png). 
 
-Details about modules/rules, input/output files format are described in the [user guide manual](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf)
+Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
 
 Dependencies
 -----------------------------
@@ -23,7 +23,7 @@ Dependencies avalaible via conda were configuring using Integrated Package Manag
 
 See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
-Pipeline Execution
+Pipeline Execution Test
 -----------------------------
 **1. Create the test directory structure:**
 ```
@@ -54,47 +54,47 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 $ cd RareCNVsResults/qc-cnv
 ```
 Replace config.js and variables.py:
-- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**
+- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**. Replace **path_to** according to your installation path.
 
   First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
   ``` json
-    "final_report_file": "./data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
-    "signal_intensity_file": "./data/SNPs_Table.txt",
+    "final_report_file": "path_to/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
+    "signal_intensity_file": "path_to/data/SNPs_Table.txt",
   ```
   Second block refers to external files used for the QC execution:
   ``` json
-    "gc_content_file": "/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
-    "hmm_file": "/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
-    "immunoglobulin_region_file": "/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
-    "centromere_telomere_region_file": "/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
+    "gc_content_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
+    "hmm_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
+    "immunoglobulin_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
+    "centromere_telomere_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
   ```
   Third block refers to intermediate files generated in this analysis, which will be used in the Rare CNVs analysis:
   ``` json
-    "list_signal_files_file": "/QCResults/data_conversion/list.txt",
-    "map_file": "/QCResults/data_conversion/sample_map.txt",   
-    "snp_file": "/QCResults/data_conversion/SNPfile.txt",
-    "pfb_file": "/QCResults/data_conversion/model.pfb",
-    "gcmodel_file": "/QCResults/data_conversion/hg19.gcmodel",
-    "sample_pass_list_file": "/QCResults/data_clean/samples_qcpass.list",
-    "sample_pass_file": "/QCResults/data_clean/samples_qcpass.rawcn",
-    "sample_summary_file": "/QCResults/data_clean/samples_qcsum.list",
-    "sample_clean_file": "/QCResults/data_clean/samples_qcpass.clean.rawcn",
-    "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+    "list_signal_files_file": "path_to/QCResults/data_conversion/list.txt",
+    "map_file": "path_to/QCResults/data_conversion/sample_map.txt",   
+    "snp_file": "path_to/QCResults/data_conversion/SNPfile.txt",
+    "pfb_file": "path_to/QCResults/data_conversion/model.pfb",
+    "gcmodel_file": "path_to/QCResults/data_conversion/hg19.gcmodel",
+    "sample_pass_list_file": "path_to/QCResults/data_clean/samples_qcpass.list",
+    "sample_pass_file": "path_to/QCResults/data_clean/samples_qcpass.rawcn",
+    "sample_summary_file": "path_to/QCResults/data_clean/samples_qcsum.list",
+    "sample_clean_file": "path_to/QCResults/data_clean/samples_qcpass.clean.rawcn",
+    "sample_merged_file": "path_to/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
   ```
 
   Last block indicates the output directories for each module and the Conda environment file location:
   ``` json
-    "data_conversion_path": "/QCResults/data_conversion",
-    "data_intensity_path" :  "/QCResults/data_conversion/data_intensity",
-    "data_calling_path": "/QCResults/data_calling",
-    "data_clean_path": "/QCResults/data_clean",
-    "graphic_path": "/QCResults/graphics",
-    "graphic_qc_path": "/QCResults/graphics/qc",
-    "log_path": "/QCResults/logs",
+    "data_conversion_path": "path_to/QCResults/data_conversion",
+    "data_intensity_path" :  "path_to/QCResults/data_conversion/data_intensity",
+    "data_calling_path": "path_to/QCResults/data_calling",
+    "data_clean_path": "path_to/QCResults/data_clean",
+    "graphic_path": "path_to/QCResults/graphics",
+    "graphic_qc_path": "path_to/QCResults/graphics/qc",
+    "log_path": "path_to/QCResults/logs",
     
-    "dependenciesenv_file": "/RareCNVsAnalysis/qc-cnv/qc-pipeline/snakefiles/env/dependenciesenv.yml"
+    "dependenciesenv_file": "path_to/RareCNVsAnalysis/qc-cnv/qc-pipeline/snakefiles/env/dependenciesenv.yml"
   ```
-- Modify **variables.py** file in qc-pipeline/snakefiles/variables.py with your programs path, prefixes and PennCNV parameters:
+- Modify **variables.py** file in qc-pipeline/snakefiles/variables.py according to your PennCNV path, prefixes and PennCNV parameters:
 
     ```python
     ### snakemake_workflows initialization ########################################
@@ -104,7 +104,7 @@ Replace config.js and variables.py:
     ### programs ########################################
     #Include here all programs and versions.You can run the specific program/version
     #calling it as {program_version} inside the code. E.g {R_3_4}
-    pennCNV = "/path/programs/PennCNV-1.0.5"
+    pennCNV = "path_to/programs/PennCNV-1.0.5"
     
     ### prefix ########################################
     ### module 1,2 and 3
@@ -152,21 +152,21 @@ Replace config.js and variables.py:
 $ cd association-cnv
 ```
 Replace config.js and variables.py:
-- Modify the config.json file in association-pipeline/snakefiles:
+- Modify the config.json file in association-pipeline/snakefiles. Replace **path_to** according to your installation path.
 
     First block referst to the files generated in the previous detections and QC analysis stored at `QCResults`, which will be the input files for this pipeline.
     ``` json
-        "map_file": "/QCResults/data_conversion/sample_map.txt",
-        "sample_all_file": "/QCResults/data_calling/sampleall.rawcn",
-        "sample_merged_file": "/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
+        "map_file": "path_to/QCResults/data_conversion/sample_map.txt",
+        "sample_all_file": "path_to/QCResults/data_calling/sampleall.rawcn",
+        "sample_merged_file": "path_to/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
     ```
     Second block refers to the external files used as imput in the different modules.
     ``` json
-        "controls_random_file": "/RareCNVsAnalysis/Resources/controls_random_sampling.txt",
-        "genes_ref_file": "/RareCNVsAnalysis/Resources/glist-hg19.dat",
-        "core_file": "/RareCNVsAnalysis/Resources/core.txt",
-        "pathway_file": "/RareCNVsAnalysis/Resources/panelApp_AI_genes.dat",
-        "allpheno_file": "/RareCNVsAnalysis/Resources/pheno.tsv",
+        "controls_random_file": "path_to/RareCNVsAnalysis/Resources/controls_random_sampling.txt",
+        "genes_ref_file": "path_to/RareCNVsAnalysis/Resources/glist-hg19.dat",
+        "core_file": "path_to/RareCNVsAnalysis/Resources/core.txt",
+        "pathway_file": "path_to/RareCNVsAnalysis/Resources/panelApp_AI_genes.dat",
+        "allpheno_file": "path_to/RareCNVsAnalysis/Resources/pheno.tsv",
     ```
     - `glist-hg19.dat`: Genome reference file for the geneset-enrichment test
     - `panelApp_AI_genes.dat`: geneset list (e.g autoimmune related genes from PanelApp)
@@ -174,22 +174,22 @@ Replace config.js and variables.py:
 
     Last block indicates the output directories for each module and the Conda environment file location:
     ``` json
-        "data_conversion_path": "/RareCNVsResults/data_conversion",
-        "burden_analysis_path": "/RareCNVsResults/burden_analysis",
-        "burden_temp_path": "/RareCNVsResults/burden_analysis/temp",
-        "burden_graph_path": "/RareCNVsResults/graphics/burden_analysis",
-        "rare_cnvs_path": "/RareCNVsResults/rare_cnvs",
-        "rare_cnvs_summary_path": "/RareCNVsResults/rare_cnvs/summary",
-        "rare_cnvs_reference_path": "/RareCNVsResults/rare_cnvs/Reference",
-        "rare_cnvs_reference_summary_path": "/RareCNVsResults/rare_cnvs/Reference/summary",
-        "rare_cnvs_forplots_path": "/RareCNVsResults/rare_cnvs/forplots",
-        "rare_cnvs_graph_path": "/RareCNVsResults/graphics/rare_cnvs",
-        "enrichment_rare_cnvs_path": "/RareCNVsResults/enrichment_rare_cnvs",
-        "enrichment_rare_cnvs_genic_path": "/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
-        "enrichment_rare_cnvs_pathway_path": "/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
-        "log_path": "/RareCNVsResults/logs",
+        "data_conversion_path": "path_to/RareCNVsResults/data_conversion",
+        "burden_analysis_path": "path_to/RareCNVsResults/burden_analysis",
+        "burden_temp_path": "path_to/RareCNVsResults/burden_analysis/temp",
+        "burden_graph_path": "path_to/RareCNVsResults/graphics/burden_analysis",
+        "rare_cnvs_path": "path_to/RareCNVsResults/rare_cnvs",
+        "rare_cnvs_summary_path": "path_to/RareCNVsResults/rare_cnvs/summary",
+        "rare_cnvs_reference_path": "path_to/RareCNVsResults/rare_cnvs/Reference",
+        "rare_cnvs_reference_summary_path": "path_to/RareCNVsResults/rare_cnvs/Reference/summary",
+        "rare_cnvs_forplots_path": "path_to/RareCNVsResults/rare_cnvs/forplots",
+        "rare_cnvs_graph_path": "path_to/RareCNVsResults/graphics/rare_cnvs",
+        "enrichment_rare_cnvs_path": "path_to/RareCNVsResults/enrichment_rare_cnvs",
+        "enrichment_rare_cnvs_genic_path": "path_to/RareCNVsResults/enrichment_rare_cnvs/genic_CNVs",
+        "enrichment_rare_cnvs_pathway_path": "path_to/RareCNVsResults/enrichment_rare_cnvs/pathway_CNVs",
+        "log_path": "path_to/RareCNVsResults/logs",
         
-        "dependenciesenv_file": "/RareCNVsAnalysis/association-cnv/association-pipeline/snakefiles/env/dependenciesenv.yml"
+        "dependenciesenv_file": "path_to/RareCNVsAnalysis/association-cnv/association-pipeline/snakefiles/env/dependenciesenv.yml"
     ```
 > [!IMPORTANT]
 > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
@@ -217,7 +217,6 @@ Replace config.js and variables.py:
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
-Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
 
 Publication and Citation
 -----------------------------
