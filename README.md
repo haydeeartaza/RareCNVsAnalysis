@@ -56,19 +56,19 @@ $ cd RareCNVsResults/qc-cnv
 Replace config.js and variables.py:
 - Modify **config.json** file in **qc-pipeline/snakefiles/config.json**. Replace **path_to** according to your installation path.
 
-  First block refers to SNPs array report and the SNPs table files (see format in user guide manual [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf):
+  First block refers to SNPs array report and the SNPs table files (see format in user guide manual, Figre 5 and 6, [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf))
   ``` json
     "final_report_file": "path_to/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "path_to/data/SNPs_Table.txt",
   ```
-  Second block refers to external files used for the QC execution:
+  Second block refers to external files used for the QC execution stored  in **resources** directoy included within the pipeline:
   ``` json
     "gc_content_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
   ```
-  Third block refers to intermediate files generated in this analysis, which will be used in the Rare CNVs analysis:
+  Third block refers to files generated in this analysis which will be used as a input in the Rare CNVs analysis:
   ``` json
     "list_signal_files_file": "path_to/QCResults/data_conversion/list.txt",
     "map_file": "path_to/QCResults/data_conversion/sample_map.txt",   
@@ -168,9 +168,9 @@ Replace config.js and variables.py:
         "pathway_file": "path_to/RareCNVsAnalysis/Resources/panelApp_AI_genes.dat",
         "allpheno_file": "path_to/RareCNVsAnalysis/Resources/pheno.tsv",
     ```
-    - `glist-hg19.dat`: Genome reference file for the geneset-enrichment test
-    - `panelApp_AI_genes.dat`: geneset list (e.g autoimmune related genes from PanelApp)
-    - `pheno.tsv`: phenotype file 
+    - `glist-hg19.dat`: Genome reference file (chr-bp1-bp2-geneid) for the geneset-enrichment test, download from [Plink resources web page](https://www.cog-genomics.org/plink/1.9/resources). Available, hg18, hg19 and hg38 versions.
+    - `panelApp_AI_genes.dat`: geneset list (chr-bp1-bp2-geneid)(e.g autoimmune related genes from PanelApp).
+    - `pheno.tsv`: phenotype file (see NOTE below regarding format specification).
 
     Last block indicates the output directories for each module and the Conda environment file location:
     ``` json
@@ -191,7 +191,7 @@ Replace config.js and variables.py:
         
         "dependenciesenv_file": "path_to/RareCNVsAnalysis/association-cnv/association-pipeline/snakefiles/env/dependenciesenv.yml"
     ```
-> [!IMPORTANT]
+> [!NOTE]
 > **Phenotype** file should containt the the case/control and gender information in columns 3 and 7 respectivelly, as is shown in the example below. Function `create_fam_file` in [functions.sh](association_cnv/lib/functions.sh) can be modified to adjust these positions.
     
     ```
