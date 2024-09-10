@@ -272,9 +272,9 @@ rule GET_RARE_CNVs:
            mv {params.referencedir}/temp {params.referencedir}/$refcontrols"_track".cnv.bed 
 
 	   # Change temporally space by tab in *.bed files for Bedtools analysis 
-	   cat {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed	| tr " " "\t" > \
+	   cat {params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.bed	| tr " " "\t" | grep -v "track" > \
 			{params.referencedir}/{params.sampleswithoutrefctrsprefix}_$type"_track".cnv.temp.bed
-	   cat {params.referencedir}/$refcontrols"_track".cnv.bed | tr " " "\t" > \
+	   cat {params.referencedir}/$refcontrols"_track".cnv.bed | tr " " "\t" | grep -v "track" > \
                         {params.referencedir}/$refcontrols"_track".cnv.temp.bed
 
 	   echo "##### Getting CNVs overlapping at least 50% with common varianats... #####"

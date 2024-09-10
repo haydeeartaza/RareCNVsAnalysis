@@ -296,7 +296,8 @@ function plot_samples_distribution {
     # Ratio of samples with X CNVs in cases and controls. Ratio=(Num_samples)/(Total_cases|Total_controls) 
     # a[$3][$4]=a[case|control][num_CNVs]
     echo -e "CLASS\tNUM_SAMPLES\tRATIO_SAMPLES\tNUM_CNVS" > $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv
-    awk -v cses=$cases -v ctrls=$controls '{if(NR>1 && $NF!=0) a[$3][$4]++}END{for(i in a){ if(i==1) n=ctrls; else n=cses; for(j in a[i]) print i"\t"a[i][j]"\t"a[i][j]/n"\t"j }}' \
+    awk -v cses=$cases -v ctrls=$controls '{if(NR>1 && $NF!=0) a[$3"_"$4]++} \
+    END{for(i in a){ pheno=i; sub(/_.*/,"",pheno); seg=i; sub(/.*_/,"",seg); if(pheno==1) n=ctrls; else n=cses; print pheno"\t"a[i]"\t"a[i]/n"\t"seg }}' \
     $rarecnvsindvfile >>  $forplotsdir/numCNVs_by_numIndividual_$prefix.tsv
 
 
