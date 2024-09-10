@@ -28,7 +28,7 @@ rule GET_REF_CONTROLS_COMMON_CNVs:
             echo "##### Extracting CNVs for the REFERENCE controls from {params.samplescnvscoreprefix} #####"
             # Extract CNVs for the REFERENCE controls
             for i in `cat {input.controlsrandomfile}`; do grep -w $i {params.samplescnvscoreprefix}.rawcn ; done \
-            > {params.referencecontrolsprefix}.rawcn
+            > {params.referencecontrolsprefix}.rawcn || true
 
 	    echo "##### Getting REFERENCE controls cnv, fam and map files #####"
 	    create_cnv_fam_map \
@@ -366,7 +366,8 @@ rule FREQUENCY_CNVs_INSPECTION:
        shell:
          """ 
 	    libdir={libdir}
-            plink={plink17}	
+            plink={plink17}
+            Rscript=`which Rscript`	
 	    source {libdir}/functions.sh
 
 	    for type in {cnv_type}; do
@@ -440,6 +441,8 @@ rule FREQUENCY_CNVs_ASSESSMENT:
    output:
        rarecnvsallsummary = expand(config['rare_cnvs_summary_path'] + '/' + '{prefix}' + '_rare_{type}' + '_ALL_summary_statistics' + '.csv', type=cnv_type,  prefix = cnv_prefix),
        rarecnvsbylengthsummary = expand(config['rare_cnvs_summary_path'] + '/' + '{prefix}' + '_rare_{type}' + '_summary_statistics' + '.csv', type=cnv_type, prefix = cnv_prefix),
+   conda:
+       config['dependenciesenv_file']
    params:
        forplotsdir = config['rare_cnvs_forplots_path'],
        referencedir = config['rare_cnvs_reference_path'],
@@ -454,6 +457,7 @@ rule FREQUENCY_CNVs_ASSESSMENT:
          """
 	    libdir={libdir}
             plink={plink17}
+            Rscript=`which Rscript`
             source {libdir}/functions.sh
 
             for type in {cnv_type}; do
