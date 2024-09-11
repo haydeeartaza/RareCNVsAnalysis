@@ -367,7 +367,7 @@ rule FREQUENCY_CNVs_INSPECTION:
          """ 
 	    libdir={libdir}
             plink={plink17}
-            Rscript=`which Rscript`	
+            Rscript=Rscript	
 	    source {libdir}/functions.sh
 
 	    for type in {cnv_type}; do
@@ -457,7 +457,7 @@ rule FREQUENCY_CNVs_ASSESSMENT:
          """
 	    libdir={libdir}
             plink={plink17}
-            Rscript=`which Rscript`
+            Rscript=Rscript
             source {libdir}/functions.sh
 
             for type in {cnv_type}; do
