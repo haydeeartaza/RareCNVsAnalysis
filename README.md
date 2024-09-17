@@ -56,7 +56,7 @@ $ cd RareCNVsResults/qc-cnv
 Replace config.js and variables.py:
 - Modify **config.json** file in **qc-pipeline/snakefiles/config.json**. Replace **path_to** according to your installation path.
 
-  First block refers to SNPs array report and the SNPs table files (see format in user guide manual, Figre 5 and 6, [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf))
+  First block refers to SNPs array report and the SNPs table files (see user guide manual, **Input Files Specification**, and Figre 5 and Figure 6 [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf))
   ``` json
     "final_report_file": "path_to/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "path_to/data/SNPs_Table.txt",
