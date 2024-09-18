@@ -1,7 +1,8 @@
+remotes
 fmsb
 ggplot2
 gridExtra
 dplyr
 reshape
 ggtext
-
+glossary

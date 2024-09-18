@@ -18,12 +18,12 @@ RUN apt-get update && \
     libbz2-dev \
     liblzma-dev \
     xorg-dev \
-    xauth \
     libx11-dev \
     x11-apps \
     xvfb xauth xfonts-base \
+    xfonts-100dpi \
+    xfonts-75dpi \
     cmake \  
-    libcurl4-gnutls-dev \
     libharfbuzz-dev libfribidi-dev \
     libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
     libperl-dev \
@@ -37,7 +37,8 @@ RUN apt-get update && \
     bcftools \
     locales \
     libpcre++-dev \
-    gawk 
+    gawk \
+    libgit2-dev
 
 # Use the right falour of awk
 RUN ln -sf /usr/bin/gawk awk
@@ -59,7 +60,8 @@ RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
     tar xvfz v1.0.5.tar.gz && \
     cd PennCNV-1.0.5/kext && \
     make && \
-    cd ../..
+    cd ../.. && \
+    rm v1.0.5.tar.gz
 
 # Install R and required packages
 ENV R_VERSION 3.6.3
@@ -69,18 +71,25 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
         ./configure --with-x=yes --with-readline=no --with-PCRE=no --build=aarch64-unknown-linux-gnu && \
         make && \
         make install && \
-        cd ..
+        cd .. && \
+        rm R-3.6.3.tar.gz
 
 # Install additional R packages
 # package from archive necessary for few other packages
 # the versions were picked to build and work within the given R version
 COPY ./requirements.txt ./
-RUN Rscript -e 'install.packages("devtools", repos="https://cloud.r-project.org", dependencies = TRUE); \
-    install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org"); \
-    library(devtools); devtools::install_version(package="pbkrtest", version="0.4.7", repos="https://cloud.r-project.org"); \
-    install.packages("glossary", repos="https://cloud.r-project.org"); \ 
-    devtools::install_version(package="ggpubr", version = "0.6.0", repos="https://cloud.r-project.org"); \
-    devtools::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
+
+RUN wget https://cran.r-project.org/src/contrib/Archive/evaluate/evaluate_0.14.tar.gz && \
+	Rscript -e 'install.packages("/evaluate_0.14.tar.gz", repos=NULL, type="source", lib="/usr/local/lib/R/library")' && \ 
+	rm evaluate_0.14.tar.gz
+
+RUN Rscript -e 'install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org", lib="/usr/local/lib/R/library")'
+
+RUN Rscript -e 'library(remotes); remotes::install_version(package="pbkrtest", version="0.4.7", repos="https://cloud.r-project.org"); \
+     remotes::install_version(package="Matrix", version="1.6.0", repos="https://cloud.r-project.org"); \
+     remotes::install_version(package="ggpubr", version = "0.6.0", repos="https://cloud.r-project.org"); \
+     remotes::install_version(package="downlit", version="0.4.3", repos="https://cloud.r-project.org"); \
+     remotes::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
 
 # Download and install PLINK v1.7 in the root directory
 # the default one did not work on this system, using official Debian build for Ubuntu
