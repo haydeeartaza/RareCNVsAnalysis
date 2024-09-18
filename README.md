@@ -144,21 +144,21 @@ Step 2: Rare CNVs analysis
 To run the pipeline on the supplied test data on the native system:
 
 ```bash
-snakemake -s association-cnv/association-pipeline/snakefiles/association.snake --core 1
+snakemake -s association_cnv/association-pipeline/snakefiles/association.snake --core 1
 ```
 
 To run the pipeline on the supplied test data via Docker:
 
 ```bash
-docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association-cnv/association-pipeline/snakefiles/association.snake --core 1
+docker run --rm -it  -v ${PWD}:/app/pipeline rarecnvs_image:latest snakemake -s association_cnv/association-pipeline/snakefiles/association.snake --core 1
 ```
 
 ### Pipeline configuration
 
 To configure the pipeline for your own dataset you need to adjust two files: 
 
-- [association-cnv/association-pipeline/snakefiles/config.json](association_cnv/association-pipeline/snakefiles/config.json)
-- [association-cnv/association-pipeline/snakefiles/variables.py](association_cnv/association-pipeline/snakefiles/variables.py)
+- [association_cnv/association-pipeline/snakefiles/config.json](association_cnv/association-pipeline/snakefiles/config.json)
+- [association_cnv/association-pipeline/snakefiles/variables.py](association_cnv/association-pipeline/snakefiles/variables.py)
 
 Modify the [`config.json`](association_cnv/association-pipeline/snakefiles/config.json) file. In this example directory `output_qc` refers the directory with the quality controlled CNV calls from the previous step, directory `output_association` will contain all files generted in this pipeline and `test/resources` refers to the directory containing the input files for this step of the pipeline.
 
