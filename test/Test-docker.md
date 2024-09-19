@@ -44,5 +44,5 @@ Test using Docker
     ```
 ## Notes
 - This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
-- If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
+- If any part of the code is changed the pipeline should be run again and it is also recommended to remove the output directories to generate results from scrath.
 - Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
