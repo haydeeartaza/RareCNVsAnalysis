@@ -6,3 +6,4 @@ dplyr
 reshape
 ggtext
 glossary
+Cairo

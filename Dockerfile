@@ -25,7 +25,7 @@ RUN apt-get update && \
     xfonts-75dpi \
     cmake \  
     libharfbuzz-dev libfribidi-dev \
-    libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+    libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libcairo2-dev \
     libperl-dev \
     tar \
     git \
@@ -68,7 +68,7 @@ ENV R_VERSION 3.6.3
 RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
         tar xvzf R-${R_VERSION}.tar.gz && \
         cd R-${R_VERSION} && \
-        ./configure --with-x=yes --with-readline=no --with-PCRE=no --build=aarch64-unknown-linux-gnu && \
+        ./configure --with-x=yes --with-cairo --with-readline=no --with-PCRE=no --build=aarch64-unknown-linux-gnu && \
         make && \
         make install && \
         cd .. && \

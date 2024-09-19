@@ -18,6 +18,7 @@ library(ggpubr)
 library(introdataviz)
 source(file.path(getwd(), "qc-cnv/lib/qc_plots_functions.R"))
 
+options(bitmapType="cairo")
 args = commandArgs(trailingOnly = TRUE)
 merge_comparison_file = args[1] 
 out_dir = args[2]

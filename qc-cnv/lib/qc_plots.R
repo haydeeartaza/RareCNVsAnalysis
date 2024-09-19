@@ -12,7 +12,6 @@
 #2.Scatter plots for number of calls (NunCNV) versus samples statistics
 #
 ##
-
 library(ggplot2)
 library(ggtext)
 library(ggpubr)
@@ -23,6 +22,7 @@ source(file.path(getwd(), "qc-cnv/lib/qc_plots_functions.R"))
 args = commandArgs(trailingOnly = TRUE)
 sample_qcsum_list = args[1]
 prefix_output_file = args[2]
+options(bitmapType="cairo")
 
 default_parametes_output_file = paste(prefix_output_file,"QC_default_parametes_PennCNV.png", sep = "_")
 numCNV_output_file = paste(prefix_output_file,"NumCNV_vs_parametres.png", sep = "_")
