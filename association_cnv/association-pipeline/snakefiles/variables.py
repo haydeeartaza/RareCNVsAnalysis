@@ -10,7 +10,7 @@ plink17 = "/usr/bin/plink1"
 bedtools = "bedtools"
 # this is needed for using X11 graphic device for plotting in docker
 # if running on the native system just set it to "Rscript"
-Rscript = "xvfb-run Rscript"
+Rscript = "xvfb-run -a Rscript"
 
 ### Prefix file names #######################################
 ### module 1,2 and 3
