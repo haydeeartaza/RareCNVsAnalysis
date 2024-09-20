@@ -1,0 +1,87 @@
+# Generate the signal intensity data based on raw CEL files from Affymetrix Genome-Wide Human SNP 6.0 Array 
+# 1.Input: CEL files and text file with the list of CEL files including path 
+# 2.output: N intensities files one by each sample 
+rule CREATE_INTENSITY_FILES:
+    input: 
+        list_CEL_file = config['list_CEL_file'],
+    output: 
+        listfile = config['list_signal_files_file'],
+        snpfile = config['snp_file']
+    params: 
+        conversiondir = config['data_conversion_path'],
+        outputdir = config['data_intensity_path'],
+        mapfile = config['map_file'],
+        logfile =  config['log_path'] + '/' + 'data_conversion.log'
+    message: "Creating intensity files from {input}"
+
+    shell:
+        """
+        
+        affylib={libdir}/Affymetrix
+        
+        #Generate genotyping calls from CEL files
+        $affylib/apt-probeset-genotype \
+        -c $affylib/GenomeWideSNP_6.cdf \
+        -a birdseed \
+        --read-models-birdseed $affylib/GenomeWideSNP_6.birdseed.models \
+        --special-snps $affylib/GenomeWideSNP_6.specialSNPs \
+        --chip-type GenomeWideEx_6 \
+        --chip-type GenomeWideSNP_6 \
+        --out-dir {params.conversiondir} \
+	--cel-files {input.list_CEL_file}
+        
+        #Allele-specific signal extraction from CEL files
+        $affylib/apt-probeset-summarize \
+        --cdf-file $affylib/GenomeWideSNP_6.cdf \
+        --analysis quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true \
+        --target-sketch $affylib/hapmap.quant-norm.normalization-target.txt \
+        --chip-type GenomeWideEx_6 \
+        --chip-type GenomeWideSNP_6 \
+        --out-dir {params.conversiondir} \
+	--cel-files {input.list_CEL_file}
+        
+        
+        #Generate canonical genotype clustering file
+        #extracting gender information. The file_sex file is important for chrX markers and chrY markers
+        grep male {params.conversiondir}/birdseed.report.txt | cut -f 1,2 > {params.conversiondir}/file_sex
+
+        $affylib/generate_affy_geno_cluster.pl \
+        {params.conversiondir}/birdseed.calls.txt \
+        {params.conversiondir}/birdseed.confidences.txt \
+        {params.conversiondir}/quant-norm.pm-only.med-polish.expr.summary.txt \
+        -locfile $affylib/affygw6.hg18.pfb \
+        -sexfile {params.conversiondir}/file_sex \
+        -out {params.conversiondir}/gw6.genocluster
+        
+        #LRR and BAF calculation
+        $affylib/normalize_affy_geno_cluster.pl \
+	{params.conversiondir}/gw6.genocluster \
+        {params.conversiondir}/quant-norm.pm-only.med-polish.expr.summary.txt \
+        -locfile $affylib/affygw6.hg18.pfb \
+        -out {params.conversiondir}/gw6.lrr_baf.txt
+        
+        #Split the signal file into individual files for CNV calling by PennCNV
+        {pennCNV}/kcolumn.pl  {params.conversiondir}/gw6.lrr_baf.txt split 2 -tab -head 3 -out  {params.outputdir}/gw6
+        
+        
+        # Generate the file with the list of intensity files (used in PennCNV)    
+        echo "##### Generate map file sample vs. file associated... #####"
+        for i in `ls {params.outputdir}`; do sample=`head -1 {params.outputdir}/$i | cut -f4 | cut -f1 -d'.'`; echo -e "$i\t$sample"; done > {params.mapfile}
+
+        
+        echo "##### Generate the file with the list of intensity files per sample (used in PennCNV)... #####"
+        for i in `ls {params.outputdir} | sort -V`; do echo -e "$i"; done > {output.listfile}
+        
+        # Create SNPs list file (Name, Chr, Position) from signal intensity 
+        echo "##### Create SNPs file from signal intensity file... #####"
+        cut -f1-3 {params.conversiondir}/gw6.lrr_baf.txt > {output.snpfile}
+        
+
+        
+        # log    
+        raw_samples=`wc -l {output.listfile}`
+        echo "##### Converting GS report to signal files... #####"
+        echo "Samples in report: $raw_samples" > {params.logfile}
+
+        """
+
