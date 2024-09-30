@@ -7,6 +7,17 @@ This pipeline is a generic bioinformatic solution to identify rare CNVs in case-
 
 Details about config, input/output files and a module/rule description see [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf)
 
+Pipeline Structure
+-----------------------------
+The pipeline executes two major tasks:
+
+1. Quality control analysis, which uses SNP-array genotyping data (green box) as an input to obtain high-quality samples and CNV calls. 
+2. Rare CNV analysis, which takes samples and CNV calls from the QC pipeline output, and after the data format conversion, consists of burden, rare CNV and enrichment analysis. 
+
+Black dotted lines split each analysis in their corresponding modules, purple boxes represent a specific task in each module, yellow boxes show representative outputs (files and/or plots), and the blue box represents external functions used by some modules. Dotted purple boxes are optional tasks which could be easily removed or changed to adapt the pipeline with the study requirements.
+
+![Pipeline workflow](manual/images/Rare_CNV_pipeline.png)
+
 Dependencies
 -----------------------------
 - Mambaforge3
@@ -17,15 +28,19 @@ Dependencies
 - plink (1.7)
 - PennCNV (1.0.5)
 
-Installation
+Installation of dependencies
 -----------------------------
-Dependencies avalaible via conda were configuring using Integrated Package Management to define isolated software environments per rule (https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 
-See Snakemake and dependencies installation [here](manual/INSTALL.md)
+Dependencies available via Conda are installed by Snakemake (Integrated Package Management). Dependencies not availabe should be installed manually. See Snakemake and dependencies installation [here](manual/INSTALL.md)
 
-Pipeline Execution Test
+SNP-array data
 -----------------------------
-**1. Create the test directory structure:**
+As a default, this pipeline is set up to use **Illumina SNP-array genotyping data**. However, **Affymetrix array data** can also be used with this pipeline. The  **Input Files Specification** section of the [user guide manual](manual/Rare_CNVs_pipeline_guide.pdf) contains the guidelines to prepare the appropriate input files and modify pipeline files accordingly.
+
+Pipeline execution
+-----------------------------
+
+**1. Create the directory structure:**
 ```
 .
 ├── data
@@ -47,29 +62,29 @@ $ git clone  https://github.com/haydeeartaza/RareCNVsAnalysis.git
 - **data**: Directory containing the **test** SNP-array genotyping data. Download the final report and the SNPs file from [input data](https://drive.google.com/uc?export=download&id=1EbEWtprUBIz_PKB5C8709JhL2fQBDpSE). Originally downloaded from [Illumina GenomeStudio project](https://emea.support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/global-screening-array-24/v3-0/infinium-global-screening-array-24-v3-0-a1-demo-data-12.zip) 
 - **QCResults**: QC pipeline ouput directory created automaticaly during QC pipeline execution.
 - **RareCNVsResults**: Rare CNV pipeline ouput directory created automaticaly during the pipeline execution.
-> [!NOTE]
-> **Affymetrix array data** can also be used with this pipeline. The user guide manual, **Input Files Specification** section, contains the guidelines to prepare the appropiate input files.
 
-**3. Detection calls and QC analysis execution:**
+### Preparing the environment for calling and QC analysis
+
+**1. Setting up the configuration files:**
 ```
 $ cd RareCNVsResults/qc-cnv
 ```
 Replace config.js and variables.py:
-- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**. Replace **path_to** according to your installation path.
+- Modify **config.json** file in **qc-pipeline/snakefiles/config.json**. Replace all instances of **path_to** according to your installation path.
 
-  First block refers to SNPs array report and the SNPs table files (see user guide manual, **Input Files Specification**, and Figre 5 and Figure 6 [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf))
+  The first block refers to SNPs array report and the SNPs table files (see user guide manual, **Input Files Specification**, and Figre 5 and Figure 6 [here](https://github.com/haydeeartaza/RareCNVsAnalysis/blob/main/manual/Rare_CNVs_pipeline_guide.pdf))
   ``` json
     "final_report_file": "path_to/data/GSA-24-v3-0-a1-demo-data-12_FinalReport.txt",
     "signal_intensity_file": "path_to/data/SNPs_Table.txt",
   ```
-  Second block refers to external files used for the QC execution stored  in **resources** directoy included within the pipeline:
+  The second block refers to external files used for the QC execution stored  in **resources** directoy included within the pipeline:
   ``` json
     "gc_content_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/gc5Base.sorted.txt",
     "hmm_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/hhall.hmm",
     "immunoglobulin_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/immunoglobulin_penncnv.txt",
     "centromere_telomere_region_file": "path_to/RareCNVsAnalysis/qc-cnv/resources/centromere_telomere_penncnv.txt",
   ```
-  Third block refers to files generated in this analysis which will be used as a input in the Rare CNVs analysis:
+  The third block refers to files generated in this analysis which will be used as a input in the **Rare CNVs analysis**:
   ``` json
     "list_signal_files_file": "path_to/QCResults/data_conversion/list.txt",
     "map_file": "path_to/QCResults/data_conversion/sample_map.txt",   
@@ -83,7 +98,7 @@ Replace config.js and variables.py:
     "sample_merged_file": "path_to/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
   ```
 
-  Last block indicates the output directories for each module and the Conda environment file location:
+  The last block indicates the output directories for each module and the Conda environment file location:
   ``` json
     "data_conversion_path": "path_to/QCResults/data_conversion",
     "data_intensity_path" :  "path_to/QCResults/data_conversion/data_intensity",
@@ -103,8 +118,8 @@ Replace config.js and variables.py:
     resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
     
     ### programs ########################################
-    #Include here all programs and versions.You can run the specific program/version
-    #calling it as {program_version} inside the code. E.g {R_3_4}
+    #Include here all programs and versions.
+    #You specify program/version by calling it as {program_version} inside the code. E.g {pennCNV}
     pennCNV = "path_to/programs/PennCNV-1.0.5"
     
     ### prefix ########################################
@@ -139,6 +154,8 @@ Replace config.js and variables.py:
     if not os.path.exists(config['graphic_qc_path']):
         os.makedirs(config['graphic_qc_path'])
     ```
+**2. Running the calling and  QC pipeline**
+
 - Excute the pipeline with the comman line:
     ```
     $ conda activate snakemake
@@ -147,13 +164,15 @@ Replace config.js and variables.py:
     ```
    - --sdm conda: use Conda integration in Snakemake
    - --conda-create-envs-only:  will only install the required Conda environments without running the full workflow
-    
-**4. Rare CNVs analysis:**
+
+### Preparing the environment for Rare CNVs analysis
+
+**1. Setting up the configuration files:**
 ```
 $ cd association-cnv
 ```
 Replace config.js and variables.py:
-- Modify the config.json file in association-pipeline/snakefiles. Replace **path_to** according to your installation path.
+- Modify the config.json file in association-pipeline/snakefiles. Replace all instances of **path_to** according to your installation path.
 
     First block referst to the files generated in the previous detections and QC analysis stored at `QCResults`, which will be the input files for this pipeline.
     ``` json
@@ -161,7 +180,7 @@ Replace config.js and variables.py:
         "sample_all_file": "path_to/QCResults/data_calling/sampleall.rawcn",
         "sample_merged_file": "path_to/QCResults/data_clean/samples_qcpass.clean.merged.rawcn",
     ```
-    Second block refers to the external files used as imput in the different modules.
+    Second block refers to the external files used as imput in the different modules. These files should be provided by the users according the study requeriments.
     ``` json
         "controls_random_file": "path_to/RareCNVsAnalysis/Resources/controls_random_sampling.txt",
         "genes_ref_file": "path_to/RareCNVsAnalysis/Resources/glist-hg19.dat",
@@ -202,19 +221,18 @@ Replace config.js and variables.py:
     C   3   1   NA12873 0   45  1
     D   4   2   NA12891 0   15  2
     ```
+**2. Running the RareCNVs pipeline**
+
 - Excute the pipeline with the comman line:
     ```
     $ conda activate snakemake
     $ snakemake --sdm conda --conda-create-envs-only -s association-pipeline/snakefiles/association.snake 
     $ snakemake --sdm conda --core 1 -s association-pipeline/snakefiles/association.snake ```  
-> [!TIP]
-> This test only shows the pipeline execution. As the input sample size is small  (12 samples) pipeline can not obtain meaninful results.
-
-> [!TIP]
-> If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
-
-> [!TIP]
-> Frequency (high_freq) and controls reference (random_controls) values should be modified according the study requeriments and the number of reference controls as well. See [Rare copy number variation in autoimmune Addison's disease (doi:10.3389/fimmu.2024.1374499)](https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1374499/abstract)
+> [!NOTE]
+> - Illumina data test consiste of 12 samples, using this data for test both pipelines will generate not meaninful results.
+>
+> - If any part of the code is changed the pipeline should be run again and it is also recomendable to remove the output directories for generate results from scrath.
+> 
 
 ![Output directroies](manual/images/pipeline_output_dirs.png)
 
@@ -222,14 +240,3 @@ Replace config.js and variables.py:
 Publication and Citation
 -----------------------------
 This project is provisionally described in [Artaza H. *et al.*, doi:10.1101/2024.03.13.584428](https://doi.org/10.1101/2024.03.13.584428)
-
-Pipeline Structure
------------------------------
-The pipeline executes two major tasks:
-
-1. Quality control analysis, which uses SNP-array genotyping data (green box) as an input to obtain high-quality samples and CNV calls. 
-2. Rare CNV analysis, which takes samples and CNV calls from the QC pipeline output, and after the data format conversion, consists of burden, rare CNV and enrichment analysis. 
-
-Black dotted lines split each analysis in their corresponding modules, purple boxes represent a specific task in each module, yellow boxes show representative outputs (files and/or plots), and the blue box represents external functions used by some modules. Dotted purple boxes are optional tasks which could be easily removed or changed to adapt the pipeline with the study requirements.
-
-![Pipeline workflow](manual/images/Rare_CNV_pipeline.png)
