@@ -9,8 +9,7 @@ Dependencies
 -----------------------------
 - Python (>=3.8.5)
 - Snakemake (5.22.1)
-- bcftools
-- vcftools
+- BEDTools
 - plink (1.7)
 - PennCNV (1.0.5)
 - R (3.6.3, see requirements.txt and Dockerfile for the list of packages) 
