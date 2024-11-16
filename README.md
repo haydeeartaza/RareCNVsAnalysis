@@ -213,10 +213,6 @@ Test
 -----------------------------
 See test instructions for run [on the native system](test/Test-native-system.md) and [via Docker](test/Test-docker.md).
 
-Publication and Citation
------------------------------
-This project is provisionally described in [Artaza H. *et al.*, doi:10.1101/2024.03.13.584428](https://doi.org/10.1101/2024.03.13.584428).
-
 Pipeline Structure
 -----------------------------
 The pipeline executes two major tasks:
@@ -227,3 +223,7 @@ The pipeline executes two major tasks:
 Black dotted lines split each analysis in their corresponding modules, purple boxes represent a specific task in each module, yellow boxes show representative outputs (files and/or plots), and the blue box represents external functions used by some modules. Dotted purple boxes are optional tasks which could be easily removed or changed to adapt the pipeline with the study requirements.
 
 ![Pipeline workflow](manual/images/Rare_CNV_pipeline.png)
+
+Publication and Citation
+-----------------------------
+This project is provisionally described in [Artaza H. *et al.*, doi:10.1101/2024.03.13.584428](https://doi.org/10.1101/2024.03.13.584428).
