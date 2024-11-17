@@ -72,7 +72,7 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
         make && \
         make install && \
         cd .. && \
-        rm R-3.6.3.tar.gz
+        rm R-${R_VERSION}.tar.gz
 
 # Install additional R packages
 # package from archive necessary for few other packages
