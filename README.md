@@ -5,14 +5,14 @@ Overview
 -----------------------------
 This pipeline is a generic bioinformatic solution to identify rare CNVs in case-control based studies. Using SNPs-array genotyping data, this pipeline performs CNV detection and quality control, followed by the burden analysis, rare CNV frequency analysis and CNV enrichment analysis [see pipeline workflow](manual/images/Rare_CNV_pipeline.png).
 
-Dependencies
+Dependencies for direct installation
 -----------------------------
 - Python (>=3.8.5)
 - Snakemake (5.22.1)
 - BEDTools
 - plink (1.7)
 - PennCNV (1.0.5)
-- R (3.6.3, see requirements.txt and Dockerfile for the list of packages) 
+- R (tested with v3.6.3 locally and v4.3.3 in Docker) 
 
 Installation
 -----------------------------
