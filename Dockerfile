@@ -64,8 +64,8 @@ RUN wget https://github.com/WGLab/PennCNV/archive/v1.0.5.tar.gz && \
     rm v1.0.5.tar.gz
 
 # Install R and required packages
-ENV R_VERSION 3.6.3
-RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
+ENV R_VERSION 4.3.3
+RUN wget https://cran.r-project.org/src/base/R-4/R-${R_VERSION}.tar.gz && \
         tar xvzf R-${R_VERSION}.tar.gz && \
         cd R-${R_VERSION} && \
         ./configure --with-x=yes --with-cairo --with-readline=no --with-PCRE=no --build=aarch64-unknown-linux-gnu && \
@@ -79,16 +79,14 @@ RUN wget https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz && \
 # the versions were picked to build and work within the given R version
 COPY ./requirements.txt ./
 
-RUN wget https://cran.r-project.org/src/contrib/Archive/evaluate/evaluate_0.14.tar.gz && \
-	Rscript -e 'install.packages("/evaluate_0.14.tar.gz", repos=NULL, type="source", lib="/usr/local/lib/R/library")' && \ 
-	rm evaluate_0.14.tar.gz
+#RUN wget https://cran.r-project.org/src/contrib/Archive/evaluate/evaluate_0.14.tar.gz && \
+#	Rscript -e 'install.packages("/evaluate_0.14.tar.gz", repos=NULL, type="source", lib="/usr/local/lib/R/library")' && \ 
+#	rm evaluate_0.14.tar.gz
 
 RUN Rscript -e 'install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org", lib="/usr/local/lib/R/library")'
 
-RUN Rscript -e 'library(remotes); remotes::install_version(package="pbkrtest", version="0.4.7", repos="https://cloud.r-project.org"); \
-     remotes::install_version(package="Matrix", version="1.6.0", repos="https://cloud.r-project.org"); \
-     remotes::install_version(package="ggpubr", version = "0.6.0", repos="https://cloud.r-project.org"); \
-     remotes::install_version(package="downlit", version="0.4.3", repos="https://cloud.r-project.org"); \
+RUN Rscript -e 'library(remotes); \
+     remotes::install_version(package="faux", version="1.2.1", repos="https://cloud.r-project.org"); \
      remotes::install_github("psyteachr/introdataviz", upgrade_dependencies = FALSE)'
 
 # Download and install PLINK v1.7 in the root directory
