@@ -79,10 +79,6 @@ RUN wget https://cran.r-project.org/src/base/R-4/R-${R_VERSION}.tar.gz && \
 # the versions were picked to build and work within the given R version
 COPY ./requirements.txt ./
 
-#RUN wget https://cran.r-project.org/src/contrib/Archive/evaluate/evaluate_0.14.tar.gz && \
-#	Rscript -e 'install.packages("/evaluate_0.14.tar.gz", repos=NULL, type="source", lib="/usr/local/lib/R/library")' && \ 
-#	rm evaluate_0.14.tar.gz
-
 RUN Rscript -e 'install.packages(scan("requirements.txt", what = "package"), repos="https://cloud.r-project.org", lib="/usr/local/lib/R/library")'
 
 RUN Rscript -e 'library(remotes); \
