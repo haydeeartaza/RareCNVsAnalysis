@@ -93,7 +93,7 @@ Note that the `config.json` in this example is adapted for running with Docker, 
 Modify [`variables.py`](qc-cnv/qc-pipeline/snakefiles/variables.py) including programs location, setting files prefixes and PennCNV parameters. This script will also create the output directories that were previously set in `config.json` file.
 
 ```python
-  ### snakemake_workflows initialization ########################################
+### snakemake_workflows initialization ########################################
 libdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../lib'))
 resourcesdir = os.path.abspath(os.path.join(os.path.dirname(workflow.basedir), '../resources'))
 
@@ -118,21 +118,6 @@ qcnumcnv = "50"
 wf = "0.05"
 qcbafdrift = "0.01"
 qclrrsd = "0.3"
-
-### Create paths if they don't exist ###################################
-
-paths = [
-    config['data_conversion_path'],
-    config['data_intensity_path'],
-    config['data_calling_path'],
-    config['data_clean_path'],
-    config['graphic_path'],
-    config['log_path'],
-]
-
-for path in paths:
-    if not os.path.exists(path):
-        os.makedirs(path)
 ```
 
 Execute the pipeline as shown above either on the native system, or using Docker.
